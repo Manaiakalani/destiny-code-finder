@@ -9,6 +9,8 @@ export interface RedemptionCode {
   foundAt: Date;
   description?: string;
   isNew?: boolean;
+  emblemImage?: string;
+  emblemName?: string;
 }
 
 export type FilterStatus = 'all' | CodeStatus;

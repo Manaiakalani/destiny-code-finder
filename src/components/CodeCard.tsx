@@ -32,38 +32,35 @@ export function CodeCard({ code }: CodeCardProps) {
     if (hours < 1) return 'Just now';
     if (hours < 24) return `${hours}h ago`;
     if (days === 1) return 'Yesterday';
-    return `${days} days ago`;
+    if (days < 7) return `${days} days ago`;
+    return date.toLocaleDateString();
   };
+
+  const isActive = code.status === 'active';
 
   return (
     <div
       className={cn(
-        "glass-card hover-lift p-5 relative overflow-hidden group",
-        code.isNew && "gradient-border"
+        "hover-glow p-5 relative overflow-hidden group",
+        isActive ? "glass-card-highlight" : "glass-card",
+        code.status === 'expired' && "opacity-60"
       )}
     >
       {/* New badge */}
       {code.isNew && (
-        <div className="absolute top-3 right-3 flex items-center gap-1 text-xs text-primary font-medium">
-          <Sparkles className="w-3 h-3" />
-          NEW
+        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30">
+          <Sparkles className="w-3 h-3 text-primary" />
+          <span className="text-[10px] font-bold text-primary uppercase tracking-wider">New</span>
         </div>
       )}
       
-      {/* Status indicator glow */}
-      <div
-        className={cn(
-          "absolute inset-0 opacity-5 pointer-events-none transition-opacity group-hover:opacity-10",
-          code.status === 'active' && "bg-gradient-to-br from-success to-transparent",
-          code.status === 'expired' && "bg-gradient-to-br from-destructive to-transparent",
-          code.status === 'unknown' && "bg-gradient-to-br from-muted-foreground to-transparent"
-        )}
-      />
-      
-      <div className="relative space-y-4">
+      <div className="space-y-4">
         {/* Code display */}
         <div className="flex items-center justify-between gap-4">
-          <span className="code-text text-2xl text-foreground tracking-widest">
+          <span className={cn(
+            "code-text text-xl md:text-2xl",
+            isActive ? "text-foreground" : "text-muted-foreground"
+          )}>
             {code.code}
           </span>
           <button
@@ -81,16 +78,21 @@ export function CodeCard({ code }: CodeCardProps) {
         
         {/* Description */}
         {code.description && (
-          <p className="text-sm text-muted-foreground">{code.description}</p>
+          <p className={cn(
+            "text-sm",
+            isActive ? "text-foreground/80" : "text-muted-foreground"
+          )}>
+            {code.description}
+          </p>
         )}
         
-        {/* Status and meta */}
-        <div className="flex items-center justify-between gap-4">
+        {/* Meta row */}
+        <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/30">
           <div className="flex items-center gap-3">
             {/* Status badge */}
             <span
               className={cn(
-                "px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wide",
+                "px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider",
                 code.status === 'active' && "status-active",
                 code.status === 'expired' && "status-expired",
                 code.status === 'unknown' && "status-unknown"
@@ -100,7 +102,7 @@ export function CodeCard({ code }: CodeCardProps) {
             </span>
             
             {/* Source */}
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-muted-foreground truncate max-w-[100px]">
               {code.source}
             </span>
           </div>
@@ -113,18 +115,17 @@ export function CodeCard({ code }: CodeCardProps) {
         </div>
         
         {/* Redeem button */}
-        <Button
-          onClick={handleRedeem}
-          variant="default"
-          className={cn(
-            "w-full mt-2 font-heading font-semibold tracking-wide",
-            code.status === 'expired' && "opacity-50"
-          )}
-          disabled={code.status === 'expired'}
-        >
-          <ExternalLink className="w-4 h-4 mr-2" />
-          Redeem on Bungie.net
-        </Button>
+        {isActive && (
+          <Button
+            onClick={handleRedeem}
+            variant="outline"
+            size="sm"
+            className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 font-heading tracking-wider"
+          >
+            <ExternalLink className="w-3 h-3 mr-2" />
+            Redeem
+          </Button>
+        )}
       </div>
     </div>
   );

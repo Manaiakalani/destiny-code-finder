@@ -46,11 +46,11 @@ export function CodeCard({ code }: CodeCardProps) {
         code.status === 'expired' && "opacity-60"
       )}
     >
-      {/* New badge */}
+      {/* New badge - ARC themed (energy, speed) */}
       {code.isNew && (
-        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/20 border border-primary/30 z-10">
-          <Sparkles className="w-3 h-3 text-primary" />
-          <span className="text-[10px] font-bold text-primary uppercase tracking-wider">New</span>
+        <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full badge-new z-10 animate-arc-pulse">
+          <Sparkles className="w-3 h-3 text-arc" />
+          <span className="text-[10px] font-bold text-arc uppercase tracking-wider">New</span>
         </div>
       )}
       
@@ -153,13 +153,12 @@ export function CodeCard({ code }: CodeCardProps) {
           </div>
         </div>
         
-        {/* Redeem button */}
+        {/* Redeem button - SOLAR themed for active redemption */}
         {isActive && (
           <Button
             onClick={handleRedeem}
-            variant="outline"
             size="sm"
-            className="w-full border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 font-heading tracking-wider"
+            className="w-full btn-solar text-white font-heading tracking-wider"
           >
             <ExternalLink className="w-3 h-3 mr-2" />
             Redeem

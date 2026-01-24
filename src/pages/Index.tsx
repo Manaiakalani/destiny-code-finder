@@ -61,16 +61,16 @@ const Index = () => {
         isLoading={isLoading}
       />
       
-      {/* Divider */}
+      {/* Divider - VOID accent */}
       <div className="divider-glow mx-auto max-w-4xl" />
       
       {/* Main content */}
       <main className="container mx-auto px-4 py-12">
         <div className="space-y-8">
-          {/* Section header */}
+          {/* Section header with VOID styling */}
           <div className="flex items-center justify-between">
             <h2 className="font-heading text-2xl font-bold tracking-wider text-foreground">
-              All Codes
+              <span className="text-accent">Archive</span> Database
             </h2>
           </div>
           
@@ -88,14 +88,14 @@ const Index = () => {
         </div>
       </main>
       
-      {/* Footer */}
-      <footer className="border-t border-border/30 py-8 mt-12">
-        <div className="container mx-auto px-4 text-center space-y-2">
+      {/* Footer - VOID themed */}
+      <footer className="border-t border-accent/20 py-8 mt-12 bg-secondary/20">
+        <div className="container mx-auto px-4 text-center space-y-3">
           <p className="text-sm text-muted-foreground">
             Not affiliated with Bungie, Inc. Destiny 2 is a trademark of Bungie, Inc.
           </p>
-          <p className="text-xs text-muted-foreground/60">
-            Codes are gathered from official Bungie channels and community sources.
+          <p className="text-xs text-accent/50">
+            Transmissions gathered from official Bungie channels across the system.
           </p>
         </div>
       </footer>

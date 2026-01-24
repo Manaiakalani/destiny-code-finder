@@ -1,20 +1,15 @@
 import { useState, useMemo } from 'react';
 import { Header } from '@/components/Header';
-import { ScanInput } from '@/components/ScanInput';
+import { HeroSection } from '@/components/HeroSection';
 import { CodeFilters } from '@/components/CodeFilters';
-import { CodeCard } from '@/components/CodeCard';
-import { EmptyState } from '@/components/EmptyState';
-import { NewTodaySection } from '@/components/NewTodaySection';
+import { CodeGrid } from '@/components/CodeGrid';
 import { useCodeScanner } from '@/hooks/useCodeScanner';
-import { FilterStatus, SortOrder } from '@/types/code';
-import { Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { FilterStatus } from '@/types/code';
 
 const Index = () => {
-  const { codes, isScanning, lastScanTime, scan, clearCodes } = useCodeScanner();
+  const { codes, isLoading, lastUpdateTime, refreshCodes, addManualCode } = useCodeScanner();
   const [filter, setFilter] = useState<FilterStatus>('all');
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
 
   // Calculate counts
   const counts = useMemo(() => ({
@@ -43,103 +38,64 @@ const Index = () => {
       );
     }
     
-    // Sort
+    // Sort: active first, then by date
     result.sort((a, b) => {
-      const diff = b.foundAt.getTime() - a.foundAt.getTime();
-      return sortOrder === 'newest' ? diff : -diff;
+      if (a.status === 'active' && b.status !== 'active') return -1;
+      if (a.status !== 'active' && b.status === 'active') return 1;
+      return b.foundAt.getTime() - a.foundAt.getTime();
     });
     
     return result;
-  }, [codes, filter, search, sortOrder]);
-
-  // Get codes added today
-  const todayCodes = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return codes.filter(c => c.foundAt >= today && c.isNew);
-  }, [codes]);
-
-  // Codes not in today section
-  const otherCodes = useMemo(() => {
-    const todayIds = new Set(todayCodes.map(c => c.id));
-    return filteredCodes.filter(c => !todayIds.has(c.id));
-  }, [filteredCodes, todayCodes]);
+  }, [codes, filter, search]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen">
+      <Header onAddCode={addManualCode} />
       
-      <main className="container mx-auto px-4 py-8 space-y-8">
-        {/* Scan input */}
-        <section>
-          <ScanInput onScan={scan} isScanning={isScanning} />
-        </section>
-        
-        {/* Content */}
-        {codes.length > 0 ? (
-          <>
-            {/* New today section */}
-            {todayCodes.length > 0 && filter === 'all' && !search && (
-              <NewTodaySection codes={todayCodes} />
-            )}
-            
-            {/* All codes section */}
-            <section className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="font-heading text-lg font-semibold text-foreground">
-                  All Codes
-                </h2>
-                
-                <div className="flex items-center gap-4">
-                  {lastScanTime && (
-                    <span className="text-xs text-muted-foreground">
-                      Last scan: {lastScanTime.toLocaleTimeString()}
-                    </span>
-                  )}
-                  
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={clearCodes}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4 mr-1" />
-                    Clear
-                  </Button>
-                </div>
-              </div>
-              
-              <CodeFilters
-                filter={filter}
-                onFilterChange={setFilter}
-                search={search}
-                onSearchChange={setSearch}
-                sortOrder={sortOrder}
-                onSortChange={setSortOrder}
-                counts={counts}
-              />
-              
-              {otherCodes.length > 0 ? (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {otherCodes.map((code) => (
-                    <CodeCard key={code.id} code={code} />
-                  ))}
-                </div>
-              ) : (
-                <EmptyState hasSearched={true} />
-              )}
-            </section>
-          </>
-        ) : (
-          <EmptyState hasSearched={false} />
-        )}
+      {/* Hero */}
+      <HeroSection
+        codeCount={codes.length}
+        activeCount={counts.active}
+        lastUpdate={lastUpdateTime}
+        onRefresh={refreshCodes}
+        isLoading={isLoading}
+      />
+      
+      {/* Divider */}
+      <div className="divider-glow mx-auto max-w-4xl" />
+      
+      {/* Main content */}
+      <main className="container mx-auto px-4 py-12">
+        <div className="space-y-8">
+          {/* Section header */}
+          <div className="flex items-center justify-between">
+            <h2 className="font-heading text-2xl font-bold tracking-wider text-foreground">
+              All Codes
+            </h2>
+          </div>
+          
+          {/* Filters */}
+          <CodeFilters
+            filter={filter}
+            onFilterChange={setFilter}
+            search={search}
+            onSearchChange={setSearch}
+            counts={counts}
+          />
+          
+          {/* Grid */}
+          <CodeGrid codes={filteredCodes} isLoading={isLoading} />
+        </div>
       </main>
       
       {/* Footer */}
-      <footer className="border-t border-border/50 py-6 mt-12">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>
-            Not affiliated with Bungie. Codes are scraped from public sources.
+      <footer className="border-t border-border/30 py-8 mt-12">
+        <div className="container mx-auto px-4 text-center space-y-2">
+          <p className="text-sm text-muted-foreground">
+            Not affiliated with Bungie, Inc. Destiny 2 is a trademark of Bungie, Inc.
+          </p>
+          <p className="text-xs text-muted-foreground/60">
+            Codes are gathered from official Bungie channels and community sources.
           </p>
         </div>
       </footer>

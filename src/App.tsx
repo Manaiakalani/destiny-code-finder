@@ -6,6 +6,8 @@ import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
 
+const basename = import.meta.env.BASE_URL;
+
 const App = () => (
   <>
     <MouseParticles />
@@ -16,7 +18,7 @@ const App = () => (
         className: "glass-card border-border/50",
       }}
     />
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />

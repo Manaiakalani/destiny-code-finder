@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { RedemptionCode } from '@/types/code';
 
 interface AddCodeModalProps {
-  open: boolean;
+  isOpen: boolean;
   onClose: () => void;
-  onSubmit: (code: string) => { success: boolean; message: string };
+  onSubmit: (code: RedemptionCode) => void;
 }
 
-export function AddCodeModal({ open, onClose, onSubmit }: AddCodeModalProps) {
+export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
   const [code, setCode] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,18 +24,25 @@ export function AddCodeModal({ open, onClose, onSubmit }: AddCodeModalProps) {
       return;
     }
 
-    const result = onSubmit(code.trim());
-    if (result.success) {
-      toast.success('Code added successfully');
-      setCode('');
-      onClose();
-    } else {
-      toast.error(result.message);
-    }
+    // Create redemption code object
+    const redemptionCode: RedemptionCode = {
+      id: `manual-${Date.now()}`,
+      code: code.trim(),
+      status: 'unknown',
+      source: 'Manual Entry',
+      foundAt: new Date(),
+      description: 'Manually added code',
+      isNew: true
+    };
+
+    onSubmit(redemptionCode);
+    toast.success('Code added successfully');
+    setCode('');
+    onClose();
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="glass-card border-border/50 sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="font-heading text-xl tracking-wider">Submit a Code</DialogTitle>

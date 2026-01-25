@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="voidGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5b21b6;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Dark background -->
+  <rect width="64" height="64" rx="12" fill="#0a0e14"/>
+  
+  <!-- Hexagon shape -->
+  <path d="M32 8 L48 18 L48 38 L32 48 L16 38 L16 18 Z" 
+        fill="url(#voidGradient)" 
+        opacity="0.2"/>
+  
+  <!-- Hexagon border -->
+  <path d="M32 8 L48 18 L48 38 L32 48 L16 38 L16 18 Z" 
+        fill="none" 
+        stroke="url(#voidGradient)" 
+        stroke-width="2"
+        filter="url(#glow)"/>
+  
+  <!-- Inner decorative lines -->
+  <line x1="32" y1="13" x2="32" y2="43" stroke="#7c3aed" stroke-width="1.5" opacity="0.6"/>
+  <line x1="21" y1="20" x2="43" y2="36" stroke="#7c3aed" stroke-width="1.5" opacity="0.6"/>
+  <line x1="43" y1="20" x2="21" y2="36" stroke="#7c3aed" stroke-width="1.5" opacity="0.6"/>
+  
+  <!-- Center circle (Ghost eye) -->
+  <circle cx="32" cy="28" r="6" fill="#7c3aed" filter="url(#glow)"/>
+  <circle cx="32" cy="28" r="3" fill="#fff"/>
+  
+  <!-- D2 text -->
+  <text x="32" y="54" 
+        font-family="Arial, sans-serif" 
+        font-size="10" 
+        font-weight="bold" 
+        fill="#7c3aed" 
+        text-anchor="middle"
+        filter="url(#glow)">D2</text>
+</svg>

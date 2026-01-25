@@ -3,7 +3,8 @@
 // Server-side data loading with in-memory caching
 
 const BUNGIE_CDN_BASE = 'https://www.bungie.net';
-const EMBLEM_DB_URL = '/data/emblems.json';
+const BASE_URL = import.meta.env.BASE_URL || '/';
+const EMBLEM_DB_URL = `${BASE_URL}data/emblems.json`;
 
 export interface EmblemData {
   hash?: number;
@@ -110,7 +111,8 @@ export function getEmblemIconByName(emblemName: string): string | null {
     if (emblem) {
       // Prefer local cached image if available
       if (useLocalImages && emblem.localIcon) {
-        return emblem.localIcon;
+        // Prepend base URL for local images
+        return `${BASE_URL}${emblem.localIcon.replace(/^\//, '')}`;
       }
       
       // Fall back to Bungie CDN

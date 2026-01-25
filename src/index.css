@@ -1,77 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Destiny 2 Subclass Design System */
-/* Primary: VOID (Control & Mystery) | States: ARC (New), SOLAR (Active), STASIS (Expired), STRAND (Success) */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+/* NASA Design System - Space & Science Inspired */
+/* Primary: NASA Blue (Trust & Technology) | Accent: NASA Red (Action & Energy) */
 
 @layer base {
   :root {
-    /* VOID Theme - Primary */
-    --background: 270 50% 4%;
-    --foreground: 270 20% 95%;
+    /* NASA Blue Theme - Primary */
+    --background: 220 30% 6%;  /* Deep space blue-black */
+    --foreground: 220 10% 95%;
 
-    --card: 270 45% 7%;
-    --card-foreground: 270 20% 95%;
+    --card: 220 25% 10%;
+    --card-foreground: 220 10% 95%;
 
-    --popover: 270 50% 8%;
-    --popover-foreground: 270 20% 95%;
+    --popover: 220 28% 12%;
+    --popover-foreground: 220 10% 95%;
 
-    /* VOID Primary */
-    --primary: 270 56% 35%;
-    --primary-foreground: 270 20% 95%;
+    /* NASA Blue Primary */
+    --primary: 214 87% 31%;  /* #0b3d91 NASA Blue */
+    --primary-foreground: 220 10% 95%;
 
-    /* Deep VOID secondary */
-    --secondary: 270 70% 15%;
-    --secondary-foreground: 270 20% 90%;
+    /* Dark blue-gray secondary */
+    --secondary: 220 25% 18%;
+    --secondary-foreground: 220 10% 90%;
 
-    --muted: 270 30% 12%;
-    --muted-foreground: 270 15% 55%;
+    --muted: 220 20% 15%;
+    --muted-foreground: 220 12% 60%;
 
-    /* VOID Accent */
-    --accent: 275 100% 68%;
-    --accent-foreground: 270 50% 4%;
+    /* NASA Blue Accent - Brighter */
+    --accent: 217 91% 60%;  /* Lighter NASA Blue */
+    --accent-foreground: 220 30% 6%;
 
-    /* STASIS - Expired states */
-    --destructive: 195 100% 75%;
-    --destructive-foreground: 195 80% 10%;
+    /* NASA Red - Warnings/Destructive */
+    --destructive: 9 98% 55%;  /* #fc3d21 NASA Red */
+    --destructive-foreground: 0 0% 100%;
 
-    /* STRAND - Success states */
-    --success: 145 100% 55%;
-    --success-foreground: 145 80% 10%;
+    /* Green - Success states */
+    --success: 142 76% 36%;  /* NASA compliant green */
+    --success-foreground: 0 0% 100%;
 
-    /* SOLAR - Warning/Active glow */
-    --warning: 25 100% 50%;
-    --warning-foreground: 25 80% 10%;
+    /* Orange/Yellow - Warning */
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    /* ARC - New/Energy states */
-    --arc: 185 100% 50%;
-    --arc-foreground: 185 80% 10%;
+    /* Cyan - Info/Tech */
+    --arc: 191 91% 55%;  /* Tech cyan */
+    --arc-foreground: 220 30% 6%;
 
-    /* SOLAR colors */
-    --solar: 25 100% 50%;
-    --solar-secondary: 5 70% 47%;
-    --solar-accent: 45 100% 71%;
+    /* NASA Red accent */
+    --solar: 9 98% 55%;
+    --solar-secondary: 14 85% 50%;
+    --solar-accent: 25 100% 60%;
 
-    /* STASIS colors */
-    --stasis: 195 100% 75%;
-    --stasis-secondary: 195 40% 95%;
-    --stasis-accent: 200 80% 15%;
+    /* Cool Blue - Secondary states */
+    --stasis: 201 89% 64%;
+    --stasis-secondary: 201 40% 90%;
+    --stasis-accent: 205 75% 20%;
 
-    /* STRAND colors */
-    --strand: 145 100% 55%;
-    --strand-secondary: 165 100% 12%;
-    --strand-accent: 110 100% 75%;
+    /* Tech Green - Active states */
+    --strand: 142 76% 45%;
+    --strand-secondary: 145 70% 15%;
+    --strand-accent: 135 80% 60%;
 
-    --border: 270 40% 18%;
-    --input: 270 45% 12%;
-    --ring: 275 100% 68%;
+    --border: 220 25% 22%;
+    --input: 220 25% 15%;
+    --ring: 217 91% 60%;
 
     --radius: 0.5rem;
 
     --font-heading: 'Orbitron', sans-serif;
     --font-body: 'Rajdhani', sans-serif;
+  }
+
+  /* OLED Mode - True Black for AMOLED screens */
+  .oled-mode {
+    --background: 0 0% 0%;
+    --card: 0 0% 3%;
+    --card-foreground: 220 10% 95%;
+    --popover: 0 0% 2%;
+    --popover-foreground: 220 10% 95%;
+    --secondary: 0 0% 8%;
+    --muted: 0 0% 6%;
+    --border: 0 0% 15%;
+    --input: 0 0% 8%;
+  }
+
+  /* Light Mode - Clean NASA-inspired light theme */
+  .light-mode {
+    --background: 220 20% 97%;
+    --foreground: 220 30% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 10%;
+    --primary: 214 87% 31%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 92%;
+    --secondary-foreground: 220 30% 20%;
+    --muted: 220 15% 90%;
+    --muted-foreground: 220 15% 40%;
+    --accent: 217 91% 50%;
+    --accent-foreground: 0 0% 100%;
+    --border: 220 15% 85%;
+    --input: 220 15% 92%;
+    --ring: 217 91% 50%;
+  }
+
+  .light-mode body {
+    background: 
+      radial-gradient(ellipse at 20% 0%, hsl(217 60% 95%) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(220 50% 92%) 0%, transparent 50%),
+      hsl(220 20% 97%);
   }
 }
 
@@ -85,12 +127,18 @@
     font-family: var(--font-body);
     font-weight: 500;
     letter-spacing: 0.01em;
-    /* VOID gradient background */
+    /* NASA space gradient background */
     background: 
-      radial-gradient(ellipse at 20% 0%, hsl(270 60% 12%) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, hsl(270 50% 8%) 0%, transparent 50%),
-      radial-gradient(ellipse at 50% 50%, hsl(270 50% 4%) 0%, hsl(270 60% 2%) 100%);
+      radial-gradient(ellipse at 20% 0%, hsl(217 60% 12%) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(220 50% 8%) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, hsl(220 30% 6%) 0%, hsl(220 40% 4%) 100%);
     background-attachment: fixed;
+  }
+
+  /* OLED mode body background */
+  .oled-mode body,
+  html.oled-mode body {
+    background: #000000;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -100,22 +148,22 @@
 }
 
 @layer components {
-  /* VOID glassmorphism */
+  /* NASA glassmorphism */
   .glass-card {
     @apply bg-card/70 backdrop-blur-md border border-border/50 rounded-lg;
     box-shadow: 
       inset 0 1px 0 0 hsl(var(--accent) / 0.05),
-      0 4px 24px -4px hsl(270 60% 3% / 0.6);
+      0 4px 24px -4px hsl(220 30% 3% / 0.6);
   }
 
-  /* Active card with SOLAR glow */
+  /* Active card with NASA Red glow */
   .glass-card-highlight {
     @apply glass-card;
     border-color: hsl(var(--solar) / 0.4);
     box-shadow: 
       inset 0 1px 0 0 hsl(var(--solar) / 0.15),
       0 0 40px -8px hsl(var(--solar) / 0.25),
-      0 4px 24px -4px hsl(270 60% 3% / 0.5);
+      0 4px 24px -4px hsl(220 30% 3% / 0.5);
   }
 
   .code-text {
@@ -156,6 +204,43 @@
     color: hsl(var(--arc));
     border-color: hsl(var(--arc) / 0.5);
     text-shadow: 0 0 8px hsl(var(--arc) / 0.6);
+  }
+
+  /* Glitch Text Effect with Chromatic Aberration */
+  .glitch-text {
+    position: relative;
+    display: inline-block;
+  }
+
+  .glitch-text::before,
+  .glitch-text::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
+
+  .glitch-text::before {
+    color: #00ffff;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  }
+
+  .glitch-text::after {
+    color: #ff00ff;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  }
+
+  .glitch-text:hover::before {
+    opacity: 0.8;
+    animation: glitch-1-intense 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .glitch-text:hover::after {
+    opacity: 0.8;
+    animation: glitch-2-intense 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse forwards;
   }
 
   /* VOID hover glow (300-450ms, ease-in-out) */
@@ -338,6 +423,103 @@
     50% { transform: translateY(-8px); }
   }
 
+  /* Glitch animation keyframes */
+  @keyframes glitch-1 {
+    0% {
+      transform: translate(0);
+      opacity: 0.8;
+    }
+    20% {
+      transform: translate(-2px, 2px);
+      opacity: 0.7;
+    }
+    40% {
+      transform: translate(-2px, -2px);
+      opacity: 0.8;
+    }
+    60% {
+      transform: translate(2px, 2px);
+      opacity: 0.7;
+    }
+    80% {
+      transform: translate(2px, -2px);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(0);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes glitch-2 {
+    0% {
+      transform: translate(0);
+      opacity: 0.8;
+    }
+    20% {
+      transform: translate(2px, -2px);
+      opacity: 0.7;
+    }
+    40% {
+      transform: translate(2px, 2px);
+      opacity: 0.8;
+    }
+    60% {
+      transform: translate(-2px, -2px);
+      opacity: 0.7;
+    }
+    80% {
+      transform: translate(-2px, 2px);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(0);
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes glitch-1-intense {
+    0% {
+      transform: translate(0);
+    }
+    20% {
+      transform: translate(-4px, 3px);
+    }
+    40% {
+      transform: translate(-3px, -4px);
+    }
+    60% {
+      transform: translate(4px, 3px);
+    }
+    80% {
+      transform: translate(3px, -4px);
+    }
+    100% {
+      transform: translate(0);
+    }
+  }
+
+  @keyframes glitch-2-intense {
+    0% {
+      transform: translate(0);
+    }
+    20% {
+      transform: translate(4px, -3px);
+    }
+    40% {
+      transform: translate(3px, 4px);
+    }
+    60% {
+      transform: translate(-4px, -3px);
+    }
+    80% {
+      transform: translate(-3px, 4px);
+    }
+    100% {
+      transform: translate(0);
+    }
+  }
+
   /* Fade in */
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(10px); }
@@ -420,5 +602,649 @@
   .hover-stasis:hover {
     box-shadow: 0 0 25px -8px hsl(var(--stasis) / 0.4);
     border-color: hsl(var(--stasis) / 0.4);
+  }
+
+  /* Enhanced card hover with lift effect */
+  .hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.3), 0 0 60px rgba(124, 58, 237, 0.15);
+  }
+
+  /* Skeleton loader shimmer */
+  @keyframes shimmer-load {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(124, 58, 237, 0.05) 0%,
+      rgba(124, 58, 237, 0.15) 50%,
+      rgba(124, 58, 237, 0.05) 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer-load 2s infinite;
+    border-radius: 0.5rem;
+  }
+
+  /* Pulsing border for new codes - subtle version */
+  @keyframes pulse-border {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.3); }
+    50% { box-shadow: 0 0 0 4px rgba(6, 182, 212, 0); }
+  }
+
+  .pulse-border {
+    animation: pulse-border 3s ease-in-out infinite;
+  }
+
+  /* Ripple effect on buttons */
+  .btn-ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-ripple::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
+  }
+
+  .btn-ripple:active::after {
+    animation: ripple 0.6s ease-out;
+  }
+
+  @keyframes ripple {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(4); opacity: 0; }
+  }
+
+  /* Animated mesh background */
+  @keyframes mesh-flow {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .mesh-background {
+    background: linear-gradient(
+      45deg,
+      rgba(124, 58, 237, 0.03) 0%,
+      rgba(6, 182, 212, 0.03) 25%,
+      rgba(249, 115, 22, 0.03) 50%,
+      rgba(34, 197, 94, 0.03) 75%,
+      rgba(236, 72, 153, 0.03) 100%
+    );
+    background-size: 400% 400%;
+    animation: mesh-flow 15s ease infinite;
+  }
+
+  /* Counter animation for stats */
+  @keyframes count-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .stat-counter {
+    animation: count-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Badge pulse animation - very subtle */
+  @keyframes badge-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.02); opacity: 0.95; }
+  }
+
+  .badge-animated {
+    animation: badge-pulse 3s ease-in-out infinite;
+  }
+
+  /* Hexagonal divider pattern */
+  .hex-divider {
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(124, 58, 237, 0.5) 20%,
+      rgba(124, 58, 237, 0.8) 50%,
+      rgba(124, 58, 237, 0.5) 80%,
+      transparent
+    );
+    position: relative;
+  }
+
+  .hex-divider::before,
+  .hex-divider::after {
+    content: '◆';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(124, 58, 237, 0.8);
+    font-size: 12px;
+  }
+
+  .hex-divider::before { left: 0; }
+  .hex-divider::after { right: 0; }
+
+  /* Floating particles */
+  @keyframes particle-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-100px) rotate(180deg); opacity: 0.6; }
+  }
+
+  .particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(124, 58, 237, 0.4);
+    border-radius: 50%;
+    animation: particle-float 8s ease-in-out infinite;
+  }
+
+  /* Text glow enhanced */
+  .text-glow-enhanced {
+    text-shadow: 
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
+
+  /* Status badge enhanced styles */
+  .status-badge-active {
+    @apply bg-strand/20 text-strand border border-strand/40;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+
+  .status-badge-expired {
+    @apply bg-stasis/20 text-stasis/70 border border-stasis/30;
+  }
+
+  .status-badge-new {
+    @apply bg-arc/20 text-arc border border-arc/40;
+    animation: pulse-border 2s ease-in-out infinite;
+  }
+
+  /* Ghost loader animation */
+  @keyframes ghost-float {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+  }
+
+  .ghost-loader {
+    animation: ghost-float 2s ease-in-out infinite;
+  }
+
+  /* ============================================
+     AESTHETIC ENHANCEMENTS - All 6 Recommendations
+     ============================================ */
+
+  /* 1. HERO SECTION - Animated Star Particles */
+  .stars-container {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle var(--duration, 3s) ease-in-out infinite;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .star::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.3);
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Shooting stars - realistic with glowing head and fading tail */
+  .shooting-star {
+    position: absolute;
+    width: 150px;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.1) 30%,
+      rgba(200,220,255,0.4) 70%,
+      rgba(255,255,255,0.9) 90%,
+      rgba(255,255,255,1) 100%
+    );
+    border-radius: 100px;
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+    opacity: 0;
+  }
+
+  .shooting-star::before {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(200,220,255,0.8) 40%, transparent 70%);
+    border-radius: 50%;
+    filter: drop-shadow(0 0 8px rgba(255,255,255,1)) drop-shadow(0 0 15px rgba(180,200,255,0.8));
+  }
+
+  .shooting-star-1 {
+    top: 15%;
+    left: -5%;
+    animation: shoot-1 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: 0s;
+  }
+
+  .shooting-star-2 {
+    top: 8%;
+    left: 10%;
+    width: 100px;
+    animation: shoot-2 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: 2.5s;
+  }
+
+  .shooting-star-3 {
+    top: 25%;
+    left: -10%;
+    width: 180px;
+    animation: shoot-3 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: 4s;
+  }
+
+  .shooting-star-4 {
+    top: 5%;
+    left: 30%;
+    width: 120px;
+    animation: shoot-4 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: 7s;
+  }
+
+  .shooting-star-5 {
+    top: 20%;
+    left: 50%;
+    width: 90px;
+    animation: shoot-5 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    animation-delay: 10s;
+  }
+
+  @keyframes shoot-1 {
+    0% { 
+      transform: translateX(0) translateY(0) rotate(35deg); 
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    60% {
+      opacity: 1;
+    }
+    100% { 
+      transform: translateX(600px) translateY(350px) rotate(35deg); 
+      opacity: 0;
+    }
+  }
+
+  @keyframes shoot-2 {
+    0% { 
+      transform: translateX(0) translateY(0) rotate(40deg); 
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    55% {
+      opacity: 0.8;
+    }
+    100% { 
+      transform: translateX(500px) translateY(420px) rotate(40deg); 
+      opacity: 0;
+    }
+  }
+
+  @keyframes shoot-3 {
+    0% { 
+      transform: translateX(0) translateY(0) rotate(30deg); 
+      opacity: 0;
+    }
+    6% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% { 
+      transform: translateX(700px) translateY(400px) rotate(30deg); 
+      opacity: 0;
+    }
+  }
+
+  @keyframes shoot-4 {
+    0% { 
+      transform: translateX(0) translateY(0) rotate(45deg); 
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    65% {
+      opacity: 0.7;
+    }
+    100% { 
+      transform: translateX(450px) translateY(450px) rotate(45deg); 
+      opacity: 0;
+    }
+  }
+
+  @keyframes shoot-5 {
+    0% { 
+      transform: translateX(0) translateY(0) rotate(38deg); 
+      opacity: 0;
+    }
+    7% {
+      opacity: 1;
+    }
+    60% {
+      opacity: 0.9;
+    }
+    100% { 
+      transform: translateX(400px) translateY(300px) rotate(38deg); 
+      opacity: 0;
+    }
+  }
+
+  /* Legacy shoot animation for backwards compatibility */
+  @keyframes shoot {
+    0% { transform: translateX(0) translateY(0) rotate(35deg); opacity: 0; }
+    5% { opacity: 1; }
+    70% { opacity: 1; }
+    100% { transform: translateX(500px) translateY(300px) rotate(35deg); opacity: 0; }
+  }
+
+  /* Traveler silhouette */
+  .traveler-bg {
+    position: absolute;
+    bottom: -20%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  .traveler-bg::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%);
+    box-shadow: 0 0 100px 50px rgba(124, 58, 237, 0.05);
+  }
+
+  /* 2. CODE CARDS - Enhanced Shine & Rarity Borders */
+  .emblem-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.2) 45%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.2) 55%,
+      transparent 60%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .group:hover .emblem-shine {
+    transform: translateX(100%);
+  }
+
+  /* Rarity border glow effects */
+  .rarity-exotic {
+    box-shadow: 
+      0 0 15px rgba(255, 215, 0, 0.3),
+      inset 0 0 10px rgba(255, 215, 0, 0.1);
+    border-color: rgba(255, 215, 0, 0.5) !important;
+  }
+
+  .rarity-legendary {
+    box-shadow: 
+      0 0 12px rgba(128, 0, 128, 0.3),
+      inset 0 0 8px rgba(128, 0, 128, 0.1);
+    border-color: rgba(128, 0, 128, 0.5) !important;
+  }
+
+  .rarity-rare {
+    box-shadow: 
+      0 0 10px rgba(0, 112, 255, 0.3),
+      inset 0 0 6px rgba(0, 112, 255, 0.1);
+    border-color: rgba(0, 112, 255, 0.5) !important;
+  }
+
+  /* Destiny-themed border glow for cards */
+  .destiny-border {
+    position: relative;
+  }
+
+  .destiny-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--accent) / 0.4) 0%,
+      hsl(var(--strand) / 0.3) 50%,
+      hsl(var(--accent) / 0.4) 100%
+    );
+    border-radius: inherit;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .destiny-border:hover::before {
+    opacity: 1;
+  }
+
+  /* 3. STATUS BADGES - Enhanced Pulse */
+  .badge-pulse-active {
+    position: relative;
+  }
+
+  .badge-pulse-active::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: hsl(var(--strand));
+    opacity: 0;
+    animation: badge-glow-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes badge-glow-pulse {
+    0%, 100% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(1.1); }
+  }
+
+  /* 4. TYPOGRAPHY - Enhanced Text Shadows */
+  .title-shadow {
+    text-shadow: 
+      0 0 20px rgba(124, 58, 237, 0.5),
+      0 0 40px rgba(124, 58, 237, 0.3),
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .code-display {
+    font-family: 'Orbitron', monospace;
+    letter-spacing: 0.2em;
+    text-shadow: 
+      0 0 10px currentColor,
+      0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  /* 5. MICRO-INTERACTIONS - Haptic Feedback & Confetti */
+  .btn-haptic {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-haptic:active {
+    transform: scale(0.95);
+  }
+
+  /* Copy success celebration */
+  .copy-success {
+    position: relative;
+  }
+
+  .copy-success::after {
+    content: '✓';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    color: hsl(var(--strand));
+    opacity: 0;
+    animation: pop-up 0.5s ease-out;
+  }
+
+  @keyframes pop-up {
+    0% { opacity: 0; transform: translateX(-50%) translateY(0) scale(0.5); }
+    50% { opacity: 1; transform: translateX(-50%) translateY(-10px) scale(1.2); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-20px) scale(1); }
+  }
+
+  /* Confetti particles */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    z-index: 9999;
+    border-radius: 2px;
+  }
+
+  @keyframes confetti-fall {
+    0% { 
+      transform: translateY(0) translateX(0) rotate(0deg) scale(1); 
+      opacity: 1; 
+    }
+    100% { 
+      transform: translateY(150px) translateX(var(--x, 50px)) rotate(720deg) scale(0); 
+      opacity: 0; 
+    }
+  }
+
+  /* 6. DARK MODE / OLED ENHANCEMENTS */
+  .oled-mode {
+    --background: 0 0% 0%;
+    --card: 0 0% 3%;
+    --popover: 0 0% 2%;
+  }
+
+  /* Neon accent borders */
+  .neon-border {
+    border: 1px solid transparent;
+    background: 
+      linear-gradient(var(--card), var(--card)) padding-box,
+      linear-gradient(135deg, 
+        hsl(var(--accent)) 0%, 
+        hsl(var(--arc)) 25%,
+        hsl(var(--strand)) 50%,
+        hsl(var(--solar)) 75%,
+        hsl(var(--accent)) 100%
+      ) border-box;
+    background-size: 100% 100%, 300% 300%;
+    animation: neon-shift 4s ease infinite;
+  }
+
+  @keyframes neon-shift {
+    0%, 100% { background-position: 0% 0%, 0% 0%; }
+    50% { background-position: 0% 0%, 100% 100%; }
+  }
+
+  /* Glow on hover for gaming feel */
+  .gaming-glow {
+    transition: all 0.3s ease;
+  }
+
+  .gaming-glow:hover {
+    box-shadow: 
+      0 0 20px hsl(var(--accent) / 0.4),
+      0 0 40px hsl(var(--accent) / 0.2),
+      0 0 60px hsl(var(--accent) / 0.1);
+  }
+
+  /* Scan line effect for retro feel */
+  .scanlines::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0px,
+      rgba(0, 0, 0, 0.1) 1px,
+      transparent 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  /* Aurora background effect */
+  .aurora-bg {
+    background: 
+      linear-gradient(125deg, 
+        hsl(var(--accent) / 0.1) 0%,
+        transparent 40%
+      ),
+      linear-gradient(225deg, 
+        hsl(var(--strand) / 0.08) 0%,
+        transparent 40%
+      ),
+      linear-gradient(45deg, 
+        hsl(var(--solar) / 0.05) 0%,
+        transparent 40%
+      );
+    animation: aurora-shift 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes aurora-shift {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(30deg); }
   }
 }

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
@@ -55,7 +56,16 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Subclass colors
+        // NASA Design System colors
+        'nasa-blue': {
+          DEFAULT: '#0b3d91',  // NASA Blue
+          light: '#1c4f9c',
+          lighter: '#2563eb',
+        },
+        'nasa-red': {
+          DEFAULT: '#fc3d21',  // NASA Red
+          light: '#ff6b5a',
+        },
         arc: {
           DEFAULT: "hsl(var(--arc))",
           foreground: "hsl(var(--arc-foreground))",
@@ -181,5 +191,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

@@ -1,73 +1,201 @@
-# Welcome to your Lovable project
+# Destiny 2 Code Vault 🔐
 
-## Project info
+[![Destiny 2](https://img.shields.io/badge/Destiny%202-Code%20Vault-7b68ee?style=for-the-badge)](https://www.bungie.net/7/en/Destiny)
+[![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-7-646cff?style=flat-square&logo=vite)](https://vitejs.dev)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+A fast, privacy-focused web application for discovering and redeeming Destiny 2 emblem codes. Aggregates codes from multiple community sources in real-time.
 
-## How can I edit this code?
+## ✨ Features
 
-There are several ways of editing your application.
+- **🔍 Multi-Source Aggregation** — Automatically scrapes Reddit, Blueberries.gg, and curated databases
+- **🖼️ Official Emblem Previews** — Displays high-quality images directly from Bungie's CDN
+- **⚡ Lightning Fast** — Built with Vite + React for instant page loads
+- **🎨 Beautiful UI** — NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
+- **📱 Fully Responsive** — Works flawlessly on desktop, tablet, and mobile
+- **🔒 Privacy-First** — Zero cookies, zero tracking, zero analytics
+- **🌙 Theme Support** — Dark, OLED, and Light modes
+- **✨ Visual Effects** — Shooting stars, particle effects, and emblem shine animations
 
-**Use Lovable**
+## 🚀 Quick Start
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### Prerequisites
 
-Changes made via Lovable will be committed automatically to this repo.
+- [Node.js](https://nodejs.org) 18 or higher
+- npm or yarn
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```bash
+# Clone the repository
+git clone https://github.com/Manaiakalani/destiny-code-finder.git
+cd destiny-code-finder
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+# Install dependencies
+npm install
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The app will be available at **http://localhost:8080**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Production Build
 
-**Use GitHub Codespaces**
+```bash
+# Build for production
+npm run build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Preview production build locally
+npm run preview
+```
 
-## What technologies are used for this project?
+## 📁 Project Structure
 
-This project is built with:
+```
+destiny-code-finder/
+├── .github/
+│   └── workflows/         # GitHub Actions CI/CD
+├── public/
+│   ├── data/
+│   │   └── emblems.json   # Emblem database (1000+ emblems)
+│   └── emblems/           # Cached emblem images
+├── scripts/
+│   ├── scrape-emblems.js  # Bungie manifest scraper
+│   └── download-emblems.js # Image downloader
+├── src/
+│   ├── components/        # React components
+│   │   ├── ui/            # Base UI components
+│   │   ├── CodeCard.tsx   # Emblem code card
+│   │   ├── Header.tsx     # Navigation header
+│   │   └── ...
+│   ├── hooks/             # Custom React hooks
+│   ├── pages/             # Route pages
+│   ├── services/          # API & scraping services
+│   └── types/             # TypeScript definitions
+├── Dockerfile             # Production container
+└── package.json
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🛠️ Available Scripts
 
-## How can I deploy this project?
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server with HMR |
+| `npm run build` | Create production build |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run scrape:emblems` | Fetch latest emblem data from Bungie API |
+| `npm run download:emblems` | Download and cache emblem images |
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+### Running Emblem Scripts
 
-## Can I connect a custom domain to my Lovable project?
+The scrape scripts require a Bungie API key (free):
 
-Yes, you can!
+```bash
+# Get your key at: https://www.bungie.net/en/Application
+# Then run:
+BUNGIE_API_KEY=your_key npm run scrape:emblems
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🐳 Docker
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Build and Run
+
+```bash
+# Build the Docker image
+docker build -t destiny-code-vault .
+
+# Run the container
+docker run -p 8080:80 destiny-code-vault
+```
+
+### Docker Compose
+
+```yaml
+version: '3.8'
+services:
+  destiny-code-vault:
+    build: .
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+```
+
+## 🎯 Data Sources
+
+The app aggregates emblem codes from multiple sources:
+
+| Source | Description |
+|--------|-------------|
+| **Reddit** | r/DestinyTheGame, r/destiny2, r/raidsecrets |
+| **Blueberries.gg** | Community-verified emblem database |
+| **Bungie API** | Official emblem images and metadata |
+| **Curated List** | 37+ manually verified active codes |
+
+## 🎨 Design System
+
+The UI features a NASA-inspired "Deep Space" theme:
+
+- **Primary**: NASA Blue (`#0b3d91`)
+- **Accent**: Tech Cyan (`#4dd0e1`)
+- **Success/Active**: Strand Green
+- **Warning**: Solar Orange
+- **Background**: Deep space gradient
+
+### Destiny 2 Subclass Colors
+
+- 🟣 **Void**: Purple (`#7c3aed`)
+- 🟠 **Solar**: Orange (`#f97316`)
+- 🔵 **Arc**: Cyan (`#06b6d4`)
+- 🔷 **Stasis**: Ice Blue (`#38bdf8`)
+- 🟢 **Strand**: Green (`#22c55e`)
+
+## 🔒 Privacy
+
+Code Vault is built with privacy as a core principle:
+
+- ✅ No cookies
+- ✅ No analytics or tracking
+- ✅ No user accounts required
+- ✅ All data stored locally in your browser
+- ✅ Open source and auditable
+
+See our [Privacy Policy](/privacy) for complete details.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+### Quick Contribution Guide
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## ⚠️ Disclaimer
+
+This project is not affiliated with, endorsed by, or connected to Bungie, Inc. Destiny 2, the Destiny Logo, and related marks are trademarks of Bungie, Inc.
+
+Emblem codes are aggregated from publicly available community sources. Always verify codes at the [official Bungie redemption site](https://www.bungie.net/7/en/Codes/Redeem) before use.
+
+## 🙏 Acknowledgments
+
+- [Bungie](https://www.bungie.net) for creating Destiny 2
+- [Blueberries.gg](https://www.blueberries.gg) for maintaining emblem databases
+- The Destiny 2 Reddit community for sharing codes
+- All Guardians who contribute to keeping the community informed
+
+---
+
+Made with ♥ in Seattle, WA for the Destiny 2 community
+
+**Eyes up, Guardian.** 👁️

@@ -170,18 +170,28 @@ export default function Privacy() {
             </div>
           </section>
 
-          {/* No Analytics */}
+          {/* Analytics */}
           <section className="glass-card p-6 rounded-lg">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-accent/10">
                 <Eye className="w-6 h-6 text-accent" />
               </div>
-              <h2 className="font-heading text-2xl font-bold">No Analytics or Tracking</h2>
+              <h2 className="font-heading text-2xl font-bold">Privacy-Focused Analytics</h2>
             </div>
-            <p className="text-muted-foreground leading-relaxed">
-              We don't use Google Analytics, Facebook Pixel, or any other tracking or analytics services. 
-              Your usage patterns, clicks, and browsing behavior are never monitored or recorded.
-            </p>
+            <div className="space-y-4 text-muted-foreground">
+              <p className="leading-relaxed">
+                We use a minimal, privacy-focused analytics solution to understand general usage patterns 
+                (page views, visit counts). This helps us improve the service.
+              </p>
+              <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
+                <p className="text-sm"><strong className="text-foreground">What we collect:</strong> Page views, approximate visitor counts</p>
+                <p className="text-sm mt-2"><strong className="text-foreground">What we don't collect:</strong> Personal data, IP addresses, device fingerprints, or tracking cookies</p>
+              </div>
+              <p className="leading-relaxed">
+                We don't use Google Analytics, Facebook Pixel, or any invasive tracking services.
+                No personal data is ever shared with third parties.
+              </p>
+            </div>
           </section>
 
           {/* Data Security */}

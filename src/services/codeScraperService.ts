@@ -16,11 +16,11 @@ export interface EmblemCodeData {
 
 /**
  * Known emblem codes - verified against destinyemblemcollector.com, rewards.mijago.net, and blueberries.gg
- * Last updated: June 2025
+ * Last updated: February 2026
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (40 verified)
+  // D2 UNIVERSAL EMBLEM CODES (41 verified)
   // ═══════════════════════════════════════════
   { code: 'YRC-C3D-YNC', emblemName: 'A Classy Order', source: 'TWAB Reward', isActive: true, description: 'A Classy Order' },
   { code: '9FY-KDD-PRT', emblemName: 'Adventurous Spirit', source: 'Community', isActive: true, description: 'Adventurous Spirit' },
@@ -62,6 +62,7 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: '993-H3H-M6K', emblemName: 'Visio Spei', source: 'Promotional', isActive: true, description: 'Visio Spei' },
   { code: 'HG7-YRG-HHF', emblemName: 'Year of the Snake', source: 'BiliBili Promo', isActive: true, description: 'Year of the Snake' },
   { code: 'JVG-VNT-GGG', emblemName: 'соняшник', source: 'Ukraine Support', isActive: true, description: 'соняшник (Sunflower)' },
+  { code: 'DXL-XHC-X37', emblemName: 'Runner', source: 'Special Offer', isActive: true, description: 'Runner' },
 
   // ═══════════════════════════════════════════
   // D2 NON-EMBLEM REWARD CODES (2 verified)
@@ -118,6 +119,8 @@ export async function scrapeRedditCodes(): Promise<EmblemCodeData[]> {
       const posts = data?.data?.children || [];
       
       const codeRegex = /\b([A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3})\b/gi;
+      // Bungie's official character set for code validation
+      const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
       
       posts.forEach((post: { data?: { title?: string; selftext?: string } }) => {
         const title = post.data?.title || '';
@@ -128,6 +131,9 @@ export async function scrapeRedditCodes(): Promise<EmblemCodeData[]> {
         if (matches) {
           matches.forEach(code => {
             const normalizedCode = code.toUpperCase();
+            
+            // Validate against Bungie's official character set
+            if (!bungieCharset.test(normalizedCode)) return;
             
             if (!codes.some(c => c.code === normalizedCode)) {
               let emblemName = title
@@ -192,7 +198,7 @@ export async function scrapeBlueberriesGG(): Promise<EmblemCodeData[]> {
         const code = cells[2]?.textContent?.trim();
         const source = cells[3]?.textContent?.trim() || 'Blueberries.gg';
         
-        if (emblemName && code && /^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3}$/.test(code)) {
+        if (emblemName && code && /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i.test(code)) {
           codes.push({
             code: code.toUpperCase(),
             emblemName,
@@ -210,8 +216,10 @@ export async function scrapeBlueberriesGG(): Promise<EmblemCodeData[]> {
     const matches = bodyText.match(codeRegex);
     
     if (matches) {
+      const bungieCharsetCheck = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
       matches.forEach(code => {
         const normalizedCode = code.toUpperCase();
+        if (!bungieCharsetCheck.test(normalizedCode)) return;
         if (!codes.some(c => c.code === normalizedCode)) {
           codes.push({
             code: normalizedCode,

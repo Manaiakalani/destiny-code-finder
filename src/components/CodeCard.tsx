@@ -93,6 +93,8 @@ export function CodeCard({ code }: CodeCardProps) {
   };
 
   const isActive = code.status === 'active';
+  const isD1 = code.status === 'd1';
+  const isExpired = code.status === 'expired';
 
   // Determine rarity class based on emblem name keywords
   const getRarityClass = () => {
@@ -112,7 +114,9 @@ export function CodeCard({ code }: CodeCardProps) {
         "group relative rounded-xl overflow-hidden transition-all duration-300 border h-full flex flex-col destiny-border",
         isActive 
           ? "bg-gradient-to-b from-[#1c1f26] to-[#14171c] border-[#2d323b] hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10" 
-          : "bg-[#1a1d24]/50 border-[#2a2f3a]/40 opacity-60",
+          : isD1
+            ? "bg-gradient-to-b from-[#1f1c1a] to-[#17140f] border-[#3b2d2d] hover:border-solar/50 hover:shadow-xl hover:shadow-solar/10"
+            : "bg-[#1a1d24]/50 border-[#2a2f3a]/40 opacity-60",
         "hover:-translate-y-1"
       )}
     >
@@ -120,9 +124,12 @@ export function CodeCard({ code }: CodeCardProps) {
       {isActive && (
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
       )}
+      {isD1 && (
+        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-solar/5 to-transparent pointer-events-none" />
+      )}
       
       <div className="relative p-4 space-y-3 flex-1 flex flex-col">
-        {/* Header: Active badge only */}
+        {/* Header: Status badge */}
         <div className="flex items-center justify-end">
           {/* Active badge - enhanced with pulse */}
           {isActive && (
@@ -132,6 +139,22 @@ export function CodeCard({ code }: CodeCardProps) {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-strand"></span>
               </span>
               <span className="text-[10px] font-bold uppercase tracking-wider text-strand">Active</span>
+            </div>
+          )}
+          {isD1 && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-solar/15 border border-solar/25">
+              <span className="relative flex h-2 w-2">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-solar"></span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-solar">Destiny 1</span>
+            </div>
+          )}
+          {isExpired && (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stasis/15 border border-stasis/25">
+              <span className="relative flex h-2 w-2">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-stasis"></span>
+              </span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-stasis">Expired</span>
             </div>
           )}
         </div>
@@ -170,6 +193,11 @@ export function CodeCard({ code }: CodeCardProps) {
               {resolvedEmblemName || code.emblemName}
             </p>
           )}
+          {code.note && (
+            <p className="text-xs text-stasis/70 italic mt-1 px-2">
+              {code.note}
+            </p>
+          )}
         </div>
 
         {/* Info section */}
@@ -187,7 +215,12 @@ export function CodeCard({ code }: CodeCardProps) {
               <Clock className="w-3 h-3" />
               Expires
             </span>
-            <span className="text-strand font-medium">No expiration</span>
+            <span className={cn(
+              "font-medium",
+              isExpired ? "text-stasis" : "text-strand"
+            )}>
+              {isExpired ? 'Not available' : 'No expiration'}
+            </span>
           </div>
         </div>
 
@@ -217,7 +250,7 @@ export function CodeCard({ code }: CodeCardProps) {
             )}
           </Button>
           
-          {isActive && (
+          {(isActive || isD1) && (
             <Button
               onClick={handleRedeem}
               size="sm"

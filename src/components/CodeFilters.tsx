@@ -8,13 +8,14 @@ interface CodeFiltersProps {
   onFilterChange: (filter: FilterStatus) => void;
   search: string;
   onSearchChange: (search: string) => void;
-  counts: { all: number; active: number; expired: number; unknown: number };
+  counts: { all: number; active: number; expired: number; d1: number; unknown: number };
 }
 
 const FILTERS: { value: FilterStatus; label: string }[] = [
   { value: 'all', label: 'All' },
-  { value: 'active', label: 'Active' },
-  { value: 'expired', label: 'Expired' },
+  { value: 'active', label: 'D2 Active' },
+  { value: 'expired', label: 'D2 Expired' },
+  { value: 'd1', label: 'D1' },
   { value: 'unknown', label: 'Unknown' },
 ];
 
@@ -36,6 +37,7 @@ export function CodeFilters({
             switch (value) {
               case 'active': return "bg-strand/20 text-strand border border-strand/30 shadow-md shadow-strand/10";
               case 'expired': return "bg-stasis/15 text-stasis border border-stasis/25 shadow-md shadow-stasis/10";
+              case 'd1': return "bg-solar/20 text-solar border border-solar/30 shadow-md shadow-solar/10";
               case 'unknown': return "bg-accent/20 text-accent border border-accent/30 shadow-md shadow-accent/10";
               default: return "bg-accent/20 text-accent border border-accent/30 shadow-md shadow-accent/10";
             }

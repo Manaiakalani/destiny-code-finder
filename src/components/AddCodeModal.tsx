@@ -17,10 +17,11 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate code format (XXX-XXX-XXX)
-    const codePattern = /^[A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3}$/i;
+    // Validate code format using Bungie's official character set
+    // Supports standard 9-char codes (XXX-XXX-XXX) and extended 14-char codes (XXX-XXX-XXX-XXXXX)
+    const codePattern = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}(?:-[ACDFGHJKLMNPRTVXY34679]{5})?$/i;
     if (!codePattern.test(code.trim())) {
-      toast.error('Invalid code format. Use XXX-XXX-XXX');
+      toast.error('Invalid code format. Use XXX-XXX-XXX or XXX-XXX-XXX-XXXXX');
       return;
     }
 
@@ -58,10 +59,10 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="XXX-XXX-XXX"
               className="font-heading text-lg tracking-widest text-center bg-secondary/50 border-border/50"
-              maxLength={11}
+              maxLength={17}
             />
             <p className="text-xs text-muted-foreground text-center">
-              Format: 3 characters, dash, 3 characters, dash, 3 characters
+              Format: XXX-XXX-XXX or XXX-XXX-XXX-XXXXX
             </p>
           </div>
           
@@ -77,7 +78,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
             <Button
               type="submit"
               className="flex-1 font-heading tracking-wider"
-              disabled={code.length !== 11}
+              disabled={code.length < 11 || code.length > 17}
             >
               Add Code
             </Button>

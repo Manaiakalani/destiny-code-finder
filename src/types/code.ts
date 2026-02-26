@@ -1,4 +1,4 @@
-export type CodeStatus = 'active' | 'expired' | 'unknown';
+export type CodeStatus = 'active' | 'expired' | 'd1' | 'unknown';
 
 export interface RedemptionCode {
   id: string;
@@ -8,6 +8,7 @@ export interface RedemptionCode {
   sourceUrl?: string;
   foundAt: Date;
   description?: string;
+  note?: string;
   isNew?: boolean;
   emblemImage?: string;
   emblemName?: string;

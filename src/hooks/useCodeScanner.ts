@@ -13,14 +13,18 @@ interface CachedData {
 // Convert scraped code data to our RedemptionCode format
 function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): RedemptionCode {
   const now = Date.now();
+
+  let status: RedemptionCode['status'] = codeData.isActive ? 'active' : 'expired';
+  if (codeData.isD1) status = 'd1';
   
   return {
     id: `code-${index}`,
     code: codeData.code,
-    status: codeData.isActive ? 'active' : 'expired',
+    status,
     source: codeData.source || 'Community',
     foundAt: new Date(now),
     description: codeData.description,
+    note: codeData.note,
     emblemName: codeData.emblemName,
     emblemImage: codeData.iconUrl,
     isNew: true

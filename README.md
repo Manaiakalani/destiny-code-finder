@@ -213,6 +213,18 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 - **D1 Filter** — Combined filter row: All / D2 Active / D2 Expired / D1
 - **Dependency Notes** — Expired and D1 cards display explanatory notes about how to obtain the item
 
+## 📋 v2.3.0 Updates
+
+### New Codes
+- **`DXL-XHC-X37`** — **Runner** emblem (universal code, available Feb 5, 2026). Confirmed via [destinyemblemcollector.com](https://destinyemblemcollector.com/emblem?id=3079989879).
+
+### Image Fixes
+- **Runner emblem** now shows correct Bungie CDN icon
+- **End of the Rainbow** and **Rainbow Connection** — removed fabricated icon paths that were 404ing on Bungie CDN. These are a transmat effect and emote (not emblems), so they correctly show a placeholder icon.
+
+### Scraper Improvements
+- Reddit and Blueberries.gg scrapers now validate discovered codes against **Bungie's official character set** (`ACDFGHJKLMNPRTVXY34679`), filtering out false matches with characters outside the valid set.
+
 ---
 
 Made with ♥ in Seattle, WA for the Destiny 2 community

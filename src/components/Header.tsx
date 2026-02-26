@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
-  onAddCode: (code: RedemptionCode) => void;
+  onAddCode: (code: string) => void;
   activeCount?: number;
   totalCount?: number;
 }
@@ -19,7 +19,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
   const location = useLocation();
 
   const handleAddCode = (code: RedemptionCode) => {
-    onAddCode(code);
+    onAddCode(code.code);
     setIsModalOpen(false);
   };
 

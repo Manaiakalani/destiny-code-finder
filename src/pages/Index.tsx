@@ -20,6 +20,7 @@ const Index = () => {
     all: codes.length,
     active: codes.filter(c => c.status === 'active').length,
     expired: codes.filter(c => c.status === 'expired').length,
+    d1: codes.filter(c => c.status === 'd1').length,
     unknown: codes.filter(c => c.status === 'unknown').length,
   }), [codes]);
 
@@ -42,10 +43,12 @@ const Index = () => {
       );
     }
     
-    // Sort: active first, then by date
+    // Sort: active first, then D1, then expired, then by date
     result.sort((a, b) => {
-      if (a.status === 'active' && b.status !== 'active') return -1;
-      if (a.status !== 'active' && b.status === 'active') return 1;
+      const statusOrder = { active: 0, d1: 1, unknown: 2, expired: 3 };
+      const aOrder = statusOrder[a.status] ?? 2;
+      const bOrder = statusOrder[b.status] ?? 2;
+      if (aOrder !== bOrder) return aOrder - bOrder;
       return b.foundAt.getTime() - a.foundAt.getTime();
     });
     

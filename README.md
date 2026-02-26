@@ -191,8 +191,27 @@ Emblem codes are aggregated from publicly available community sources. Always ve
 
 - [Bungie](https://www.bungie.net) for creating Destiny 2
 - [Blueberries.gg](https://www.blueberries.gg) for maintaining emblem databases
+- [Destiny Emblem Collector](https://destinyemblemcollector.com) for the authoritative universal code list
+- [Mijago's Rewards](https://rewards.mijago.net) for cross-referenced emblem data
 - The Destiny 2 Reddit community for sharing codes
 - All Guardians who contribute to keeping the community informed
+
+## 📋 Community Feedback (v2.2.0)
+
+This release directly addresses community feedback from [r/DestinyTheGame](https://www.reddit.com/r/DestinyTheGame/comments/1rewz3y/):
+
+### Issues Fixed
+- **Wrong code→emblem mappings** — All 38 original code entries had incorrect emblem name associations (e.g., `YRC-C3D-YNC` was labeled "The Visionary" but is actually "A Classy Order"). Every mapping has been corrected against [destinyemblemcollector.com](https://destinyemblemcollector.com/availability/universalcode), [rewards.mijago.net](https://rewards.mijago.net), and [blueberries.gg](https://www.blueberries.gg/items/destiny-2-free-emblems/).
+- **Fabricated codes removed** — 6 codes that never existed as universal codes were removed (`JNX-DMH-XLA`, `A7L-FYC-44X`, `N3L-XN6-PXF`, `X9F-GMA-H6D`, `3VF-LGC-RLX`, `X4C-FGX-MX3`).
+- **Non-universal codes marked expired** — 7 codes for emblems that require special access (Game2Give donations, Bungie API developer program, Steelseries promos, Creator Hub, Netcafe vendors) are now marked "Expired" with dependency notes explaining how to actually obtain them.
+- **D1 shader codes properly labeled** — `D6T-3JR-CKX`, `7MM-VPD-MHP`, `RXC-9XJ-4MH` are Destiny 1 shaders (Prismatic Expanse, Double Banshee, Oracle 99), not D2 emblems. They now display under a dedicated "D1" filter.
+- **Add Code crash fixed** — `Uncaught TypeError: x.toUpperCase is not a function` caused by passing a `RedemptionCode` object where a string was expected.
+- **Code validation updated** — Regex now uses Bungie's official character set (`ACDFGHJKLMNPRTVXY34679`) and supports extended 14-character codes for Destiny: Rising promotions.
+- **Missing rewards added** — `R9J-79M-J6C` (End of the Rainbow transmat) and `TK7-D3P-FDF` (Rainbow Connection emote) now included.
+
+### New Features
+- **D1 Filter** — Combined filter row: All / D2 Active / D2 Expired / D1
+- **Dependency Notes** — Expired and D1 cards display explanatory notes about how to obtain the item
 
 ---
 

@@ -80,12 +80,11 @@ export function CodeCard({ code }: CodeCardProps) {
     setTimeout(() => setCopied(false), 2000);
   }, [code.code]);
 
-  const handleRedeem = () => {
-    // Haptic feedback
-    if (navigator.vibrate) {
+  const handleRedeemClick = (e: React.MouseEvent) => {
+    // Haptic feedback on left-click (middle-click handled natively by <a>)
+    if (e.button === 0 && navigator.vibrate) {
       navigator.vibrate([30, 50, 30]);
     }
-    window.open(`${REDEEM_URL}?token=${code.code}`, '_blank');
   };
 
   const formatDate = (date: Date) => {
@@ -251,14 +250,16 @@ export function CodeCard({ code }: CodeCardProps) {
           </Button>
           
           {(isActive || isD1) && (
-            <Button
-              onClick={handleRedeem}
-              size="sm"
-              className="flex-1 h-10 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-all duration-200 btn-haptic"
+            <a
+              href={`${REDEEM_URL}?token=${code.code}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleRedeemClick}
+              className="flex-1 h-10 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-all duration-200 btn-haptic inline-flex items-center justify-center rounded-md"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Redeem
-            </Button>
+            </a>
           )}
         </div>
       </div>

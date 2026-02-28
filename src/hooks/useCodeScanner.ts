@@ -23,7 +23,7 @@ function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): Rede
     status,
     source: codeData.source || 'Community',
     foundAt: new Date(now),
-    description: codeData.description,
+    description: codeData.description || codeData.emblemName,
     note: codeData.note,
     emblemName: codeData.emblemName,
     emblemImage: codeData.iconUrl,

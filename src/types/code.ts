@@ -5,7 +5,6 @@ export interface RedemptionCode {
   code: string;
   status: CodeStatus;
   source: string;
-  sourceUrl?: string;
   foundAt: Date;
   description?: string;
   note?: string;
@@ -15,5 +14,3 @@ export interface RedemptionCode {
 }
 
 export type FilterStatus = 'all' | CodeStatus;
-
-export type SortOrder = 'newest' | 'oldest';

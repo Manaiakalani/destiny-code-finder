@@ -3,8 +3,6 @@ import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
 import { CodeFilters } from '@/components/CodeFilters';
 import { CodeGrid } from '@/components/CodeGrid';
-import { CodeGridSkeleton } from '@/components/CodeSkeleton';
-import { EmptyState } from '@/components/EmptyState';
 import { useCodeScanner } from '@/hooks/useCodeScanner';
 import { FilterStatus } from '@/types/code';
 import { Link } from 'react-router-dom';

@@ -1,7 +1,7 @@
 {
   "name": "destiny-code-vault",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.4.0",
   "description": "Destiny 2 emblem code finder and tracker",
   "type": "module",
   "scripts": {

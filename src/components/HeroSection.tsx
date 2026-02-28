@@ -90,14 +90,15 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button
-            size="lg"
-            onClick={() => window.open('https://www.bungie.net/7/en/Codes/Redeem', '_blank')}
-            className="btn-solar min-w-[200px] font-heading font-semibold tracking-wide text-white btn-haptic gaming-glow"
+          <a
+            href="https://www.bungie.net/7/en/Codes/Redeem"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-solar min-w-[200px] font-heading font-semibold tracking-wide text-white btn-haptic gaming-glow inline-flex items-center justify-center h-11 rounded-md px-8"
           >
             <ExternalLink className="w-4 h-4 mr-2" />
             Redeem on Bungie.net
-          </Button>
+          </a>
           
           <Button
             variant="outline"

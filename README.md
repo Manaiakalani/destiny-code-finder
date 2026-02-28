@@ -108,8 +108,8 @@ BUNGIE_API_KEY=your_key npm run scrape:emblems
 # Build the Docker image
 docker build -t destiny-code-vault .
 
-# Run the container
-docker run -p 8080:80 destiny-code-vault
+# Run the container (runs as non-root on port 8080)
+docker run -p 8080:8080 destiny-code-vault
 ```
 
 ### Docker Compose
@@ -120,8 +120,11 @@ services:
   destiny-code-vault:
     build: .
     ports:
-      - "8080:80"
+      - "8080:8080"
     restart: unless-stopped
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
 ```
 
 ## 🎯 Data Sources
@@ -224,6 +227,28 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 
 ### Scraper Improvements
 - Reddit and Blueberries.gg scrapers now validate discovered codes against **Bungie's official character set** (`ACDFGHJKLMNPRTVXY34679`), filtering out false matches with characters outside the valid set.
+
+## 📋 v2.4.0 Updates
+
+### UX Improvements
+- **Middle-click support on Redeem buttons** — Redeem buttons are now native `<a>` elements instead of `<button>`, enabling middle-click / Ctrl+click to open codes in new browser tabs. Applies to both per-code Redeem buttons and the hero "Redeem on Bungie.net" button.
+
+### Code Quality & Refactoring
+- Removed unused imports (`CodeGridSkeleton`, `EmptyState` from Index page)
+- Removed dead types (`SortOrder`, unused `sourceUrl` field)
+- Removed redundant `description` fields from 48 code entries where they duplicated `emblemName` — `useCodeScanner` now falls back to `emblemName` automatically
+- Removed dead default export from `codeScraperService`
+
+### Docker Hardening
+- Container now runs as **non-root user** (`appuser`) instead of root
+- Nginx listens on **port 8080** (unprivileged) instead of port 80
+- Added `server_tokens off` to suppress Nginx version in responses
+- Added security headers: `Referrer-Policy`, `Permissions-Policy`
+- Improved gzip config with `gzip_vary` and `gzip_min_length`
+- Docker Compose example now includes `read_only` and `no-new-privileges`
+
+### Version
+- Bumped `package.json` version to **2.4.0**
 
 ---
 

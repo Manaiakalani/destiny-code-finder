@@ -255,3 +255,4 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 Made with ♥ in Seattle, WA for the Destiny 2 community
 
 **Eyes up, Guardian.** 👁️
+

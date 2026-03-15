@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 
 interface Particle {
   x: number;
@@ -23,7 +23,7 @@ export function MouseParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: 0, y: 0, moving: false });
-  const lastMoveTime = useRef(Date.now());
+  const lastMoveTime = useMemo(() => useRef(Date.now()), []).current;
   const animationFrameRef = useRef<number>();
 
   useEffect(() => {

@@ -1,4 +1,5 @@
 import { Search, Sparkles } from 'lucide-react';
+import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 
 interface EmptyStateProps {
@@ -15,7 +16,7 @@ export function EmptyState({ filter, onReset }: EmptyStateProps) {
     "The Cryptarch has nothing for you... yet."
   ];
   
-  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+  const randomMessage = useMemo(() => messages[Math.floor(Math.random() * messages.length)], []);
   
   return (
     <div className="glass-card p-12 text-center space-y-6">

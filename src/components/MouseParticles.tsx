@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Particle {
   x: number;
@@ -23,7 +23,7 @@ export function MouseParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: 0, y: 0, moving: false });
-  const lastMoveTime = useMemo(() => useRef(Date.now()), []).current;
+  const lastMoveTimeRef = useRef(Date.now());
   const animationFrameRef = useRef<number>();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export function MouseParticles() {
     // Mouse move handler
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY, moving: true };
-      lastMoveTime.current = Date.now();
+      lastMoveTimeRef.current = Date.now();
 
       // Create particles on move
       if (Math.random() > 0.7) {
@@ -63,7 +63,7 @@ export function MouseParticles() {
 
     // Check if mouse stopped moving
     const checkMouseMovement = () => {
-      if (Date.now() - lastMoveTime.current > 100) {
+      if (Date.now() - lastMoveTimeRef.current > 100) {
         mouseRef.current.moving = false;
       }
     };

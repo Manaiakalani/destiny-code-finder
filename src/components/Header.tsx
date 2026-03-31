@@ -1,4 +1,4 @@
-import { Hexagon, Menu, X, Plus, Github, Twitter } from 'lucide-react';
+import { Hexagon, Menu, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { AddCodeModal } from './AddCodeModal';

@@ -8,6 +8,32 @@
 
 A fast, privacy-focused web application for discovering and redeeming Destiny 2 emblem codes. Aggregates codes from multiple community sources in real-time.
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/demo.gif" alt="Destiny Code Vault Demo" width="720" />
+</p>
+
+### Desktop — Deep Space Theme
+<p align="center">
+  <img src="docs/screenshots/desktop-hero.png" alt="Desktop Hero View" width="720" />
+</p>
+
+### Search & Filter
+<p align="center">
+  <img src="docs/screenshots/search-filter.png" alt="Search filtering for Runner emblem" width="720" />
+</p>
+
+### Shooting Stars & Particle Effects
+<p align="center">
+  <img src="docs/screenshots/dark-theme.png" alt="Dark theme with shooting star effects" width="720" />
+</p>
+
+### Mobile Responsive
+<p align="center">
+  <img src="docs/screenshots/mobile-view.png" alt="Mobile responsive view" width="320" />
+</p>
+
 ## ✨ Features
 
 - **🔍 Multi-Source Aggregation** — Automatically scrapes Reddit, Blueberries.gg, and curated databases

@@ -92,6 +92,7 @@ export function useCodeScanner() {
 
   // Load codes on mount
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- data fetching on mount is a valid pattern
     loadCodes();
   }, [loadCodes]);
 

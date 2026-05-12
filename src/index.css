@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@config "../tailwind.config.ts";
 
 /* NASA Design System - Space & Science Inspired */
 /* Primary: NASA Blue (Trust & Technology) | Accent: NASA Red (Action & Energy) */
@@ -158,7 +159,7 @@
 
   /* Active card with NASA Red glow */
   .glass-card-highlight {
-    @apply glass-card;
+    @apply bg-card/70 backdrop-blur-md border rounded-lg;
     border-color: hsl(var(--solar) / 0.4);
     box-shadow: 
       inset 0 1px 0 0 hsl(var(--solar) / 0.15),

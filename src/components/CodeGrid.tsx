@@ -9,8 +9,8 @@ interface CodeGridProps {
 export function CodeGrid({ codes, isLoading }: CodeGridProps) {
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <div className="orbit-loader mb-4" />
+      <div className="flex flex-col items-center justify-center py-20" role="status" aria-live="polite">
+        <div className="orbit-loader mb-4" aria-hidden="true" />
         <p className="text-sm text-muted-foreground font-heading tracking-wider">
           SCANNING THE VAULT...
         </p>

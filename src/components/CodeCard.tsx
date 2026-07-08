@@ -124,9 +124,9 @@ export function CodeCard({ code }: CodeCardProps) {
       className={cn(
         "group relative rounded-xl overflow-hidden transition-all duration-300 border h-full flex flex-col destiny-border destiny-item-card",
         isActive 
-          ? "bg-gradient-to-b from-[#1c1f26] to-[#14171c] border-[#2d323b] hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10" 
+          ? "bg-gradient-to-b from-[#1c1f26] to-[#14171c] border-[#2d323b] hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)]" 
           : isD1
-            ? "bg-gradient-to-b from-[#1f1c1a] to-[#17140f] border-[#3b2d2d] hover:border-solar/50 hover:shadow-xl hover:shadow-solar/10"
+            ? "bg-gradient-to-b from-[#1f1c1a] to-[#17140f] border-[#3b2d2d] hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)]"
             : "bg-[#1a1d24]/50 border-[#2a2f3a]/40 opacity-60",
         "hover:-translate-y-1"
       )}

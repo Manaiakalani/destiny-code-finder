@@ -51,10 +51,11 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm text-muted-foreground">
+            <label htmlFor="code-input" className="text-sm text-muted-foreground">
               Enter a Destiny 2 redemption code
             </label>
             <Input
+              id="code-input"
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="XXX-XXX-XXX"

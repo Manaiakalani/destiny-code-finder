@@ -48,6 +48,7 @@ const Index = () => {
       const searchLower = search.toLowerCase();
       result = result.filter(c =>
         c.code.toLowerCase().includes(searchLower) ||
+        c.emblemName?.toLowerCase().includes(searchLower) ||
         c.description?.toLowerCase().includes(searchLower) ||
         c.source.toLowerCase().includes(searchLower)
       );

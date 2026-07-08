@@ -16,12 +16,24 @@ export interface EmblemCodeData {
 
 /**
  * Known emblem codes - verified against destinyemblemcollector.com, rewards.mijago.net, and blueberries.gg
- * Last updated: February 2026
+ * Last updated: July 2026
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (41 verified)
+  // D2 UNIVERSAL EMBLEM CODES (55 verified)
   // ═══════════════════════════════════════════
+  { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true },
+  { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true },
+  { code: 'A7L-FYC-44X', emblemName: 'Flames of Forgotten Truth', source: 'Promotional', isActive: true },
+  { code: 'JD7-4CM-HJG', emblemName: 'Illusion of Light', source: 'Promotional', isActive: true },
+  { code: 'JDT-NLC-JKM', emblemName: 'Ab Aeterno', source: 'Promotional', isActive: true },
+  { code: 'JNX-DMH-XLA', emblemName: 'Field of Light', source: 'Promotional', isActive: true },
+  { code: 'N3L-XN6-PXF', emblemName: 'The Reflective Proof', source: 'Promotional', isActive: true },
+  { code: 'X9F-GMA-H6D', emblemName: 'The Unimagined Plane', source: 'Promotional', isActive: true },
+  { code: '7F9-767-F74', emblemName: 'Sign of the Finite', source: 'Promotional', isActive: true },
+  { code: 'X4C-FGX-MX3', emblemName: 'Note of Conquest', source: 'Promotional', isActive: true },
+  { code: 'F6K-D44-JH4', emblemName: 'Gloriabundus', source: 'Bungie Social Media', isActive: true, description: 'Released July 7, 2026' },
+  { code: 'JA9-PRC-XKX', emblemName: 'Take the Mantle', source: 'Pre-Release Event', isActive: true, description: 'Released March 26, 2026' },
   { code: 'YRC-C3D-YNC', emblemName: 'A Classy Order', source: 'TWAB Reward', isActive: true },
   { code: '9FY-KDD-PRT', emblemName: 'Adventurous Spirit', source: 'Community', isActive: true },
   { code: 'HN3-7K9-93G', emblemName: 'Airlock Invitation', source: 'Fall Guys Promo', isActive: true },
@@ -63,12 +75,21 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'HG7-YRG-HHF', emblemName: 'Year of the Snake', source: 'BiliBili Promo', isActive: true },
   { code: 'JVG-VNT-GGG', emblemName: 'соняшник', source: 'Ukraine Support', isActive: true, description: 'соняшник (Sunflower)' },
   { code: 'DXL-XHC-X37', emblemName: 'Runner', source: 'Special Offer', isActive: true },
+  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true },
 
   // ═══════════════════════════════════════════
-  // D2 NON-EMBLEM REWARD CODES (2 verified)
+  // D2 NON-EMBLEM REWARD CODES (10 verified)
   // ═══════════════════════════════════════════
   { code: 'R9J-79M-J6C', emblemName: 'End of the Rainbow', source: 'Pride Celebration', isActive: true, description: 'Transmat Effect' },
   { code: 'TK7-D3P-FDF', emblemName: 'Rainbow Connection', source: 'Pride Celebration', isActive: true, description: 'Emote' },
+  { code: 'FLK-TXG-P4A', emblemName: 'Hot and Cold', source: 'Monument of Triumph', isActive: true, description: 'Shader' },
+  { code: '3TG-G67-PYD', emblemName: 'Deadlands Titan Ornament Set', source: 'Monument of Triumph', isActive: true, description: 'Titan Armor Ornament Set' },
+  { code: 'MMX-3HF-CJ4', emblemName: 'Deadlands Warlock Ornament Set', source: 'Monument of Triumph', isActive: true, description: 'Warlock Armor Ornament Set' },
+  { code: '6MC-A3F-X3R', emblemName: 'Deadlands Hunter Ornament Set', source: 'Monument of Triumph', isActive: true, description: 'Hunter Armor Ornament Set' },
+  { code: 'FPP-NHV-HNC', emblemName: 'Field Transcriber', source: 'Monument of Triumph', isActive: true, description: 'Ghost Shell' },
+  { code: '7AM-PJR-GMX', emblemName: 'Mobile Array', source: 'Monument of Triumph', isActive: true, description: 'Sparrow' },
+  { code: 'K9P-PVD-NR6', emblemName: 'Dynamic Equivalence', source: 'Monument of Triumph', isActive: true, description: 'Ship' },
+  { code: 'M3L-7DA-67C', emblemName: 'Evergreen Destrier', source: 'Monument of Triumph', isActive: true, description: 'Sparrow' },
 
   // ═══════════════════════════════════════════
   // DESTINY 1 SHADER CODES (3 verified)
@@ -85,7 +106,6 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'THR-HTP-LGG', emblemName: 'Field Recognition', source: 'Steelseries Promo', isActive: false, note: 'Steelseries promotion; individual codes only' },
   { code: '6RG-HRH-T9T', emblemName: 'Together We Ramen', source: 'D2 Creator Hub', isActive: false, note: 'Creator Hub emblem; creator program only' },
   { code: 'J3X-GNT-JAF', emblemName: 'Emblem of the Hibiscus', source: 'Netcafe Vendor', isActive: false, note: 'Netcafe vendor emblem; no universal code' },
-  { code: 'FJ9-LAM-67F', emblemName: 'Take Care Now', source: 'Game2Give Charity', isActive: false, note: 'Game2Give charity donation; individual codes only' },
   { code: 'TCN-HCD-TGY', emblemName: 'Emblem of the Fleet', source: 'Unknown', isActive: false, note: 'No known universal code' },
 ]
 
@@ -103,24 +123,38 @@ export async function scrapeRedditCodes(): Promise<EmblemCodeData[]> {
       { subreddit: 'raidsecrets', query: 'emblem' },
     ];
     
-    for (const search of searches) {
-      const url = `https://www.reddit.com/r/${search.subreddit}/search.json?q=${encodeURIComponent(search.query)}&sort=new&limit=50&restrict_sr=1&t=month`;
-      
-      const response = await fetch(url, {
-        headers: { 'User-Agent': 'Destiny Code Finder/1.0' }
-      });
-      
-      if (!response.ok) {
-        console.warn(`Reddit fetch failed for r/${search.subreddit}:`, response.status);
-        continue;
-      }
-      
-      const data = await response.json();
-      const posts = data?.data?.children || [];
-      
-      const codeRegex = /\b([A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3})\b/gi;
-      // Bungie's official character set for code validation
-      const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
+    const results = await Promise.allSettled(
+      searches.map(async (search) => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
+        try {
+          const url = `https://www.reddit.com/r/${search.subreddit}/search.json?q=${encodeURIComponent(search.query)}&sort=new&limit=50&restrict_sr=1&t=month`;
+          
+          const response = await fetch(url, {
+            headers: { 'User-Agent': 'Destiny Code Finder/1.0' },
+            signal: controller.signal,
+          });
+          
+          if (!response.ok) {
+            console.warn(`Reddit fetch failed for r/${search.subreddit}:`, response.status);
+            return [];
+          }
+          
+          const data = await response.json();
+          return { posts: data?.data?.children || [], subreddit: search.subreddit };
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      })
+    );
+    
+    const codeRegex = /\b([A-Z0-9]{3}-[A-Z0-9]{3}-[A-Z0-9]{3})\b/gi;
+    const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
+    
+    for (const result of results) {
+      if (result.status !== 'fulfilled' || !result.value || Array.isArray(result.value)) continue;
+      const { posts, subreddit } = result.value;
       
       posts.forEach((post: { data?: { title?: string; selftext?: string } }) => {
         const title = post.data?.title || '';
@@ -132,7 +166,6 @@ export async function scrapeRedditCodes(): Promise<EmblemCodeData[]> {
           matches.forEach(code => {
             const normalizedCode = code.toUpperCase();
             
-            // Validate against Bungie's official character set
             if (!bungieCharset.test(normalizedCode)) return;
             
             if (!codes.some(c => c.code === normalizedCode)) {
@@ -153,7 +186,7 @@ export async function scrapeRedditCodes(): Promise<EmblemCodeData[]> {
               codes.push({
                 code: normalizedCode,
                 emblemName,
-                source: `Reddit r/${search.subreddit}`,
+                source: `Reddit r/${subreddit}`,
                 isActive: !isExpired,
                 description: `Found in: ${title.substring(0, 100)}`
               });
@@ -178,7 +211,17 @@ export async function scrapeBlueberriesGG(): Promise<EmblemCodeData[]> {
   
   try {
     const url = 'https://www.blueberries.gg/items/destiny-2-free-emblems/';
-    const response = await fetch(`${CORS_PROXY}${encodeURIComponent(url)}`);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+    
+    let response: Response;
+    try {
+      response = await fetch(`${CORS_PROXY}${encodeURIComponent(url)}`, {
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
     
     if (!response.ok) {
       console.warn('Blueberries.gg fetch failed:', response.status);
@@ -292,14 +335,11 @@ export async function getAllEmblemCodes(): Promise<EmblemCodeData[]> {
 }
 
 /**
- * Verify if a code is valid by checking Bungie's redemption page
+ * Verify if a code is valid by checking Bungie's redemption page.
+ * Note: Client-side validation is limited due to CORS restrictions.
+ * This only checks basic format validity against Bungie's charset.
  */
-export async function verifyCode(code: string): Promise<boolean> {
-  try {
-    const url = `https://www.bungie.net/7/en/Codes/Redeem?token=${code}`;
-    const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
-    return true;
-  } catch {
-    return false;
-  }
+export function verifyCodeFormat(code: string): boolean {
+  const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
+  return bungieCharset.test(code);
 }

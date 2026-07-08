@@ -27,6 +27,10 @@ export function MouseParticles() {
   const animationFrameRef = useRef<number>();
 
   useEffect(() => {
+    // Respect reduced motion preference
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (motionQuery.matches) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 

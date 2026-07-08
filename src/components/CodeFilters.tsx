@@ -47,6 +47,7 @@ export function CodeFilters({
             <button
               key={value}
               onClick={() => onFilterChange(value)}
+              aria-pressed={filter === value}
               className={cn(
                 "px-3.5 py-2 text-sm font-bold rounded-md transition-all duration-200 tracking-wide",
                 getFilterStyle()
@@ -66,8 +67,10 @@ export function CodeFilters({
       
       {/* Search with improved styling */}
       <div className="relative w-full sm:w-80">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-accent/50" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-accent/50" aria-hidden="true" />
+        <label htmlFor="code-search" className="sr-only">Search codes, emblems, sources</label>
         <Input
+          id="code-search"
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder="Search codes, emblems, sources..."

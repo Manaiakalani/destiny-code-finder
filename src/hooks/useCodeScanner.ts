@@ -44,6 +44,7 @@ export function useCodeScanner() {
   // Load cached data or fetch fresh data
   const loadCodes = useCallback(async () => {
     try {
+    try {
       // Check cache first
       const cached = localStorage.getItem(STORAGE_KEY);
       if (cached) {
@@ -62,6 +63,9 @@ export function useCodeScanner() {
           return;
         }
       }
+    } catch {
+      // localStorage unavailable (private browsing) — continue to fresh fetch
+    }
       
       // Fetch fresh data from APIs
       console.log('Fetching fresh emblem codes from Reddit and community sources...');
@@ -72,11 +76,15 @@ export function useCodeScanner() {
       );
       
       // Cache the results
-      const cacheData: CachedData = {
-        codes: redemptionCodes,
-        timestamp: Date.now()
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+      try {
+        const cacheData: CachedData = {
+          codes: redemptionCodes,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+      } catch {
+        // localStorage unavailable — skip caching
+      }
       
       setCodes(redemptionCodes);
       setLastUpdateTime(new Date());
@@ -92,7 +100,7 @@ export function useCodeScanner() {
 
   // Load codes on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- data fetching on mount is a valid pattern
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on mount
     loadCodes();
   }, [loadCodes]);
 
@@ -101,7 +109,7 @@ export function useCodeScanner() {
     
     try {
       // Force fresh fetch (bypass cache)
-      localStorage.removeItem(STORAGE_KEY);
+      try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
       await loadCodes();
     } catch (error) {
       console.error('Error refreshing codes:', error);
@@ -111,6 +119,13 @@ export function useCodeScanner() {
 
   const addManualCode = useCallback((code: string) => {
     const normalizedCode = code.toUpperCase().trim();
+    
+    // Validate against Bungie's official character set
+    const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/;
+    if (!bungieCharset.test(normalizedCode)) {
+      return { success: false, message: 'Invalid code format' };
+    }
+    
     const existingCode = codes.find(c => c.code === normalizedCode);
     
     if (existingCode) {
@@ -131,11 +146,15 @@ export function useCodeScanner() {
     setCodes(updatedCodes);
     
     // Update cache
-    const cacheData: CachedData = {
-      codes: updatedCodes,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+    try {
+      const cacheData: CachedData = {
+        codes: updatedCodes,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+    } catch {
+      // localStorage unavailable — skip caching
+    }
     
     return { success: true, message: 'Code added' };
   }, [codes]);

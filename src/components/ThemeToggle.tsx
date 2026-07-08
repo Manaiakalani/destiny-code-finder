@@ -7,8 +7,12 @@ type Theme = 'light' | 'dark' | 'oled';
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      return (localStorage.getItem('theme') as Theme) || 'dark';
+    try {
+      if (typeof window !== 'undefined') {
+        return (localStorage.getItem('theme') as Theme) || 'dark';
+      }
+    } catch {
+      // localStorage unavailable (private browsing)
     }
     return 'dark';
   });
@@ -27,7 +31,7 @@ export function ThemeToggle() {
     }
     // 'dark' is the default, no class needed
     
-    localStorage.setItem('theme', theme);
+    try { localStorage.setItem('theme', theme); } catch { /* private browsing */ }
   }, [theme]);
 
   const cycleTheme = () => {

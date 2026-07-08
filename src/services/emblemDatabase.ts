@@ -48,7 +48,11 @@ export async function initEmblemDatabase(): Promise<void> {
   
   isLoading = true;
   loadPromise = fetchDatabase();
-  await loadPromise;
+  try {
+    await loadPromise;
+  } catch {
+    loadPromise = null;
+  }
   isLoading = false;
 }
 
@@ -71,9 +75,11 @@ async function fetchDatabase(): Promise<void> {
     console.log(`[EmblemDB] Loaded ${Object.keys(data.emblems).length} emblems, ${Object.keys(data.codeToEmblem).length} code mappings, ${Object.keys(data.legacyEmblems || {}).length} legacy emblems (v${data.version})`);
   } catch (error) {
     console.error('[EmblemDB] Failed to fetch database:', error);
-    codeToEmblemMap = {};
-    emblemCache = {};
-    legacyEmblemCache = {};
+    // Leave caches as null so future calls can retry
+    codeToEmblemMap = null;
+    emblemCache = null;
+    legacyEmblemCache = null;
+    loadPromise = null;
   }
 }
 

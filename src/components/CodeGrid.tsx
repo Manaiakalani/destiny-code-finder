@@ -1,6 +1,5 @@
 import { RedemptionCode } from '@/types/code';
 import { CodeCard } from './CodeCard';
-import { Loader2 } from 'lucide-react';
 
 interface CodeGridProps {
   codes: RedemptionCode[];
@@ -11,9 +10,9 @@ export function CodeGrid({ codes, isLoading }: CodeGridProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+        <div className="orbit-loader mb-4" />
         <p className="text-sm text-muted-foreground font-heading tracking-wider">
-          LOADING CODES...
+          SCANNING THE VAULT...
         </p>
       </div>
     );

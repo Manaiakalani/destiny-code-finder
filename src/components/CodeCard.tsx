@@ -122,7 +122,7 @@ export function CodeCard({ code }: CodeCardProps) {
   return (
     <div
       className={cn(
-        "group relative rounded-xl overflow-hidden transition-all duration-300 border h-full flex flex-col destiny-border",
+        "group relative rounded-xl overflow-hidden transition-all duration-300 border h-full flex flex-col destiny-border destiny-item-card",
         isActive 
           ? "bg-gradient-to-b from-[#1c1f26] to-[#14171c] border-[#2d323b] hover:border-accent/50 hover:shadow-xl hover:shadow-accent/10" 
           : isD1

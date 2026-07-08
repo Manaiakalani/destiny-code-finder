@@ -66,7 +66,19 @@ export function CodeCard({ code }: CodeCardProps) {
   }, [code.code, code.emblemName]);
 
   const handleCopy = useCallback(async (e: React.MouseEvent) => {
-    await navigator.clipboard.writeText(code.code);
+    try {
+      await navigator.clipboard.writeText(code.code);
+    } catch {
+      // Fallback: select the code text for manual copy
+      const selection = window.getSelection();
+      const range = document.createRange();
+      const codeEl = e.currentTarget.closest('.group')?.querySelector('.code-display');
+      if (selection && codeEl) {
+        range.selectNodeContents(codeEl);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+    }
     setCopied(true);
     
     // Create confetti at click position
@@ -169,6 +181,8 @@ export function CodeCard({ code }: CodeCardProps) {
               <img 
                 src={emblemImageUrl} 
                 alt={code.emblemName || 'Emblem'}
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 onError={() => setImageError(true)}
               />

@@ -20,7 +20,7 @@ export interface EmblemCodeData {
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (54 verified)
+  // D2 UNIVERSAL EMBLEM CODES (55 verified)
   // ═══════════════════════════════════════════
   { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true },
   { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true },
@@ -75,6 +75,7 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'HG7-YRG-HHF', emblemName: 'Year of the Snake', source: 'BiliBili Promo', isActive: true },
   { code: 'JVG-VNT-GGG', emblemName: 'соняшник', source: 'Ukraine Support', isActive: true, description: 'соняшник (Sunflower)' },
   { code: 'DXL-XHC-X37', emblemName: 'Runner', source: 'Special Offer', isActive: true },
+  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true },
 
   // ═══════════════════════════════════════════
   // D2 NON-EMBLEM REWARD CODES (10 verified)
@@ -105,7 +106,6 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'THR-HTP-LGG', emblemName: 'Field Recognition', source: 'Steelseries Promo', isActive: false, note: 'Steelseries promotion; individual codes only' },
   { code: '6RG-HRH-T9T', emblemName: 'Together We Ramen', source: 'D2 Creator Hub', isActive: false, note: 'Creator Hub emblem; creator program only' },
   { code: 'J3X-GNT-JAF', emblemName: 'Emblem of the Hibiscus', source: 'Netcafe Vendor', isActive: false, note: 'Netcafe vendor emblem; no universal code' },
-  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true },
   { code: 'TCN-HCD-TGY', emblemName: 'Emblem of the Fleet', source: 'Unknown', isActive: false, note: 'No known universal code' },
 ]
 

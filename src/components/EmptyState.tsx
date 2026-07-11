@@ -49,7 +49,7 @@ export function EmptyState({ filter, onReset }: EmptyStateProps) {
           {randomMessage}
         </p>
         {filter && (
-          <p className="text-sm text-muted-foreground/70">
+          <p className="text-sm text-muted-foreground">
             Try adjusting your filters or search terms.
           </p>
         )}

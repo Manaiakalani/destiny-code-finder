@@ -218,7 +218,7 @@ export function CodeCard({ code }: CodeCardProps) {
             {code.code}
           </button>
           {(resolvedEmblemName || code.emblemName) && (
-            <p className="text-sm text-muted-foreground/70 font-medium">
+            <p className="text-sm text-muted-foreground font-medium">
               {resolvedEmblemName || code.emblemName}
             </p>
           )}

@@ -108,6 +108,8 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                   <p className="font-heading text-xl font-bold text-accent">{totalCount}</p>
                   <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
                 </div>
+                <div className="w-px h-10 bg-accent/20" />
+                <ThemeToggle />
               </div>
 
               <Button

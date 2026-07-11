@@ -31,7 +31,7 @@ export function CodeFilters({
       <div className="flex flex-wrap items-center gap-2 rounded-lg border border-accent/20 bg-secondary/50 p-1 shadow-lg backdrop-blur-sm w-full sm:w-auto">
         {FILTERS.map(({ value, label }) => {
           const getFilterStyle = () => {
-            if (filter !== value) return 'text-muted-foreground/70 hover:text-foreground hover:bg-accent/10';
+            if (filter !== value) return 'text-muted-foreground hover:text-foreground hover:bg-accent/10';
             switch (value) {
               case 'active': return 'bg-strand/20 text-strand border border-strand/30 shadow-md shadow-strand/10';
               case 'expired': return 'bg-stasis/15 text-stasis border border-stasis/25 shadow-md shadow-stasis/10';

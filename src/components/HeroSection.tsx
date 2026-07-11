@@ -8,7 +8,6 @@ interface HeroSectionProps {
   isLoading: boolean;
 }
 
-// Generate random star positions
 function generateStars(count: number) {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
@@ -21,9 +20,7 @@ function generateStars(count: number) {
 }
 
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
-  // Memoize stars so they don't regenerate on every render
   const stars = useMemo(() => generateStars(50), []);
-  // 5 shooting stars with unique animations
   const shootingStars = useMemo(() => [
     { id: 1, className: 'shooting-star-1' },
     { id: 2, className: 'shooting-star-2' },
@@ -34,7 +31,6 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
 
   return (
     <section className="relative py-16 md:py-20 overflow-hidden">
-      {/* Animated star particles */}
       <div className="stars-container">
         {stars.map((star) => (
           <div
@@ -50,7 +46,6 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
             } as React.CSSProperties}
           />
         ))}
-        {/* Shooting stars */}
         {shootingStars.map((star) => (
           <div
             key={`shooting-${star.id}`}
@@ -59,20 +54,12 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
         ))}
       </div>
 
-      {/* Traveler silhouette watermark */}
       <div className="traveler-bg" aria-hidden="true" />
-
-      {/* Aurora background effect */}
       <div className="absolute inset-0 aurora-bg" />
-      
-      {/* Subtle gradient background */}
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
-      
-      {/* Soft glow accent */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/5 rounded-full blur-3xl" />
-      
+
       <div className="relative container mx-auto px-4 text-center">
-        {/* Title */}
         <div className="space-y-5 mb-10">
           <p className="text-xs font-semibold text-accent/80 uppercase tracking-[0.25em]">
             Guardian Archives
@@ -88,33 +75,31 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
           </p>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a
             href="https://www.bungie.net/7/en/Codes/Redeem"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-solar min-w-[200px] font-heading font-semibold tracking-wide text-white btn-haptic gaming-glow inline-flex items-center justify-center h-11 rounded-md px-8"
+            className="btn-solar min-h-[44px] min-w-[200px] font-heading font-semibold tracking-wide text-white btn-haptic gaming-glow inline-flex items-center justify-center h-11 rounded-md px-8"
           >
             <ExternalLink className="w-4 h-4 mr-2" />
             Redeem on Bungie.net
           </a>
-          
+
           <Button
             variant="outline"
             size="lg"
             onClick={onRefresh}
             disabled={isLoading}
-            className="min-w-[140px] border-accent/25 text-accent hover:bg-accent/10 hover:border-accent/40 font-heading btn-haptic"
+            className="min-h-[44px] min-w-[140px] border-accent/25 text-accent hover:bg-accent/10 hover:border-accent/40 font-heading btn-haptic"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
         </div>
-        
-        {/* Last update */}
+
         {lastUpdate && (
-          <p className="mt-6 text-xs text-muted-foreground/50">
+          <p className="mt-6 text-xs text-muted-foreground/50" role="status" aria-live="polite">
             Last updated: {lastUpdate.toLocaleTimeString()}
           </p>
         )}

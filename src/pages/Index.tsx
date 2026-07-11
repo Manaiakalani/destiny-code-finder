@@ -109,12 +109,12 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-6">
             {/* Top - Made with love */}
-            <p className="text-sm text-muted-foreground/70">
+            <p className="text-sm text-muted-foreground">
               Made with <span className="text-red-500">♥</span> in Seattle, WA for the Destiny 2 community
             </p>
             
             {/* Middle - Social handles */}
-            <div className="flex items-center gap-6 text-sm text-muted-foreground/60">
+            <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a
                 href="https://github.com/Manaiakalani"
                 target="_blank"

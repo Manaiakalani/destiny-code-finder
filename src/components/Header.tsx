@@ -55,12 +55,12 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
               <div className="flex items-center gap-6 px-4 py-2 rounded-lg glass-card">
                 <div className="text-center">
                   <p className="font-heading text-2xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">Active</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Active</p>
                 </div>
-                <div className="w-px h-10 bg-accent/20" />
+                <div className="w-px h-10 bg-border" />
                 <div className="text-center">
                   <p className="font-heading text-2xl font-bold text-accent">{totalCount}</p>
-                  <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
                 </div>
               </div>
 
@@ -96,13 +96,18 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
               <div className="flex items-center justify-center gap-8 py-3">
                 <div className="text-center">
                   <p className="font-heading text-xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">Active</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Active</p>
                 </div>
-                <div className="w-px h-10 bg-accent/20" />
+                <div className="w-px h-10 bg-border" />
                 <div className="text-center">
                   <p className="font-heading text-xl font-bold text-accent">{totalCount}</p>
-                  <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
                 </div>
+              </div>
+
+              {/* Theme Toggle for mobile */}
+              <div className="flex items-center justify-center">
+                <ThemeToggle />
               </div>
 
               {/* Add Code Button */}
@@ -111,7 +116,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                   setIsModalOpen(true);
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full btn-solar text-white font-heading tracking-wider"
+                className="w-full btn-solar text-white font-heading tracking-wider min-h-[44px]"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code

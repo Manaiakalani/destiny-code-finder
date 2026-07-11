@@ -102,12 +102,20 @@
     --secondary: 220 15% 92%;
     --secondary-foreground: 220 30% 20%;
     --muted: 220 15% 90%;
-    --muted-foreground: 220 15% 40%;
-    --accent: 217 91% 50%;
+    --muted-foreground: 220 15% 35%;
+    --accent: 265 80% 42%; /* Void purple - 8.2:1 on white */
     --accent-foreground: 0 0% 100%;
-    --border: 220 15% 85%;
+    --border: 220 15% 82%;
     --input: 220 15% 92%;
     --ring: 217 91% 50%;
+    
+    /* Subclass overrides for light mode (WCAG AA 4.5:1+) */
+    --arc: 202 90% 32%;    /* Arc blue - 5.5:1 */
+    --solar: 25 95% 34%;   /* Solar - 4.8:1 */
+    --solar-secondary: 14 80% 32%;
+    --solar-accent: 28 85% 34%;
+    --stasis: 190 90% 28%; /* Stasis - 5.2:1 */
+    --strand: 145 70% 28%; /* Strand green - 4.8:1 */
   }
 
   .light-mode body {
@@ -1254,7 +1262,7 @@
     position: relative;
     width: 48px;
     height: 48px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid hsl(var(--foreground) / 0.1);
     border-top-color: hsl(var(--accent));
     border-radius: 50%;
     animation: orbit-spin 0.9s linear infinite;
@@ -1264,7 +1272,7 @@
     content: '';
     position: absolute;
     inset: 6px;
-    border: 2px solid rgba(255, 255, 255, 0.06);
+    border: 2px solid hsl(var(--foreground) / 0.06);
     border-top-color: hsl(var(--strand));
     border-radius: 50%;
     animation: orbit-spin 1.4s linear infinite reverse;
@@ -1298,7 +1306,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid hsl(var(--foreground) / 0.1);
     border-radius: inherit;
     pointer-events: none;
   }

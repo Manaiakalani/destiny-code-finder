@@ -20,7 +20,7 @@ export interface EmblemCodeData {
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (55 verified)
+  // D2 UNIVERSAL EMBLEM CODES (61 verified)
   // ═══════════════════════════════════════════
   { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true },
   { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true },
@@ -75,6 +75,12 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'HG7-YRG-HHF', emblemName: 'Year of the Snake', source: 'BiliBili Promo', isActive: true },
   { code: 'JVG-VNT-GGG', emblemName: 'соняшник', source: 'Ukraine Support', isActive: true, description: 'соняшник (Sunflower)' },
   { code: 'DXL-XHC-X37', emblemName: 'Runner', source: 'Special Offer', isActive: true },
+  { code: 'VMG-HXK-VAL', emblemName: 'Broken and Bruised', source: 'Promotional', isActive: true },
+  { code: 'JRR-7YA-CCC', emblemName: 'Last Blush', source: 'Promotional', isActive: true },
+  { code: 'FCX-P94-JCV', emblemName: 'Little Light', source: 'Promotional', isActive: true },
+  { code: '7LD-PLJ-FN3', emblemName: 'Lofty Wail', source: 'Promotional', isActive: true },
+  { code: 'J64-HYC-HTD', emblemName: 'Red Shift Returning', source: 'Promotional', isActive: true },
+  { code: '9NG-KDD-PNG', emblemName: 'Tethered Storm', source: 'Promotional', isActive: true },
   { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true },
 
   // ═══════════════════════════════════════════

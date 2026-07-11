@@ -1,10 +1,9 @@
 import { Hexagon, Menu, X, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AddCodeModal } from './AddCodeModal';
 import { ThemeToggle } from './ThemeToggle';
 import { RedemptionCode } from '@/types/code';
-import { cn } from '@/lib/utils';
 import { Link, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
@@ -18,20 +17,30 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isMobileMenuOpen]);
+
   const handleAddCode = (code: RedemptionCode) => {
     onAddCode(code.code);
     setIsModalOpen(false);
   };
-
-  const isActive = (path: string) => location.pathname === path;
 
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b border-border/40 glass-card backdrop-blur-xl">
         <div className="container mx-auto px-4">
           <div className="flex h-16 items-center justify-between">
-            {/* Left side: Logo */}
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-md">
               <div className="relative">
                 <Hexagon className="w-10 h-10 text-accent transition-all duration-300 group-hover:text-solar" strokeWidth={1.5} />
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -49,74 +58,65 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              {/* Stats */}
               <div className="flex items-center gap-6 px-4 py-2 rounded-lg glass-card">
                 <div className="text-center">
                   <p className="font-heading text-2xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Active</p>
+                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">Active</p>
                 </div>
-                <div className="w-px h-10 bg-border" />
+                <div className="w-px h-10 bg-accent/20" />
                 <div className="text-center">
                   <p className="font-heading text-2xl font-bold text-accent">{totalCount}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
+                  <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
                 </div>
               </div>
 
-              {/* Theme Toggle - near stats */}
               <ThemeToggle />
 
-              {/* Add Code Button */}
               <Button
+                type="button"
                 onClick={() => setIsModalOpen(true)}
                 size="sm"
-                className="btn-solar text-white font-heading tracking-wider"
+                className="min-h-[44px] btn-solar text-white font-heading tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code
               </Button>
             </nav>
 
-            {/* Mobile Menu Button */}
             <button
+              type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md hover:bg-secondary transition-colors"
+              className="md:hidden min-h-[44px] min-w-[44px] p-2 rounded-md hover:bg-secondary transition-colors touch-manipulation"
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-menu"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
 
-          {/* Mobile Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-border/40 space-y-4">
-              {/* Stats */}
+            <div id="mobile-menu" className="md:hidden py-4 border-t border-border/40 space-y-4">
               <div className="flex items-center justify-center gap-8 py-3">
                 <div className="text-center">
                   <p className="font-heading text-xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Active</p>
+                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">Active</p>
                 </div>
-                <div className="w-px h-10 bg-border" />
+                <div className="w-px h-10 bg-accent/20" />
                 <div className="text-center">
                   <p className="font-heading text-xl font-bold text-accent">{totalCount}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total</p>
+                  <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
                 </div>
               </div>
 
-              {/* Theme Toggle for mobile */}
-              <div className="flex items-center justify-center">
-                <ThemeToggle />
-              </div>
-
-              {/* Add Code Button */}
               <Button
+                type="button"
                 onClick={() => {
                   setIsModalOpen(true);
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full btn-solar text-white font-heading tracking-wider min-h-[44px]"
+                className="w-full min-h-[44px] btn-solar text-white font-heading tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code

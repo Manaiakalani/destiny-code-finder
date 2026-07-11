@@ -142,6 +142,32 @@
       radial-gradient(ellipse at 80% 100%, hsl(220 50% 8%) 0%, transparent 50%),
       radial-gradient(ellipse at 50% 50%, hsl(220 30% 6%) 0%, hsl(220 40% 4%) 100%);
     background-attachment: fixed;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea,
+  [role='button'] {
+    touch-action: manipulation;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   /* OLED mode body background */

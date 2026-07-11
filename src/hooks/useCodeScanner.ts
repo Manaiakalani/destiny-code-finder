@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { RedemptionCode, CodeStatus } from '@/types/code';
+import { RedemptionCode } from '@/types/code';
 import { getAllEmblemCodes, KNOWN_ACTIVE_CODES, EmblemCodeData } from '@/services/codeScraperService';
 
 const STORAGE_KEY = 'destiny2-codes-cache';
@@ -16,7 +16,7 @@ function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): Rede
 
   let status: RedemptionCode['status'] = codeData.isActive ? 'active' : 'expired';
   if (codeData.isD1) status = 'd1';
-  
+
   return {
     id: `code-${index}`,
     code: codeData.code,
@@ -32,7 +32,7 @@ function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): Rede
 }
 
 // Initialize with known codes immediately (don't wait for API)
-const INITIAL_CODES: RedemptionCode[] = KNOWN_ACTIVE_CODES.map((code, index) => 
+const INITIAL_CODES: RedemptionCode[] = KNOWN_ACTIVE_CODES.map((code, index) =>
   codeDataToRedemptionCode(code, index)
 );
 
@@ -40,42 +40,40 @@ export function useCodeScanner() {
   const [codes, setCodes] = useState<RedemptionCode[]>(INITIAL_CODES);
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Load cached data or fetch fresh data
-  const loadCodes = useCallback(async () => {
+  const loadCodes = useCallback(async (forceRefresh = false) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
     try {
-    try {
-      // Check cache first
-      const cached = localStorage.getItem(STORAGE_KEY);
-      if (cached) {
-        const cachedData: CachedData = JSON.parse(cached);
-        const age = Date.now() - cachedData.timestamp;
-        
-        // Use cache if less than 30 minutes old
-        if (age < CACHE_DURATION) {
-          const restoredCodes = cachedData.codes.map(c => ({
-            ...c,
-            foundAt: new Date(c.foundAt)
-          }));
-          setCodes(restoredCodes);
-          setLastUpdateTime(new Date(cachedData.timestamp));
-          setIsLoading(false);
-          return;
+      try {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached && !forceRefresh) {
+          const cachedData: CachedData = JSON.parse(cached);
+          const age = Date.now() - cachedData.timestamp;
+
+          if (age < CACHE_DURATION) {
+            const restoredCodes = cachedData.codes.map(c => ({
+              ...c,
+              foundAt: new Date(c.foundAt)
+            }));
+            setCodes(restoredCodes);
+            setLastUpdateTime(new Date(cachedData.timestamp));
+            setIsLoading(false);
+            return;
+          }
         }
+      } catch {
+        // localStorage unavailable (private browsing) — continue to fresh fetch
       }
-    } catch {
-      // localStorage unavailable (private browsing) — continue to fresh fetch
-    }
-      
-      // Fetch fresh data from APIs
-      console.log('Fetching fresh emblem codes from Reddit and community sources...');
+
       const freshCodes = await getAllEmblemCodes();
-      
-      const redemptionCodes = freshCodes.map((code, index) => 
+      const redemptionCodes = freshCodes.map((code, index) =>
         codeDataToRedemptionCode(code, index)
       );
-      
-      // Cache the results
+
       try {
         const cacheData: CachedData = {
           codes: redemptionCodes,
@@ -85,83 +83,84 @@ export function useCodeScanner() {
       } catch {
         // localStorage unavailable — skip caching
       }
-      
+
       setCodes(redemptionCodes);
       setLastUpdateTime(new Date());
-      
+      setErrorMessage(null);
     } catch (error) {
       console.error('Error loading codes:', error);
-      // Fall back to initial codes if fetch fails
       setCodes(INITIAL_CODES);
+      setErrorMessage('We could not refresh the latest codes. Showing the last available set.');
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Load codes on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on mount
-    loadCodes();
+    // Initial data load on mount — setState within async callback is intentional
+    void loadCodes(); // eslint-disable-line react-hooks/set-state-in-effect
   }, [loadCodes]);
 
   const refreshCodes = useCallback(async () => {
-    setIsLoading(true);
-    
     try {
-      // Force fresh fetch (bypass cache)
       try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
-      await loadCodes();
+      await loadCodes(true);
     } catch (error) {
       console.error('Error refreshing codes:', error);
-      setIsLoading(false);
     }
   }, [loadCodes]);
 
   const addManualCode = useCallback((code: string) => {
     const normalizedCode = code.toUpperCase().trim();
-    
-    // Validate against Bungie's official character set
+
     const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/;
     if (!bungieCharset.test(normalizedCode)) {
       return { success: false, message: 'Invalid code format' };
     }
-    
+
     const existingCode = codes.find(c => c.code === normalizedCode);
-    
     if (existingCode) {
       return { success: false, message: 'Code already exists' };
     }
 
-    const newCode: RedemptionCode = {
-      id: `manual-${Date.now()}`,
-      code: normalizedCode,
-      status: 'unknown',
-      source: 'User Submitted',
-      foundAt: new Date(),
-      description: 'Manually added code',
-      isNew: true,
-    };
+    setCodes(prevCodes => {
+      const existingCode = prevCodes.find(c => c.code === normalizedCode);
+      if (existingCode) {
+        return prevCodes;
+      }
 
-    const updatedCodes = [newCode, ...codes.map(c => ({ ...c, isNew: false }))];
-    setCodes(updatedCodes);
-    
-    // Update cache
-    try {
-      const cacheData: CachedData = {
-        codes: updatedCodes,
-        timestamp: Date.now()
+      const newCode: RedemptionCode = {
+        id: `manual-${Date.now()}`,
+        code: normalizedCode,
+        status: 'unknown',
+        source: 'User Submitted',
+        foundAt: new Date(),
+        description: 'Manually added code',
+        isNew: true,
       };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
-    } catch {
-      // localStorage unavailable — skip caching
-    }
-    
+
+      const updatedCodes = [newCode, ...prevCodes.map(c => ({ ...c, isNew: false }))];
+
+      try {
+        const cacheData: CachedData = {
+          codes: updatedCodes,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+      } catch {
+        // localStorage unavailable — skip caching
+      }
+
+      return updatedCodes;
+    });
+
     return { success: true, message: 'Code added' };
   }, [codes]);
 
   return {
     codes,
     isLoading,
+    errorMessage,
     lastUpdateTime,
     refreshCodes,
     addManualCode,

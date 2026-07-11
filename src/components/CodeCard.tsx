@@ -1,5 +1,6 @@
 import { ExternalLink, Copy, Check, Clock, Sparkles } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
+import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -11,11 +12,10 @@ interface CodeCardProps {
 
 const REDEEM_URL = 'https://www.bungie.net/7/en/Codes/Redeem';
 
-// Confetti celebration for copy success
 function createConfetti(x: number, y: number) {
   const colors = ['#FFD700', '#7C3AED', '#22D3EE', '#F97316', '#10B981'];
   const confettiCount = 12;
-  
+
   for (let i = 0; i < confettiCount; i++) {
     const confetti = document.createElement('div');
     confetti.className = 'confetti';
@@ -25,10 +25,8 @@ function createConfetti(x: number, y: number) {
     confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
     confetti.style.animation = `confetti-fall ${1 + Math.random()}s ease-out forwards`;
     confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-    
+
     document.body.appendChild(confetti);
-    
-    // Clean up after animation
     setTimeout(() => confetti.remove(), 1500);
   }
 }
@@ -39,65 +37,85 @@ export function CodeCard({ code }: CodeCardProps) {
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
 
-  // Load emblem image URL when database is ready - try by CODE first, then by name
   useEffect(() => {
     let mounted = true;
-    
+
     async function loadEmblemImage() {
-      // Ensure database is loaded
       if (!isDatabaseReady()) {
         await initEmblemDatabase();
       }
-      
+
       if (!mounted) return;
-      
-      // Try to get emblem by code first (most reliable)
+
       const url = getEmblemIcon(code.code, code.emblemName);
       setEmblemImageUrl(url);
-      
-      // Also resolve the proper emblem name from code
+
       const nameFromCode = getEmblemNameByCode(code.code);
       setResolvedEmblemName(nameFromCode || code.emblemName || null);
     }
-    
-    loadEmblemImage();
-    
+
+    void loadEmblemImage();
+
     return () => { mounted = false; };
   }, [code.code, code.emblemName]);
 
-  const handleCopy = useCallback(async (e: React.MouseEvent) => {
+  const copyCodeToClipboard = useCallback(async (sourceElement?: HTMLElement | null) => {
     try {
       await navigator.clipboard.writeText(code.code);
+      return true;
     } catch {
-      // Fallback: select the code text for manual copy
       const selection = window.getSelection();
       const range = document.createRange();
-      const codeEl = e.currentTarget.closest('.group')?.querySelector('.code-display');
+      const codeEl = sourceElement?.closest('[data-code-card]')?.querySelector('[data-code-display]') as HTMLElement | null;
       if (selection && codeEl) {
         range.selectNodeContents(codeEl);
         selection.removeAllRanges();
         selection.addRange(range);
       }
+      return false;
     }
+  }, [code.code]);
+
+  const handleCopy = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const success = await copyCodeToClipboard(e.currentTarget);
+
+    if (success) {
+      toast.success('Code copied and ready to redeem');
+    } else {
+      toast.warning('Clipboard unavailable', {
+        description: 'The code is highlighted for manual copying.'
+      });
+    }
+
     setCopied(true);
-    
-    // Create confetti at click position
     createConfetti(e.clientX, e.clientY);
-    
-    // Haptic feedback for supported devices
+
     if (navigator.vibrate) {
       navigator.vibrate(50);
     }
-    
-    setTimeout(() => setCopied(false), 2000);
-  }, [code.code]);
 
-  const handleRedeemClick = (e: React.MouseEvent) => {
-    // Haptic feedback on left-click (middle-click handled natively by <a>)
+    window.setTimeout(() => setCopied(false), 1800);
+  }, [copyCodeToClipboard]);
+
+  const handleRedeemClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
     if (e.button === 0 && navigator.vibrate) {
       navigator.vibrate([30, 50, 30]);
     }
-  };
+
+    const success = await copyCodeToClipboard(e.currentTarget);
+    window.open(`${REDEEM_URL}?token=${code.code}`, '_blank', 'noopener,noreferrer');
+
+    setCopied(true);
+    if (success) {
+      toast.success('Code copied — Bungie opened');
+    } else {
+      toast.info('Bungie opened — paste the code manually if needed.');
+    }
+
+    window.setTimeout(() => setCopied(false), 2000);
+  }, [code.code, copyCodeToClipboard]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -107,7 +125,6 @@ export function CodeCard({ code }: CodeCardProps) {
   const isD1 = code.status === 'd1';
   const isExpired = code.status === 'expired';
 
-  // Determine rarity class based on emblem name keywords
   const getRarityClass = () => {
     const name = (resolvedEmblemName || code.emblemName || '').toLowerCase();
     if (name.includes('exotic') || name.includes('gilded') || name.includes('flawless')) {
@@ -121,28 +138,26 @@ export function CodeCard({ code }: CodeCardProps) {
 
   return (
     <div
+      data-code-card
       className={cn(
-        "group relative rounded-xl overflow-hidden transition-all duration-300 border h-full flex flex-col destiny-border destiny-item-card",
-        isActive 
-          ? "bg-gradient-to-b from-[#1c1f26] to-[#14171c] border-[#2d323b] hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)]" 
+        'group relative rounded-xl overflow-hidden transition-[transform,box-shadow,border-color,background-color,opacity] duration-200 ease-out border h-full flex flex-col destiny-border destiny-item-card',
+        isActive
+          ? 'bg-card border-border hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)] shadow-sm'
           : isD1
-            ? "bg-gradient-to-b from-[#1f1c1a] to-[#17140f] border-[#3b2d2d] hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)]"
-            : "bg-[#1a1d24]/50 border-[#2a2f3a]/40 opacity-60",
-        "hover:-translate-y-1"
+            ? 'bg-card border-solar/30 hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)] shadow-sm'
+            : 'bg-muted/50 border-border/40 opacity-60',
+        'hover:-translate-y-1'
       )}
     >
-      {/* Top accent glow */}
       {isActive && (
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
       )}
       {isD1 && (
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-solar/5 to-transparent pointer-events-none" />
       )}
-      
+
       <div className="relative p-4 space-y-3 flex-1 flex flex-col">
-        {/* Header: Status badge */}
         <div className="flex items-center justify-end">
-          {/* Active badge - enhanced with pulse */}
           {isActive && (
             <div className="badge-pulse-active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-strand/15 border border-strand/25">
               <span className="relative flex h-2 w-2">
@@ -170,16 +185,14 @@ export function CodeCard({ code }: CodeCardProps) {
           )}
         </div>
 
-        {/* Code display with emblem */}
         <div className="text-center py-2 flex flex-col items-center">
-          {/* Emblem image with rarity glow */}
           <div className={cn(
-            "relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-gradient-to-br from-[#252a35] to-[#1a1e25] border border-[#3a4050]/50 shadow-lg transition-all duration-300",
+            'relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-secondary border border-border/50 shadow-md transition-transform duration-300',
             getRarityClass()
           )}>
             {emblemImageUrl && !imageError ? (
-              <img 
-                src={emblemImageUrl} 
+              <img
+                src={emblemImageUrl}
                 alt={code.emblemName || 'Emblem'}
                 loading="lazy"
                 decoding="async"
@@ -191,16 +204,19 @@ export function CodeCard({ code }: CodeCardProps) {
                 <Sparkles className="w-7 h-7 text-accent/60" />
               </div>
             )}
-            {/* Enhanced shine effect on hover */}
             <div className="emblem-shine" />
           </div>
-          
-          <h3 
+
+          <button
+            type="button"
             className="code-display glitch-text text-2xl md:text-3xl font-bold text-foreground mb-1.5 select-all cursor-pointer hover:text-accent transition-colors"
+            data-code-display
             data-text={code.code}
+            aria-label={`Copy ${code.code}`}
+            onClick={handleCopy}
           >
             {code.code}
-          </h3>
+          </button>
           {(resolvedEmblemName || code.emblemName) && (
             <p className="text-sm text-muted-foreground/70 font-medium">
               {resolvedEmblemName || code.emblemName}
@@ -213,8 +229,7 @@ export function CodeCard({ code }: CodeCardProps) {
           )}
         </div>
 
-        {/* Info section */}
-        <div className="space-y-1.5 pt-2 border-t border-[#2a2f3a]/50">
+        <div className="space-y-1.5 pt-2 border-t border-border/50">
           <div className="flex items-center justify-between text-xs">
             <span className="text-muted-foreground/50">Source</span>
             <span className="text-muted-foreground font-medium">{code.source}</span>
@@ -229,25 +244,25 @@ export function CodeCard({ code }: CodeCardProps) {
               Expires
             </span>
             <span className={cn(
-              "font-medium",
-              isExpired ? "text-stasis" : "text-strand"
+              'font-medium',
+              isExpired ? 'text-stasis' : 'text-strand'
             )}>
               {isExpired ? 'Not available' : 'No expiration'}
             </span>
           </div>
         </div>
 
-        {/* Action buttons with haptic feedback */}
         <div className="flex gap-2 pt-2">
           <Button
+            type="button"
             onClick={handleCopy}
             variant="outline"
             size="sm"
             className={cn(
-              "flex-1 font-semibold transition-all duration-200 h-10 text-sm btn-haptic",
-              copied 
-                ? "border-strand/40 text-strand bg-strand/10 copy-success" 
-                : "border-[#3a4050] text-muted-foreground hover:border-accent/50 hover:text-foreground hover:bg-accent/10"
+              'flex-1 min-h-[44px] h-11 font-semibold transition-[transform,background-color,color,border-color,box-shadow] duration-200 ease-out text-sm btn-haptic',
+              copied
+                ? 'border-strand/40 text-strand bg-strand/10 copy-success'
+                : 'border-border text-muted-foreground hover:border-accent/50 hover:text-foreground hover:bg-accent/10'
             )}
           >
             {copied ? (
@@ -262,18 +277,16 @@ export function CodeCard({ code }: CodeCardProps) {
               </>
             )}
           </Button>
-          
+
           {(isActive || isD1) && (
-            <a
-              href={`${REDEEM_URL}?token=${code.code}`}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Button
+              type="button"
               onClick={handleRedeemClick}
-              className="flex-1 h-10 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-all duration-200 btn-haptic inline-flex items-center justify-center rounded-md"
+              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
-              Redeem
-            </a>
+              Copy & Redeem
+            </Button>
           )}
         </div>
       </div>

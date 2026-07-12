@@ -222,6 +222,11 @@ export function CodeCard({ code }: CodeCardProps) {
               {resolvedEmblemName || code.emblemName}
             </p>
           )}
+          {code.description && (
+            <p className="text-xs text-accent/70 font-medium mt-0.5">
+              {code.description}
+            </p>
+          )}
           {code.note && (
             <p className="text-xs text-stasis/70 italic mt-1 px-2">
               {code.note}

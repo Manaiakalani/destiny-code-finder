@@ -222,7 +222,7 @@ export function CodeCard({ code }: CodeCardProps) {
               {resolvedEmblemName || code.emblemName}
             </p>
           )}
-          {code.description && (
+          {code.description && code.description !== (resolvedEmblemName || code.emblemName) && (
             <p className="text-xs text-accent/70 font-medium mt-0.5">
               {code.description}
             </p>

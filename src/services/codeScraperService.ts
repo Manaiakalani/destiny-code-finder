@@ -20,7 +20,7 @@ export interface EmblemCodeData {
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (61 verified)
+  // D2 UNIVERSAL EMBLEM CODES (60 verified)
   // ═══════════════════════════════════════════
   { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true },
   { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true },

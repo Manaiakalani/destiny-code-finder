@@ -107,15 +107,15 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `perf:` Performance improvements
 - `chore:` Maintenance tasks
 
-## Updating the Catalogue
+## Adding New Emblem Sources
 
-Code Vault ships a reviewed catalogue rather than scraping community sites in the browser.
+When adding a new code source:
 
-1. Confirm a code and reward against Bungie plus at least one independent public reference.
-2. Update `src/services/codeCatalogService.ts`.
-3. Update reward metadata in `public/data/emblems.json`, then run `npm run sync:emblems`.
-4. Update the catalogue review date only after the full list has been checked.
-5. Run `npm run lint` and `npm run build`.
+1. Add scraper function in `src/services/codeScraperService.ts`
+2. Update `getAllEmblemCodes()` to include the new source
+3. Add proper error handling
+4. Test with various scenarios
+5. Update documentation
 
 ## Questions?
 

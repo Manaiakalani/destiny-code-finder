@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { RedemptionCode } from '@/types/code';
 import { getAllEmblemCodes, KNOWN_ACTIVE_CODES, EmblemCodeData } from '@/services/codeScraperService';
 
@@ -41,9 +41,11 @@ export function useCodeScanner() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   // Load cached data or fetch fresh data
   const loadCodes = useCallback(async (forceRefresh = false) => {
+    const currentRequestId = ++requestIdRef.current;
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -51,25 +53,30 @@ export function useCodeScanner() {
       try {
         const cached = localStorage.getItem(STORAGE_KEY);
         if (cached && !forceRefresh) {
-          const cachedData: CachedData = JSON.parse(cached);
-          const age = Date.now() - cachedData.timestamp;
-
-          if (age < CACHE_DURATION) {
-            const restoredCodes = cachedData.codes.map(c => ({
-              ...c,
-              foundAt: new Date(c.foundAt)
-            }));
-            setCodes(restoredCodes);
-            setLastUpdateTime(new Date(cachedData.timestamp));
-            setIsLoading(false);
-            return;
+          const cachedData = JSON.parse(cached) as CachedData;
+          if (cachedData?.codes && typeof cachedData.timestamp === 'number') {
+            const age = Date.now() - cachedData.timestamp;
+            if (age < CACHE_DURATION) {
+              if (currentRequestId !== requestIdRef.current) return;
+              const restoredCodes = cachedData.codes.map(c => ({
+                ...c,
+                foundAt: new Date(c.foundAt)
+              }));
+              setCodes(restoredCodes);
+              setLastUpdateTime(new Date(cachedData.timestamp));
+              setIsLoading(false);
+              return;
+            }
           }
         }
       } catch {
-        // localStorage unavailable (private browsing) — continue to fresh fetch
+        // localStorage unavailable or corrupted — clear and continue
+        try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
       }
 
       const freshCodes = await getAllEmblemCodes();
+      if (currentRequestId !== requestIdRef.current) return; // stale response
+
       const redemptionCodes = freshCodes.map((code, index) =>
         codeDataToRedemptionCode(code, index)
       );
@@ -81,7 +88,7 @@ export function useCodeScanner() {
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
       } catch {
-        // localStorage unavailable — skip caching
+        // localStorage unavailable or quota exceeded — skip caching
       }
 
       setCodes(redemptionCodes);

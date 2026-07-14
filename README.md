@@ -46,8 +46,7 @@ Other scripts:
 | Command | Description |
 |---|---|
 | `npm run preview` | Preview the production build |
-| `npm run scrape:emblems` | Refresh Bungie emblem metadata |
-| `npm run download:emblems` | Cache emblem images locally |
+| `npm run sync:emblems` | Apply reviewed legacy icons, local cache paths, and catalogue validation |
 
 ## Architecture
 

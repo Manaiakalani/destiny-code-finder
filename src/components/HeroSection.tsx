@@ -15,6 +15,7 @@ export function HeroSection({ counts, catalogReviewedAt }: HeroSectionProps) {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'America/Los_Angeles',
   });
 
   return (

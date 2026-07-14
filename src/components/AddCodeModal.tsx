@@ -33,10 +33,10 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
     e.preventDefault();
 
     const trimmedCode = code.trim();
-    const codePattern = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}(?:-[ACDFGHJKLMNPRTVXY34679]{5})?$/i;
+    const codePattern = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
 
     if (!codePattern.test(trimmedCode)) {
-      setValidationError('Use XXX-XXX-XXX or XXX-XXX-XXX-XXXXX');
+      setValidationError('Use format XXX-XXX-XXX (Bungie charset only)');
       return;
     }
 

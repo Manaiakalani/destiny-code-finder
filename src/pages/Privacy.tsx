@@ -117,26 +117,13 @@ export default function Privacy() {
             </div>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
-                To provide you with the latest emblem codes, we fetch data from these external sources:
+                Emblem codes are curated from publicly available community sources and verified manually.
+                The app loads emblem artwork from Bungie's CDN:
               </p>
               <div className="grid gap-3">
                 <div className="p-4 border border-border/40 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-foreground">Reddit API</span>
-                    <a
-                      href="https://www.reddit.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:text-accent/80 text-sm"
-                    >
-                      reddit.com
-                    </a>
-                  </div>
-                  <p className="text-sm">Public JSON API for community posts. No authentication required.</p>
-                </div>
-                <div className="p-4 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-foreground">Bungie API</span>
+                    <span className="font-medium text-foreground">Bungie CDN</span>
                     <a
                       href="https://www.bungie.net"
                       target="_blank"
@@ -146,51 +133,31 @@ export default function Privacy() {
                       bungie.net
                     </a>
                   </div>
-                  <p className="text-sm">Official Destiny 2 manifest for emblem images and metadata.</p>
-                </div>
-                <div className="p-4 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-foreground">Blueberries.gg</span>
-                    <a
-                      href="https://www.blueberries.gg"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent hover:text-accent/80 text-sm"
-                    >
-                      blueberries.gg
-                    </a>
-                  </div>
-                  <p className="text-sm">Destiny 2 game guide and resource database. Accessed via CORS proxy.</p>
+                  <p className="text-sm">Official Destiny 2 emblem images served directly from Bungie's content delivery network.</p>
                 </div>
               </div>
               <p className="leading-relaxed pt-2">
-                These third-party services may have their own privacy policies. We recommend reviewing them if you have concerns 
-                about how they handle data.
+                No external APIs are called from your browser. All code data is bundled with the app.
               </p>
             </div>
           </section>
 
-          {/* Analytics */}
+          {/* No Analytics */}
           <section className="glass-card p-6 rounded-lg">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-accent/10">
                 <Eye className="w-6 h-6 text-accent" />
               </div>
-              <h2 className="font-heading text-2xl font-bold">Privacy-Focused Analytics</h2>
+              <h2 className="font-heading text-2xl font-bold">No Analytics</h2>
             </div>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
-                We use a minimal, privacy-focused analytics solution to understand general usage patterns 
-                (page views, visit counts). This helps us improve the service.
+                Code Vault does not use any analytics, tracking scripts, or telemetry.
+                No page views, visitor counts, or usage data is collected.
               </p>
               <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
-                <p className="text-sm"><strong className="text-foreground">What we collect:</strong> Page views, approximate visitor counts</p>
-                <p className="text-sm mt-2"><strong className="text-foreground">What we don't collect:</strong> Personal data, IP addresses, device fingerprints, or tracking cookies</p>
+                <p className="text-sm"><strong className="text-foreground">No tracking at all:</strong> No Google Analytics, no Facebook Pixel, no cookies, no fingerprinting.</p>
               </div>
-              <p className="leading-relaxed">
-                We don't use Google Analytics, Facebook Pixel, or any invasive tracking services.
-                No personal data is ever shared with third parties.
-              </p>
             </div>
           </section>
 

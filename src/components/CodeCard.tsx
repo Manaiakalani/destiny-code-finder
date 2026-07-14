@@ -36,6 +36,14 @@ export function CodeCard({ code }: CodeCardProps) {
   const [imageError, setImageError] = useState(false);
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
+  const [lastLoadedCode, setLastLoadedCode] = useState('');
+
+  // Reset error state when code changes (derived state pattern)
+  if (code.code !== lastLoadedCode) {
+    setLastLoadedCode(code.code);
+    setImageError(false);
+    setEmblemImageUrl(null);
+  }
 
   useEffect(() => {
     let mounted = true;

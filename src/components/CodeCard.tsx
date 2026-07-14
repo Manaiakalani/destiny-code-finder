@@ -1,61 +1,61 @@
-import { ExternalLink, Copy, Check, Clock, Sparkles } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { Check, Copy, ExternalLink, Pin, PinOff, Sparkles } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { getEmblemIcon, initEmblemDatabase, isDatabaseReady, getEmblemNameByCode } from '@/services/emblemDatabase';
+import {
+  getEmblemIcon,
+  getEmblemNameByCode,
+  initEmblemDatabase,
+  isDatabaseReady,
+} from '@/services/emblemDatabase';
+import { type AddCodeResult } from '@/hooks/useCodeScanner';
 
 interface CodeCardProps {
   code: RedemptionCode;
+  onRemovePin: (code: string) => AddCodeResult;
 }
 
 const REDEEM_URL = 'https://www.bungie.net/7/en/Codes/Redeem';
 
-function createConfetti(x: number, y: number) {
-  const colors = ['#FFD700', '#7C3AED', '#22D3EE', '#F97316', '#10B981'];
-  const confettiCount = 12;
+const STATUS_DETAILS: Record<RedemptionCode['status'], { label: string; className: string }> = {
+  redeemable: {
+    label: 'Redeemable',
+    className: 'border-strand/40 bg-strand/10 text-strand',
+  },
+  d1: {
+    label: 'Destiny 1',
+    className: 'border-solar/40 bg-solar/10 text-solar',
+  },
+  restricted: {
+    label: 'Restricted',
+    className: 'border-border bg-secondary text-muted-foreground',
+  },
+  pinned: {
+    label: 'Unverified pin',
+    className: 'border-accent/40 bg-accent/10 text-accent',
+  },
+};
 
-  for (let i = 0; i < confettiCount; i++) {
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = `${x}px`;
-    confetti.style.top = `${y}px`;
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-    confetti.style.animation = `confetti-fall ${1 + Math.random()}s ease-out forwards`;
-    confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-
-    document.body.appendChild(confetti);
-    setTimeout(() => confetti.remove(), 1500);
-  }
-}
-
-export function CodeCard({ code }: CodeCardProps) {
+export function CodeCard({ code, onRemovePin }: CodeCardProps) {
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
+  const status = STATUS_DETAILS[code.status];
 
   useEffect(() => {
     let mounted = true;
 
     async function loadEmblemImage() {
-      if (!isDatabaseReady()) {
-        await initEmblemDatabase();
-      }
-
+      if (!isDatabaseReady()) await initEmblemDatabase();
       if (!mounted) return;
-
-      const url = getEmblemIcon(code.code, code.emblemName);
-      setEmblemImageUrl(url);
-
-      const nameFromCode = getEmblemNameByCode(code.code);
-      setResolvedEmblemName(nameFromCode || code.emblemName || null);
+      setEmblemImageUrl(getEmblemIcon(code.code, code.emblemName));
+      setResolvedEmblemName(getEmblemNameByCode(code.code) || code.emblemName || null);
     }
 
     void loadEmblemImage();
-
     return () => { mounted = false; };
   }, [code.code, code.emblemName]);
 
@@ -65,10 +65,12 @@ export function CodeCard({ code }: CodeCardProps) {
       return true;
     } catch {
       const selection = window.getSelection();
-      const range = document.createRange();
-      const codeEl = sourceElement?.closest('[data-code-card]')?.querySelector('[data-code-display]') as HTMLElement | null;
-      if (selection && codeEl) {
-        range.selectNodeContents(codeEl);
+      const codeElement = sourceElement
+        ?.closest('[data-code-card]')
+        ?.querySelector('[data-code-display]');
+      if (selection && codeElement) {
+        const range = document.createRange();
+        range.selectNodeContents(codeElement);
         selection.removeAllRanges();
         selection.addRange(range);
       }
@@ -76,225 +78,131 @@ export function CodeCard({ code }: CodeCardProps) {
     }
   }, [code.code]);
 
-  const handleCopy = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const success = await copyCodeToClipboard(e.currentTarget);
-
-    if (success) {
-      toast.success('Code copied and ready to redeem');
-    } else {
+  const handleCopy = useCallback(async (sourceElement?: HTMLElement | null) => {
+    const success = await copyCodeToClipboard(sourceElement);
+    if (!success) {
       toast.warning('Clipboard unavailable', {
-        description: 'The code is highlighted for manual copying.'
+        description: 'The code is selected so you can copy it manually.',
       });
+      return;
     }
 
     setCopied(true);
-    createConfetti(e.clientX, e.clientY);
-
-    if (navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-
-    window.setTimeout(() => setCopied(false), 1800);
+    toast.success('Code copied');
+    window.setTimeout(() => setCopied(false), 1600);
   }, [copyCodeToClipboard]);
 
-  const handleRedeemClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleRedeemClick = useCallback((event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    void copyCodeToClipboard(event.currentTarget).then(success => {
+      if (success) toast.success('Code copied - paste it on Bungie.net');
+    });
+  }, [copyCodeToClipboard]);
 
-    if (e.button === 0 && navigator.vibrate) {
-      navigator.vibrate([30, 50, 30]);
-    }
-
-    const success = await copyCodeToClipboard(e.currentTarget);
-    window.open(`${REDEEM_URL}?token=${code.code}`, '_blank', 'noopener,noreferrer');
-
-    setCopied(true);
-    if (success) {
-      toast.success('Code copied — Bungie opened');
-    } else {
-      toast.info('Bungie opened — paste the code manually if needed.');
-    }
-
-    window.setTimeout(() => setCopied(false), 2000);
-  }, [code.code, copyCodeToClipboard]);
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const handleRemovePin = () => {
+    const result = onRemovePin(code.code);
+    if (result.success) toast.success(result.message);
+    else toast.error(result.message);
   };
 
-  const isActive = code.status === 'active';
-  const isD1 = code.status === 'd1';
-  const isExpired = code.status === 'expired';
-
-  const getRarityClass = () => {
-    const name = (resolvedEmblemName || code.emblemName || '').toLowerCase();
-    if (name.includes('exotic') || name.includes('gilded') || name.includes('flawless')) {
-      return 'rarity-exotic';
-    }
-    if (name.includes('raid') || name.includes('triumph') || name.includes('seal')) {
-      return 'rarity-legendary';
-    }
-    return '';
-  };
+  const displayName = resolvedEmblemName || code.emblemName || 'Pinned code';
 
   return (
-    <div
+    <article
       data-code-card
-      className={cn(
-        'group relative rounded-xl overflow-hidden transition-[transform,box-shadow,border-color,background-color,opacity] duration-200 ease-out border h-full flex flex-col destiny-border destiny-item-card',
-        isActive
-          ? 'bg-card border-border hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)] shadow-sm'
-          : isD1
-            ? 'bg-card border-solar/30 hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)] shadow-sm'
-            : 'bg-muted/50 border-border/40 opacity-60',
-        'hover:-translate-y-1'
-      )}
+      className="rounded-lg border border-border bg-card p-4 transition-colors hover:border-accent/50"
     >
-      {isActive && (
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
-      )}
-      {isD1 && (
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-solar/5 to-transparent pointer-events-none" />
-      )}
-
-      <div className="relative p-4 space-y-3 flex-1 flex flex-col">
-        <div className="flex items-center justify-end">
-          {isActive && (
-            <div className="badge-pulse-active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-strand/15 border border-strand/25">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-strand opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-strand"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-strand">Active</span>
-            </div>
-          )}
-          {isD1 && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-solar/15 border border-solar/25">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-solar"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-solar">Destiny 1</span>
-            </div>
-          )}
-          {isExpired && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stasis/15 border border-stasis/25">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-stasis"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-stasis">Expired</span>
-            </div>
+      <div className="flex items-start gap-4">
+        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
+          {emblemImageUrl && !imageError ? (
+            <img
+              src={emblemImageUrl}
+              alt={`${displayName} reward icon`}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center text-accent">
+              <Sparkles className="h-6 w-6" aria-hidden="true" />
+            </span>
           )}
         </div>
 
-        <div className="text-center py-2 flex flex-col items-center">
-          <div className={cn(
-            'relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-secondary border border-border/50 shadow-md transition-transform duration-300',
-            getRarityClass()
-          )}>
-            {emblemImageUrl && !imageError ? (
-              <img
-                src={emblemImageUrl}
-                alt={code.emblemName || 'Emblem'}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/20 to-accent/5">
-                <Sparkles className="w-7 h-7 text-accent/60" />
-              </div>
-            )}
-            <div className="emblem-shine" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div className="min-w-0">
+              <h3 className="truncate text-base font-semibold text-foreground">{displayName}</h3>
+              {code.description && code.description !== displayName && (
+                <p className="mt-0.5 text-sm text-muted-foreground">{code.description}</p>
+              )}
+            </div>
+            <span className={cn(
+              'inline-flex min-h-7 shrink-0 items-center rounded-full border px-2.5 text-xs font-semibold',
+              status.className,
+            )}>
+              {status.label}
+            </span>
           </div>
 
           <button
             type="button"
-            className="code-display glitch-text text-2xl md:text-3xl font-bold text-foreground mb-1.5 select-all cursor-pointer hover:text-accent transition-colors"
             data-code-display
-            data-text={code.code}
-            aria-label={`Copy ${code.code}`}
-            onClick={handleCopy}
+            onClick={(event) => void handleCopy(event.currentTarget)}
+            className="mt-3 inline-flex min-h-11 max-w-full items-center rounded-md font-mono text-xl font-semibold tracking-[0.08em] text-foreground transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            aria-label={`Copy code ${code.code}`}
           >
             {code.code}
           </button>
-          {(resolvedEmblemName || code.emblemName) && (
-            <p className="text-sm text-muted-foreground font-medium">
-              {resolvedEmblemName || code.emblemName}
-            </p>
-          )}
-          {code.description && code.description !== (resolvedEmblemName || code.emblemName) && (
-            <p className="text-xs text-accent/70 font-medium mt-0.5">
-              {code.description}
-            </p>
-          )}
+
+          <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+            <span>{code.source}</span>
+            {code.isPinned && (
+              <span className="inline-flex items-center gap-1">
+                <Pin className="h-3.5 w-3.5" aria-hidden="true" />
+                Pinned on this device
+              </span>
+            )}
+          </div>
+
           {code.note && (
-            <p className="text-xs text-stasis/70 italic mt-1 px-2">
-              {code.note}
-            </p>
-          )}
-        </div>
-
-        <div className="space-y-1.5 pt-2 border-t border-border/50">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground/50">Source</span>
-            <span className="text-muted-foreground font-medium">{code.source}</span>
-          </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground/50">Found</span>
-            <span className="text-muted-foreground font-medium">{formatDate(code.foundAt)}</span>
-          </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground/50 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Expires
-            </span>
-            <span className={cn(
-              'font-medium',
-              isExpired ? 'text-stasis' : 'text-strand'
-            )}>
-              {isExpired ? 'Not available' : 'No expiration'}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex gap-2 pt-2">
-          <Button
-            type="button"
-            onClick={handleCopy}
-            variant="outline"
-            size="sm"
-            className={cn(
-              'flex-1 min-h-[44px] h-11 font-semibold transition-[transform,background-color,color,border-color,box-shadow] duration-200 ease-out text-sm btn-haptic',
-              copied
-                ? 'border-strand/40 text-strand bg-strand/10 copy-success'
-                : 'border-border text-muted-foreground hover:border-accent/50 hover:text-foreground hover:bg-accent/10'
-            )}
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </>
-            )}
-          </Button>
-
-          {(isActive || isD1) && (
-            <Button
-              type="button"
-              onClick={handleRedeemClick}
-              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
-            >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Copy & Redeem
-            </Button>
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{code.note}</p>
           )}
         </div>
       </div>
-    </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={(event) => void handleCopy(event.currentTarget)}
+          className="min-h-11 flex-1"
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          {copied ? 'Copied' : 'Copy code'}
+        </Button>
+        <a
+          href={REDEEM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={handleRedeemClick}
+          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-md bg-solar px-4 text-sm font-semibold text-solar-foreground transition-colors hover:bg-solar/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          Redeem
+          <ExternalLink className="h-4 w-4" aria-hidden="true" />
+        </a>
+        {code.isPinned && (
+          <button
+            type="button"
+            onClick={handleRemovePin}
+            className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+            aria-label={`Remove pin for ${code.code}`}
+          >
+            <PinOff className="h-4 w-4" aria-hidden="true" />
+          </button>
+        )}
+      </div>
+    </article>
   );
 }

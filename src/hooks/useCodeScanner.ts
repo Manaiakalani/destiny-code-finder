@@ -1,28 +1,20 @@
-import { useCallback, useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { RedemptionCode } from '@/types/code';
-import {
-  CATALOG_REVIEWED_AT,
-  KNOWN_ACTIVE_CODES,
-  EmblemCodeData,
-  normalizeCode,
-  verifyCodeFormat,
-} from '@/services/codeScraperService';
+import { getAllEmblemCodes, KNOWN_ACTIVE_CODES, EmblemCodeData } from '@/services/codeScraperService';
 
-const PINNED_CODES_KEY = 'destiny2-pinned-codes-v1';
+const STORAGE_KEY = 'destiny2-codes-cache';
+const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
 
-interface StoredPin {
-  code: string;
-  addedAt: string;
-}
-
-export interface AddCodeResult {
-  success: boolean;
-  message: string;
+interface CachedData {
+  codes: RedemptionCode[];
+  timestamp: number;
 }
 
 // Convert scraped code data to our RedemptionCode format
 function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): RedemptionCode {
-  let status: RedemptionCode['status'] = codeData.isActive ? 'redeemable' : 'restricted';
+  const now = Date.now();
+
+  let status: RedemptionCode['status'] = codeData.isActive ? 'active' : 'expired';
   if (codeData.isD1) status = 'd1';
 
   return {
@@ -30,12 +22,12 @@ function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): Rede
     code: codeData.code,
     status,
     source: codeData.source || 'Community',
-    foundAt: new Date(CATALOG_REVIEWED_AT),
-    description: codeData.description,
+    foundAt: new Date(now),
+    description: codeData.description || codeData.emblemName,
     note: codeData.note,
     emblemName: codeData.emblemName,
     emblemImage: codeData.iconUrl,
-    isNew: false,
+    isNew: true
   };
 }
 
@@ -44,90 +36,133 @@ const INITIAL_CODES: RedemptionCode[] = KNOWN_ACTIVE_CODES.map((code, index) =>
   codeDataToRedemptionCode(code, index)
 );
 
-function readPins(): StoredPin[] {
-  try {
-    const stored = JSON.parse(localStorage.getItem(PINNED_CODES_KEY) || '[]') as StoredPin[];
-    if (!Array.isArray(stored)) return [];
-    return stored.filter(pin =>
-      typeof pin?.code === 'string' &&
-      typeof pin?.addedAt === 'string' &&
-      verifyCodeFormat(pin.code)
-    );
-  } catch {
-    return [];
-  }
-}
-
-function writePins(pins: StoredPin[]): boolean {
-  try {
-    localStorage.setItem(PINNED_CODES_KEY, JSON.stringify(pins));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function mergePins(catalog: RedemptionCode[], pins: StoredPin[]): RedemptionCode[] {
-  const pinsByCode = new Map(pins.map(pin => [pin.code, pin]));
-  const catalogCodes = new Set(catalog.map(item => item.code));
-  const mergedCatalog = catalog.map(item =>
-    pinsByCode.has(item.code) ? { ...item, isPinned: true } : item
-  );
-  const localPins = pins
-    .filter(pin => !catalogCodes.has(pin.code))
-    .map((pin, index): RedemptionCode => ({
-      id: `pin-${index}-${pin.code}`,
-      code: pin.code,
-      status: 'pinned',
-      source: 'Pinned locally',
-      foundAt: new Date(pin.addedAt),
-      description: 'Unverified code',
-      isPinned: true,
-      isNew: false,
-    }));
-
-  return [...localPins, ...mergedCatalog];
-}
-
 export function useCodeScanner() {
-  const [codes, setCodes] = useState<RedemptionCode[]>(() =>
-    mergePins(INITIAL_CODES, readPins())
-  );
+  const [codes, setCodes] = useState<RedemptionCode[]>(INITIAL_CODES);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const addManualCode = useCallback((code: string): AddCodeResult => {
-    const normalizedCode = normalizeCode(code);
-    if (!verifyCodeFormat(normalizedCode)) {
-      return { success: false, message: 'Use Bungie format XXX-XXX-XXX with supported characters.' };
+  // Load cached data or fetch fresh data
+  const loadCodes = useCallback(async (forceRefresh = false) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+
+    try {
+      try {
+        const cached = localStorage.getItem(STORAGE_KEY);
+        if (cached && !forceRefresh) {
+          const cachedData: CachedData = JSON.parse(cached);
+          const age = Date.now() - cachedData.timestamp;
+
+          if (age < CACHE_DURATION) {
+            const restoredCodes = cachedData.codes.map(c => ({
+              ...c,
+              foundAt: new Date(c.foundAt)
+            }));
+            setCodes(restoredCodes);
+            setLastUpdateTime(new Date(cachedData.timestamp));
+            setIsLoading(false);
+            return;
+          }
+        }
+      } catch {
+        // localStorage unavailable (private browsing) — continue to fresh fetch
+      }
+
+      const freshCodes = await getAllEmblemCodes();
+      const redemptionCodes = freshCodes.map((code, index) =>
+        codeDataToRedemptionCode(code, index)
+      );
+
+      try {
+        const cacheData: CachedData = {
+          codes: redemptionCodes,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+      } catch {
+        // localStorage unavailable — skip caching
+      }
+
+      setCodes(redemptionCodes);
+      setLastUpdateTime(new Date());
+      setErrorMessage(null);
+    } catch (error) {
+      console.error('Error loading codes:', error);
+      setCodes(INITIAL_CODES);
+      setErrorMessage('We could not refresh the latest codes. Showing the last available set.');
+    } finally {
+      setIsLoading(false);
     }
-
-    const pins = readPins();
-    if (pins.some(pin => pin.code === normalizedCode)) {
-      return { success: false, message: 'This code is already pinned.' };
-    }
-
-    const nextPins = [{ code: normalizedCode, addedAt: new Date().toISOString() }, ...pins];
-    if (!writePins(nextPins)) {
-      return { success: false, message: 'Local storage is unavailable, so the code could not be pinned.' };
-    }
-
-    setCodes(mergePins(INITIAL_CODES, nextPins));
-    return { success: true, message: 'Code pinned on this device.' };
   }, []);
 
-  const removePinnedCode = useCallback((code: string) => {
-    const normalizedCode = normalizeCode(code);
-    const nextPins = readPins().filter(pin => pin.code !== normalizedCode);
-    if (!writePins(nextPins)) {
-      return { success: false, message: 'Local storage is unavailable, so the pin could not be removed.' };
+  useEffect(() => {
+    // Initial data load on mount — setState within async callback is intentional
+    void loadCodes(); // eslint-disable-line react-hooks/set-state-in-effect
+  }, [loadCodes]);
+
+  const refreshCodes = useCallback(async () => {
+    try {
+      try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+      await loadCodes(true);
+    } catch (error) {
+      console.error('Error refreshing codes:', error);
     }
-    setCodes(mergePins(INITIAL_CODES, nextPins));
-    return { success: true, message: 'Pin removed.' };
-  }, []);
+  }, [loadCodes]);
+
+  const addManualCode = useCallback((code: string) => {
+    const normalizedCode = code.toUpperCase().trim();
+
+    const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/;
+    if (!bungieCharset.test(normalizedCode)) {
+      return { success: false, message: 'Invalid code format' };
+    }
+
+    const existingCode = codes.find(c => c.code === normalizedCode);
+    if (existingCode) {
+      return { success: false, message: 'Code already exists' };
+    }
+
+    setCodes(prevCodes => {
+      const existingCode = prevCodes.find(c => c.code === normalizedCode);
+      if (existingCode) {
+        return prevCodes;
+      }
+
+      const newCode: RedemptionCode = {
+        id: `manual-${Date.now()}`,
+        code: normalizedCode,
+        status: 'unknown',
+        source: 'User Submitted',
+        foundAt: new Date(),
+        description: 'Manually added code',
+        isNew: true,
+      };
+
+      const updatedCodes = [newCode, ...prevCodes.map(c => ({ ...c, isNew: false }))];
+
+      try {
+        const cacheData: CachedData = {
+          codes: updatedCodes,
+          timestamp: Date.now()
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
+      } catch {
+        // localStorage unavailable — skip caching
+      }
+
+      return updatedCodes;
+    });
+
+    return { success: true, message: 'Code added' };
+  }, [codes]);
 
   return {
     codes,
-    catalogReviewedAt: new Date(CATALOG_REVIEWED_AT),
+    isLoading,
+    errorMessage,
+    lastUpdateTime,
+    refreshCodes,
     addManualCode,
-    removePinnedCode,
   };
 }

@@ -1,43 +1,83 @@
-import { Moon, Sun } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Moon, Sun, Monitor } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useTheme } from '@/contexts/theme';
 
-const LABELS = {
-  light: 'Light',
-  dark: 'Dark',
-  oled: 'OLED',
-} as const;
-
-const NEXT_LABELS = {
-  light: 'Dark',
-  dark: 'OLED',
-  oled: 'Light',
-} as const;
+type Theme = 'light' | 'dark' | 'oled';
 
 export function ThemeToggle() {
-  const { theme, cycleTheme } = useTheme();
-  const label = LABELS[theme];
+  const [theme, setTheme] = useState<Theme>(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        return (localStorage.getItem('theme') as Theme) || 'dark';
+      }
+    } catch {
+      // localStorage unavailable (private browsing)
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    
+    // Remove all theme classes
+    root.classList.remove('light-mode', 'oled-mode');
+    
+    // Apply the appropriate class
+    if (theme === 'light') {
+      root.classList.add('light-mode');
+    } else if (theme === 'oled') {
+      root.classList.add('oled-mode');
+    }
+    // 'dark' is the default, no class needed
+    
+    try { localStorage.setItem('theme', theme); } catch { /* private browsing */ }
+  }, [theme]);
+
+  const cycleTheme = () => {
+    setTheme(current => {
+      if (current === 'dark') return 'oled';
+      if (current === 'oled') return 'light';
+      return 'dark';
+    });
+  };
+
+  const getIcon = () => {
+    switch (theme) {
+      case 'light':
+        return <Sun className="w-4 h-4" />;
+      case 'oled':
+        return <Moon className="w-4 h-4 fill-current" />;
+      default:
+        return <Moon className="w-4 h-4" />;
+    }
+  };
+
+  const getLabel = () => {
+    switch (theme) {
+      case 'light':
+        return 'Light';
+      case 'oled':
+        return 'OLED';
+      default:
+        return 'Dark';
+    }
+  };
 
   return (
     <Button
-      type="button"
       variant="ghost"
       size="sm"
       onClick={cycleTheme}
       className={cn(
-        'min-h-11 min-w-11 gap-2 px-3 text-sm text-muted-foreground hover:text-foreground',
-        theme === 'oled' && 'text-accent',
+        "gap-1.5 h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors btn-haptic",
+        theme === 'oled' && "text-accent",
+        theme === 'light' && "text-solar"
       )}
-      aria-label={`${label} theme active. Switch to ${NEXT_LABELS[theme]} theme.`}
-      title={`${label} theme`}
+      title={`Current: ${getLabel()} mode. Click to cycle.`}
     >
-      {theme === 'light' ? (
-        <Sun className="h-4 w-4" aria-hidden="true" />
-      ) : (
-        <Moon className={cn('h-4 w-4', theme === 'oled' && 'fill-current')} aria-hidden="true" />
-      )}
-      <span className="hidden sm:inline">{label}</span>
+      {getIcon()}
+      <span className="hidden sm:inline font-medium">{getLabel()}</span>
     </Button>
   );
 }

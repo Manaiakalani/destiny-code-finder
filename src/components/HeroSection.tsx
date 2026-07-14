@@ -1,56 +1,108 @@
-import { ShieldCheck } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ExternalLink, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useMemo } from 'react';
 
 interface HeroSectionProps {
-  counts: {
-    redeemable: number;
-    d1: number;
-    restricted: number;
-  };
-  catalogReviewedAt: Date;
+  lastUpdate: Date | null;
+  onRefresh: () => void;
+  isLoading: boolean;
 }
 
-export function HeroSection({ counts, catalogReviewedAt }: HeroSectionProps) {
-  const reviewedDate = catalogReviewedAt.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'America/Los_Angeles',
-  });
+function generateStars(count: number) {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    left: `${Math.random() * 100}%`,
+    top: `${Math.random() * 100}%`,
+    size: Math.random() * 2 + 1,
+    duration: Math.random() * 3 + 2,
+    delay: Math.random() * 5,
+  }));
+}
+
+export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
+  const stars = useMemo(() => generateStars(50), []);
+  const shootingStars = useMemo(() => [
+    { id: 1, className: 'shooting-star-1' },
+    { id: 2, className: 'shooting-star-2' },
+    { id: 3, className: 'shooting-star-3' },
+    { id: 4, className: 'shooting-star-4' },
+    { id: 5, className: 'shooting-star-5' },
+  ], []);
 
   return (
-    <section className="relative overflow-hidden border-b border-border">
-      <div className="catalog-halo" aria-hidden="true" />
-      <div className="container relative mx-auto max-w-6xl px-4 py-9 sm:py-11">
-        <div className="max-w-3xl">
-          <h1 className="text-balance font-heading text-3xl font-bold tracking-[0.04em] text-foreground sm:text-4xl">
-            Destiny redemption codes
-          </h1>
-          <p className="mt-3 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground">
-            A curated catalogue of universal rewards, Destiny 1 codes, and restricted offers.
-            Copy a code, then confirm it on Bungie.net.
+    <section className="relative py-16 md:py-20 overflow-hidden">
+      <div className="stars-container">
+        {stars.map((star) => (
+          <div
+            key={star.id}
+            className="star"
+            style={{
+              left: star.left,
+              top: star.top,
+              width: `${star.size}px`,
+              height: `${star.size}px`,
+              '--duration': `${star.duration}s`,
+              '--delay': `${star.delay}s`,
+            } as React.CSSProperties}
+          />
+        ))}
+        {shootingStars.map((star) => (
+          <div
+            key={`shooting-${star.id}`}
+            className={`shooting-star ${star.className}`}
+          />
+        ))}
+      </div>
+
+      <div className="traveler-bg" aria-hidden="true" />
+      <div className="absolute inset-0 aurora-bg" />
+      <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/5 rounded-full blur-3xl" />
+
+      <div className="relative container mx-auto px-4 text-center">
+        <div className="space-y-5 mb-10">
+          <p className="text-xs font-semibold text-accent/80 uppercase tracking-[0.25em]">
+            Guardian Archives
           </p>
-          <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-            <span>
-              <strong className="font-semibold text-foreground">{counts.redeemable}</strong> redeemable
+          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground title-shadow">
+            Destiny 2{' '}
+            <span className="bg-gradient-to-r from-solar via-solar-accent to-solar bg-clip-text text-transparent">
+              Codes
             </span>
-            <span aria-hidden="true">/</span>
-            <span>
-              <strong className="font-semibold text-foreground">{counts.d1}</strong> Destiny 1
-            </span>
-            <span aria-hidden="true">/</span>
-            <span>
-              <strong className="font-semibold text-foreground">{counts.restricted}</strong> restricted
-            </span>
-          </div>
-          <Link
-            to="/about"
-            className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md text-sm font-medium text-accent underline-offset-4 hover:underline"
-          >
-            <ShieldCheck className="h-4 w-4" aria-hidden="true" />
-            Catalogue reviewed {reviewedDate} - see verification method
-          </Link>
+          </h1>
+          <p className="text-sm text-muted-foreground/80 max-w-xl mx-auto">
+            Real-time redemption codes from Blueberries.gg, Destiny Emblem Collector, Reddit, and the community.
+          </p>
         </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a
+            href="https://www.bungie.net/7/en/Codes/Redeem"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-solar min-h-[44px] min-w-[200px] font-heading font-semibold tracking-wide text-white btn-haptic gaming-glow inline-flex items-center justify-center h-11 rounded-md px-8"
+          >
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Redeem on Bungie.net
+          </a>
+
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={onRefresh}
+            disabled={isLoading}
+            className="min-h-[44px] min-w-[140px] border-accent/25 text-accent hover:bg-accent/10 hover:border-accent/40 font-heading btn-haptic"
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
+        </div>
+
+        {lastUpdate && (
+          <p className="mt-6 text-xs text-muted-foreground/50" role="status" aria-live="polite">
+            Last updated: {lastUpdate.toLocaleTimeString()}
+          </p>
+        )}
       </div>
     </section>
   );

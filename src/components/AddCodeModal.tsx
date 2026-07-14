@@ -8,7 +8,7 @@ import { RedemptionCode } from '@/types/code';
 interface AddCodeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (code: RedemptionCode) => void;
+  onSubmit: (code: RedemptionCode) => { success: boolean; message: string } | void;
 }
 
 export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
@@ -50,7 +50,11 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
       isNew: true
     };
 
-    onSubmit(redemptionCode);
+    const result = onSubmit(redemptionCode);
+    if (result && !result.success) {
+      setValidationError(result.message);
+      return;
+    }
     toast.success('Code added and pinned to the top');
     setCode('');
     setValidationError(null);
@@ -65,7 +69,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
     }
   };
 
-  const isSubmitDisabled = code.trim().length < 11 || code.trim().length > 17;
+  const isSubmitDisabled = code.trim().length !== 11;
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>
@@ -89,7 +93,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
               onChange={handleCodeChange}
               placeholder="XXX-XXX-XXX"
               className="min-h-[44px] font-heading text-lg tracking-widest text-center bg-secondary/50 border-border/50"
-              maxLength={17}
+              maxLength={11}
               spellCheck={false}
               autoComplete="off"
               aria-invalid={Boolean(validationError)}
@@ -101,7 +105,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
               </p>
             ) : (
               <p id="code-format-help" className="text-xs text-muted-foreground text-center">
-                Format: XXX-XXX-XXX or XXX-XXX-XXX-XXXXX
+                Format: XXX-XXX-XXX (Bungie charset)
               </p>
             )}
           </div>

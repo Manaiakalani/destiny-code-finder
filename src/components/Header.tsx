@@ -7,7 +7,7 @@ import { RedemptionCode } from '@/types/code';
 import { Link, useLocation } from 'react-router-dom';
 
 interface HeaderProps {
-  onAddCode: (code: string) => void;
+  onAddCode: (code: string) => { success: boolean; message: string };
   activeCount?: number;
   totalCount?: number;
 }
@@ -31,8 +31,11 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
   }, [isMobileMenuOpen]);
 
   const handleAddCode = (code: RedemptionCode) => {
-    onAddCode(code.code);
-    setIsModalOpen(false);
+    const result = onAddCode(code.code);
+    if (result.success) {
+      setIsModalOpen(false);
+    }
+    return result;
   };
 
   return (

@@ -71,7 +71,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
             </span>
           </h1>
           <p className="text-sm text-muted-foreground/80 max-w-xl mx-auto">
-            Real-time redemption codes from Blueberries.gg, Destiny Emblem Collector, Reddit, and the community.
+            Curated emblem codes verified against Destiny Emblem Collector, Blueberries.gg, and the community.
           </p>
         </div>
 

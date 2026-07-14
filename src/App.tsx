@@ -1,19 +1,22 @@
 import { Toaster } from "sonner";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import { MouseParticles } from "@/components/MouseParticles";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
 import NotFound from "./pages/NotFound";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { useTheme } from "@/contexts/theme";
 
-const App = () => (
+const AppRoutes = () => {
+  const { sonnerTheme } = useTheme();
+
+  return (
   <>
-    <MouseParticles />
     <Toaster
-      theme="dark"
+      theme={sonnerTheme}
       position="bottom-right"
       toastOptions={{
-        className: "glass-card border-border/50",
+        className: "border-border bg-popover text-popover-foreground",
       }}
     />
     <HashRouter>
@@ -25,6 +28,13 @@ const App = () => (
       </Routes>
     </HashRouter>
   </>
+  );
+};
+
+const App = () => (
+  <ThemeProvider>
+    <AppRoutes />
+  </ThemeProvider>
 );
 
 export default App;

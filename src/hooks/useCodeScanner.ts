@@ -95,11 +95,14 @@ export function useCodeScanner() {
       setLastUpdateTime(new Date());
       setErrorMessage(null);
     } catch (error) {
+      if (currentRequestId !== requestIdRef.current) return;
       console.error('Error loading codes:', error);
       setCodes(INITIAL_CODES);
       setErrorMessage('We could not refresh the latest codes. Showing the last available set.');
     } finally {
-      setIsLoading(false);
+      if (currentRequestId === requestIdRef.current) {
+        setIsLoading(false);
+      }
     }
   }, []);
 

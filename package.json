@@ -1,7 +1,7 @@
 {
   "name": "destiny-code-vault",
   "private": true,
-  "version": "3.0.1",
+  "version": "3.0.0",
   "description": "Destiny 2 emblem code finder and tracker",
   "type": "module",
   "scripts": {
@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
-    "sync:emblems": "node scripts/sync-emblem-data.mjs"
+    "scrape:emblems": "node scripts/scrape-emblems.js",
+    "download:emblems": "node scripts/download-emblems.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

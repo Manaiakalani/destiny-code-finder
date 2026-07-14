@@ -6,7 +6,7 @@ import {
   EmblemCodeData,
   normalizeCode,
   verifyCodeFormat,
-} from '@/services/codeCatalogService';
+} from '@/services/codeScraperService';
 
 const PINNED_CODES_KEY = 'destiny2-pinned-codes-v1';
 
@@ -20,7 +20,7 @@ export interface AddCodeResult {
   message: string;
 }
 
-// Convert curated catalogue data to the UI model.
+// Convert scraped code data to our RedemptionCode format
 function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): RedemptionCode {
   let status: RedemptionCode['status'] = codeData.isActive ? 'redeemable' : 'restricted';
   if (codeData.isD1) status = 'd1';
@@ -39,7 +39,7 @@ function codeDataToRedemptionCode(codeData: EmblemCodeData, index: number): Rede
   };
 }
 
-// Initialize the bundled catalogue immediately.
+// Initialize with known codes immediately (don't wait for API)
 const INITIAL_CODES: RedemptionCode[] = KNOWN_ACTIVE_CODES.map((code, index) =>
   codeDataToRedemptionCode(code, index)
 );

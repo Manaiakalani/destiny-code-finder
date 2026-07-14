@@ -115,7 +115,7 @@ export default function About() {
             <h2 className="text-lg font-semibold text-foreground">Know before redeeming</h2>
             <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
               <li>Format validation does not prove that Bungie will accept a code.</li>
-              <li>A Redeemable label is not a guarantee; Bungie can change availability.</li>
+              <li>“No known expiry” is not a guarantee; Bungie can change availability.</li>
               <li>Locally pinned codes are marked unverified until they match a reviewed catalogue entry.</li>
               <li>Final availability and account eligibility are always determined on Bungie.net.</li>
             </ul>

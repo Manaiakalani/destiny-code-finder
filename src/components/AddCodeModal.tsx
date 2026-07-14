@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { type AddCodeResult } from '@/hooks/useCodeScanner';
-import { verifyCodeFormat } from '@/services/codeCatalogService';
+import { verifyCodeFormat } from '@/services/codeScraperService';
 
 interface AddCodeModalProps {
   isOpen: boolean;

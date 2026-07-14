@@ -1,5 +1,5 @@
-// Curated code catalogue
-// Static entries reviewed against Bungie metadata and independent community references.
+// Code Scraper Service
+// Aggregates emblem codes from multiple sources (Reddit, Blueberries.gg, known codes)
 
 export interface EmblemCodeData {
   code: string;
@@ -18,23 +18,18 @@ export interface EmblemCodeData {
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // DESTINY 1 EMBLEM CODES (11 verified)
+  // D2 UNIVERSAL EMBLEM CODES (60 verified)
   // ═══════════════════════════════════════════
-  { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true, isD1: true },
-  { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'A7L-FYC-44X', emblemName: 'Flames of Forgotten Truth', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'JD7-4CM-HJG', emblemName: 'Illusion of Light', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'JDT-NLC-JKM', emblemName: 'Ab Aeterno', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'JNX-DMH-XLA', emblemName: 'Field of Light', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'N3L-XN6-PXF', emblemName: 'The Reflective Proof', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'X9F-GMA-H6D', emblemName: 'The Unimagined Plane', source: 'Promotional', isActive: true, isD1: true },
-  { code: '7F9-767-F74', emblemName: 'Sign of the Finite', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'X4C-FGX-MX3', emblemName: 'Note of Conquest', source: 'Promotional', isActive: true, isD1: true },
-  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true, isD1: true },
-
-  // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (49 verified)
-  // ═══════════════════════════════════════════
+  { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true },
+  { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true },
+  { code: 'A7L-FYC-44X', emblemName: 'Flames of Forgotten Truth', source: 'Promotional', isActive: true },
+  { code: 'JD7-4CM-HJG', emblemName: 'Illusion of Light', source: 'Promotional', isActive: true },
+  { code: 'JDT-NLC-JKM', emblemName: 'Ab Aeterno', source: 'Promotional', isActive: true },
+  { code: 'JNX-DMH-XLA', emblemName: 'Field of Light', source: 'Promotional', isActive: true },
+  { code: 'N3L-XN6-PXF', emblemName: 'The Reflective Proof', source: 'Promotional', isActive: true },
+  { code: 'X9F-GMA-H6D', emblemName: 'The Unimagined Plane', source: 'Promotional', isActive: true },
+  { code: '7F9-767-F74', emblemName: 'Sign of the Finite', source: 'Promotional', isActive: true },
+  { code: 'X4C-FGX-MX3', emblemName: 'Note of Conquest', source: 'Promotional', isActive: true },
   { code: 'F6K-D44-JH4', emblemName: 'Gloriabundus', source: 'Bungie Social Media', isActive: true, description: 'Released July 7, 2026' },
   { code: 'JA9-PRC-XKX', emblemName: 'Take the Mantle', source: 'Pre-Release Event', isActive: true, description: 'Released March 26, 2026' },
   { code: 'YRC-C3D-YNC', emblemName: 'A Classy Order', source: 'TWAB Reward', isActive: true },
@@ -84,6 +79,7 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: '7LD-PLJ-FN3', emblemName: 'Lofty Wail', source: 'Promotional', isActive: true },
   { code: 'J64-HYC-HTD', emblemName: 'Red Shift Returning', source: 'Promotional', isActive: true },
   { code: '9NG-KDD-PNG', emblemName: 'Tethered Storm', source: 'Promotional', isActive: true },
+  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true },
 
   // ═══════════════════════════════════════════
   // D2 NON-EMBLEM REWARD CODES (10 verified)

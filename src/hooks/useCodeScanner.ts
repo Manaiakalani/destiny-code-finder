@@ -117,29 +117,41 @@ function readManualCodes(): RedemptionCode[] {
     const raw = storage.getItem(MANUAL_STORAGE_KEY);
     return raw ? normalizeManualCodes(JSON.parse(raw)) : [];
   } catch {
-    try {
-      storage.removeItem(MANUAL_STORAGE_KEY);
-    } catch {
-      // noop
-    }
+    quarantineCorruptPayload(storage, MANUAL_STORAGE_KEY);
     return [];
   }
 }
 
+/**
+ * Persists user-submitted codes by MERGING with whatever is already stored,
+ * never by replacing it. Callers hand in a snapshot of their own state, and a
+ * snapshot can be stale — a plain replace would let one caller silently delete
+ * a code another path had just rescued. Nothing in the UI deletes a manual
+ * code, so union is always the correct resolution.
+ *
+ * Returns false only when the merged set could not be persisted.
+ */
 function writeManualCodes(codes: RedemptionCode[]): boolean {
   const storage = getStorage();
   if (!storage) {
     return false;
   }
 
-  const manual = codes.filter(isManualCode);
+  const incoming = codes.filter(isManualCode);
+  if (incoming.length === 0) {
+    return true;
+  }
+
+  const existing = readManualCodes();
+  const known = new Set(existing.map(code => code.code));
+  const merged = [...existing, ...incoming.filter(code => !known.has(code.code))];
+
+  if (merged.length === existing.length) {
+    return true;
+  }
 
   try {
-    if (manual.length === 0) {
-      storage.removeItem(MANUAL_STORAGE_KEY);
-    } else {
-      storage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(manual));
-    }
+    storage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(merged));
     return true;
   } catch {
     // Quota exceeded or storage blocked.
@@ -157,20 +169,24 @@ function writeManualCodes(codes: RedemptionCode[]): boolean {
  * that point it is the only surviving copy.
  */
 function rescueManualCodes(value: unknown): boolean {
-  const rescued = normalizeManualCodes((value as Partial<CachedData> | null)?.codes);
-  if (rescued.length === 0) {
-    return true;
+  return writeManualCodes(normalizeManualCodes((value as Partial<CachedData> | null)?.codes));
+}
+
+/**
+ * Moves a payload we cannot parse out of the way instead of deleting it. It
+ * may still contain a user code behind the corruption, and that is the one
+ * thing here we cannot regenerate.
+ */
+function quarantineCorruptPayload(storage: Storage, storageKey: string) {
+  try {
+    const raw = storage.getItem(storageKey);
+    if (raw !== null) {
+      storage.setItem(`${storageKey}-corrupt`, raw);
+    }
+    storage.removeItem(storageKey);
+  } catch {
+    // Could not set it aside — leave the original rather than lose it.
   }
-
-  const existing = readManualCodes();
-  const known = new Set(existing.map(code => code.code));
-  const missing = rescued.filter(code => !known.has(code.code));
-
-  if (missing.length === 0) {
-    return true;
-  }
-
-  return writeManualCodes([...existing, ...missing]);
 }
 
 function purgeLegacyCache() {
@@ -189,12 +205,29 @@ function purgeLegacyCache() {
       storage.removeItem(LEGACY_STORAGE_KEY);
     }
   } catch {
-    // Unparseable: nothing to rescue, so dropping it loses nothing.
-    try {
-      storage.removeItem(LEGACY_STORAGE_KEY);
-    } catch {
-      // noop
+    quarantineCorruptPayload(storage, LEGACY_STORAGE_KEY);
+  }
+}
+
+/**
+ * Lifts user codes out of a cache payload written by an older build that still
+ * stored them inline. Must run before any overwrite of that key — including on
+ * the force-refresh path, which never reads the cache at all.
+ *
+ * Returns false only when inline codes were found and could not be persisted,
+ * meaning the existing payload is still their only copy.
+ */
+function migrateInlineManualCodes(storage: Storage, storageKey: string): boolean {
+  try {
+    const raw = storage.getItem(storageKey);
+    if (!raw) {
+      return true;
     }
+
+    return rescueManualCodes(JSON.parse(raw));
+  } catch {
+    // Unparseable, so there is nothing to lift out of it.
+    return true;
   }
 }
 
@@ -262,11 +295,7 @@ function readCachedData(): CachedData | null {
         timestamp: parsedCache.timestamp,
       };
     } catch {
-      try {
-        storage.removeItem(storageKey);
-      } catch {
-        // noop
-      }
+      quarantineCorruptPayload(storage, storageKey);
     }
   }
 
@@ -283,6 +312,15 @@ function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()
     return;
   }
 
+  purgeLegacyCache();
+
+  // A force refresh never reads the cache, so this is the only chance to lift
+  // user codes out of a payload written by an older build before we clobber it.
+  if (!migrateInlineManualCodes(storage, STORAGE_KEY)) {
+    // Those codes exist nowhere else yet — keep the payload holding them.
+    return;
+  }
+
   const cacheData: CachedData = {
     schemaVersion: CACHE_SCHEMA_VERSION,
     codes: codes.filter(code => !isManualCode(code)),
@@ -294,8 +332,6 @@ function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()
   } catch {
     // localStorage unavailable or quota exceeded — skip caching
   }
-
-  purgeLegacyCache();
 }
 
 // Initialize with known codes immediately (don't wait for API)

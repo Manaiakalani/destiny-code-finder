@@ -115,21 +115,38 @@ interface ManualCodesRead {
    * not be overwritten.
    */
   readable: boolean;
+  /** False when the browser denies localStorage entirely. */
+  available: boolean;
 }
 
 function readManualCodes(): ManualCodesRead {
   const storage = getStorage();
   if (!storage) {
-    return { codes: [], readable: true };
+    return { codes: [], readable: true, available: false };
   }
 
   try {
     const raw = storage.getItem(MANUAL_STORAGE_KEY);
-    return { codes: raw ? normalizeManualCodes(JSON.parse(raw)) : [], readable: true };
+    return {
+      codes: raw ? normalizeManualCodes(JSON.parse(raw)) : [],
+      readable: true,
+      available: true,
+    };
   } catch {
-    return { codes: [], readable: quarantineCorruptPayload(storage, MANUAL_STORAGE_KEY) };
+    return {
+      codes: [],
+      readable: quarantineCorruptPayload(storage, MANUAL_STORAGE_KEY),
+      available: true,
+    };
   }
 }
+
+/**
+ * 'saved' also covers "there was nothing new to write" — in both cases the
+ * caller's codes are accounted for in storage and any source payload holding
+ * them is safe to discard.
+ */
+type ManualWriteResult = 'saved' | 'unavailable' | 'failed';
 
 /**
  * Persists user-submitted codes by MERGING with whatever is already stored,
@@ -138,38 +155,38 @@ function readManualCodes(): ManualCodesRead {
  * a code another path had just rescued. Nothing in the UI deletes a manual
  * code, so union is always the correct resolution.
  *
- * Returns false only when the merged set could not be persisted.
+ * Returns 'failed' only when the merged set could not be persisted.
  */
-function writeManualCodes(codes: RedemptionCode[]): boolean {
+function writeManualCodes(codes: RedemptionCode[]): ManualWriteResult {
   const storage = getStorage();
   if (!storage) {
-    return false;
+    return 'unavailable';
   }
 
   const incoming = codes.filter(isManualCode);
   if (incoming.length === 0) {
-    return true;
+    return 'saved';
   }
 
   const existing = readManualCodes();
   if (!existing.readable) {
     // Overwriting now would destroy a payload we could not preserve.
-    return false;
+    return 'failed';
   }
 
   const known = new Set(existing.codes.map(code => code.code));
   const merged = [...existing.codes, ...incoming.filter(code => !known.has(code.code))];
 
   if (merged.length === existing.codes.length) {
-    return true;
+    return 'saved';
   }
 
   try {
     storage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(merged));
-    return true;
+    return 'saved';
   } catch {
     // Quota exceeded or storage blocked.
-    return false;
+    return 'failed';
   }
 }
 
@@ -183,13 +200,17 @@ function writeManualCodes(codes: RedemptionCode[]): boolean {
  * that point it is the only surviving copy.
  */
 function rescueManualCodes(value: unknown): boolean {
-  return writeManualCodes(normalizeManualCodes((value as Partial<CachedData> | null)?.codes));
+  return writeManualCodes(normalizeManualCodes((value as Partial<CachedData> | null)?.codes)) === 'saved';
 }
 
 /**
  * Moves a payload we cannot parse out of the way instead of deleting it. It
  * may still contain a user code behind the corruption, and that is the one
  * thing here we cannot regenerate.
+ *
+ * Quarantine slots are never reused: a second corruption on the same key would
+ * otherwise overwrite the first one's bytes, which is the exact loss this is
+ * meant to prevent.
  *
  * Returns false when the original could not be set aside, in which case it is
  * left untouched and callers must not overwrite it.
@@ -198,7 +219,14 @@ function quarantineCorruptPayload(storage: Storage, storageKey: string): boolean
   try {
     const raw = storage.getItem(storageKey);
     if (raw !== null) {
-      storage.setItem(`${storageKey}-corrupt`, raw);
+      const preferredSlot = `${storageKey}-corrupt`;
+      const occupant = storage.getItem(preferredSlot);
+      const slot =
+        occupant === null || occupant === raw
+          ? preferredSlot
+          : `${preferredSlot}-${Date.now()}`;
+
+      storage.setItem(slot, raw);
     }
     storage.removeItem(storageKey);
     return true;
@@ -251,10 +279,20 @@ function migrateInlineManualCodes(storage: Storage, storageKey: string): boolean
   }
 }
 
-function readCachedData(): CachedData | null {
+interface CacheReadResult {
+  data: CachedData | null;
+  /**
+   * Manual codes found inline in a cache payload that could not be moved to
+   * the dedicated key. They are still safe on disk, but nothing else can see
+   * them, so they are handed back for display.
+   */
+  unpersistedManualCodes: RedemptionCode[];
+}
+
+function readCachedData(): CacheReadResult {
   const storage = getStorage();
   if (!storage) {
-    return null;
+    return { data: null, unpersistedManualCodes: [] };
   }
 
   // Migrate first. Once a valid v2 cache exists the loop below returns before
@@ -262,6 +300,7 @@ function readCachedData(): CachedData | null {
   // failed would otherwise be orphaned with no further retry.
   purgeLegacyCache();
 
+  const unpersistedManualCodes: RedemptionCode[] = [];
   const storageKeys = [STORAGE_KEY, LEGACY_STORAGE_KEY];
   for (const storageKey of storageKeys) {
     try {
@@ -278,6 +317,8 @@ function readCachedData(): CachedData | null {
       ) {
         if (rescueManualCodes(parsedCache)) {
           storage.removeItem(storageKey);
+        } else {
+          unpersistedManualCodes.push(...normalizeManualCodes(parsedCache?.codes));
         }
         continue;
       }
@@ -302,6 +343,8 @@ function readCachedData(): CachedData | null {
           } catch {
             // Cache stays mixed; it is filtered on every read regardless.
           }
+        } else {
+          unpersistedManualCodes.push(...normalizedCodes.filter(isManualCode));
         }
       }
 
@@ -310,26 +353,32 @@ function readCachedData(): CachedData | null {
       }
 
       return {
-        schemaVersion: CACHE_SCHEMA_VERSION,
-        codes: catalogueCodes,
-        timestamp: parsedCache.timestamp,
+        data: {
+          schemaVersion: CACHE_SCHEMA_VERSION,
+          codes: catalogueCodes,
+          timestamp: parsedCache.timestamp,
+        },
+        unpersistedManualCodes,
       };
     } catch {
       quarantineCorruptPayload(storage, storageKey);
     }
   }
 
-  return null;
+  return { data: null, unpersistedManualCodes };
 }
 
-function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()) {
+function writeCachedData(
+  codes: RedemptionCode[],
+  timestamp: number = Date.now()
+): ManualWriteResult {
   // Manual codes first, and always: they are the only unrecoverable data here,
   // whereas the catalogue cache can be rebuilt from the bundled catalogue.
-  writeManualCodes(codes);
+  const manualResult = writeManualCodes(codes);
 
   const storage = getStorage();
   if (!storage) {
-    return;
+    return manualResult;
   }
 
   purgeLegacyCache();
@@ -338,7 +387,7 @@ function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()
   // user codes out of a payload written by an older build before we clobber it.
   if (!migrateInlineManualCodes(storage, STORAGE_KEY)) {
     // Those codes exist nowhere else yet — keep the payload holding them.
-    return;
+    return manualResult;
   }
 
   const cacheData: CachedData = {
@@ -350,8 +399,15 @@ function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()
   try {
     storage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
   } catch {
-    // localStorage unavailable or quota exceeded — skip caching
+    // localStorage unavailable or quota exceeded — skip caching. Retry the
+    // manual write now that the catalogue cache may have freed space; user
+    // codes are worth a second attempt, the catalogue is not.
+    if (manualResult === 'failed') {
+      return writeManualCodes(codes);
+    }
   }
+
+  return manualResult;
 }
 
 // Initialize with known codes immediately (don't wait for API)
@@ -365,26 +421,50 @@ export function useCodeScanner() {
   const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const requestIdRef = useRef(0);
-  // Fallback for browsers that block localStorage, where the persisted copy
-  // silently no-ops and the only surviving record is this session's state.
-  const manualCodesRef = useRef<RedemptionCode[]>([]);
+  /**
+   * Manual codes this session knows about that are NOT confirmed to be in
+   * storage — either the browser blocks localStorage, or a write failed. They
+   * are the only surviving copy, so they are unioned into every read.
+   *
+   * Deliberately NOT a mirror of storage: if the user clears site data, those
+   * codes are meant to be gone, and a mirror would resurrect them on the next
+   * refresh.
+   */
+  const unsavedManualCodesRef = useRef<RedemptionCode[]>([]);
+  // Lets the cross-tab handler read current codes without re-subscribing on
+  // every render, and without doing side effects inside a state updater.
+  const codesRef = useRef(codes);
+  useEffect(() => {
+    codesRef.current = codes;
+  }, [codes]);
 
-  const collectManualCodes = useCallback((catalogueCodes: Set<string>) => {
-    const seen = new Set<string>();
-    const manual: RedemptionCode[] = [];
+  const collectManualCodes = useCallback(
+    (catalogueCodes: Set<string>, extraCodes: RedemptionCode[] = []) => {
+      const stored = readManualCodes();
+      const seen = new Set<string>();
+      const manual: RedemptionCode[] = [];
 
-    for (const code of [...manualCodesRef.current, ...readManualCodes().codes]) {
-      if (catalogueCodes.has(code.code) || seen.has(code.code)) {
-        continue;
+      for (const code of [...unsavedManualCodesRef.current, ...extraCodes, ...stored.codes]) {
+        if (catalogueCodes.has(code.code) || seen.has(code.code)) {
+          continue;
+        }
+
+        seen.add(code.code);
+        manual.push(code);
       }
 
-      seen.add(code.code);
-      manual.push(code);
-    }
+      // Anything now confirmed in storage no longer needs the in-memory copy.
+      if (stored.available && stored.readable) {
+        const persisted = new Set(stored.codes.map(code => code.code));
+        unsavedManualCodesRef.current = unsavedManualCodesRef.current.filter(
+          code => !persisted.has(code.code)
+        );
+      }
 
-    manualCodesRef.current = manual;
-    return manual;
-  }, []);
+      return manual;
+    },
+    []
+  );
 
   const loadCodes = useCallback(async (forceRefresh = false) => {
     const currentRequestId = ++requestIdRef.current;
@@ -393,12 +473,12 @@ export function useCodeScanner() {
 
     try {
       if (!forceRefresh) {
-        const cachedData = readCachedData();
+        const { data: cachedData, unpersistedManualCodes } = readCachedData();
         if (cachedData) {
           const age = Date.now() - cachedData.timestamp;
           if (age < CACHE_DURATION) {
             const cachedCodes = new Set(cachedData.codes.map(c => c.code));
-            const restoredManualCodes = collectManualCodes(cachedCodes);
+            const restoredManualCodes = collectManualCodes(cachedCodes, unpersistedManualCodes);
 
             if (currentRequestId !== requestIdRef.current) return;
             setCodes([...restoredManualCodes, ...cachedData.codes]);
@@ -463,38 +543,76 @@ export function useCodeScanner() {
     const normalizedCode = normalizeCodeInput(code);
 
     if (!verifyCodeFormat(normalizedCode)) {
-      return { success: false, message: 'Invalid code format' };
+      return { success: false, message: 'Invalid code format', persisted: false };
     }
 
-    const existingCode = codes.find(c => c.code === normalizedCode);
-    if (existingCode) {
-      return { success: false, message: 'Code already exists' };
+    if (codes.some(c => c.code === normalizedCode)) {
+      return { success: false, message: 'Code already exists', persisted: false };
+    }
+
+    const newCode: RedemptionCode = {
+      id: `${MANUAL_ID_PREFIX}${Date.now()}`,
+      code: normalizedCode,
+      status: 'unknown',
+      source: 'User Submitted',
+      foundAt: new Date(),
+      description: 'Manually added code',
+      isNew: true,
+    };
+
+    // Persist outside the state updater so the caller learns whether it stuck.
+    const writeResult = writeCachedData([newCode, ...codes]);
+    if (writeResult !== 'saved') {
+      unsavedManualCodesRef.current = [
+        newCode,
+        ...unsavedManualCodesRef.current.filter(c => c.code !== normalizedCode),
+      ];
     }
 
     setCodes(prevCodes => {
-      const existingCode = prevCodes.find(c => c.code === normalizedCode);
-      if (existingCode) {
+      if (prevCodes.some(c => c.code === normalizedCode)) {
         return prevCodes;
       }
 
-      const newCode: RedemptionCode = {
-        id: `${MANUAL_ID_PREFIX}${Date.now()}`,
-        code: normalizedCode,
-        status: 'unknown',
-        source: 'User Submitted',
-        foundAt: new Date(),
-        description: 'Manually added code',
-        isNew: true,
-      };
-
-      const updatedCodes = [newCode, ...prevCodes.map(c => ({ ...c, isNew: false }))];
-      manualCodesRef.current = updatedCodes.filter(isManualCode);
-      writeCachedData(updatedCodes);
-      return updatedCodes;
+      return [newCode, ...prevCodes.map(c => ({ ...c, isNew: false }))];
     });
 
-    return { success: true, message: 'Code added' };
+    if (writeResult === 'saved') {
+      return { success: true, message: 'Code added and pinned to the top', persisted: true };
+    }
+
+    return {
+      success: true,
+      persisted: false,
+      message:
+        writeResult === 'unavailable'
+          ? 'Code added, but your browser is blocking storage — it will be gone if you reload.'
+          : 'Code added, but it could not be saved — it will be gone if you reload.',
+    };
   }, [codes]);
+
+  // Another tab merging its own codes into the shared key can only ever have
+  // written a superset or a stale set. Re-merging ours back in makes the two
+  // converge instead of letting the later write win.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== null && event.key !== MANUAL_STORAGE_KEY) {
+        return;
+      }
+
+      const manual = codesRef.current.filter(isManualCode);
+      if (manual.length > 0) {
+        writeManualCodes(manual);
+      }
+
+      const catalogueCodes = codesRef.current.filter(c => !isManualCode(c));
+      const merged = collectManualCodes(new Set(catalogueCodes.map(c => c.code)), manual);
+      setCodes([...merged, ...catalogueCodes]);
+    };
+
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [collectManualCodes]);
 
   return {
     codes,

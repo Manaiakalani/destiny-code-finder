@@ -9,7 +9,7 @@ import { normalizeCodeInput, verifyCodeFormat } from '@/services/codeScraperServ
 interface AddCodeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (code: RedemptionCode) => { success: boolean; message: string } | void;
+  onSubmit: (code: RedemptionCode) => { success: boolean; message: string; persisted?: boolean } | void;
 }
 
 export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
@@ -54,7 +54,11 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
       setValidationError(result.message);
       return;
     }
-    toast.success('Code added and pinned to the top');
+    if (result && result.persisted === false) {
+      toast.warning(result.message);
+    } else {
+      toast.success(result?.message ?? 'Code added and pinned to the top');
+    }
     setCode('');
     setValidationError(null);
     onClose();

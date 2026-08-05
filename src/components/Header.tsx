@@ -7,7 +7,7 @@ import { RedemptionCode } from '@/types/code';
 import { Link } from 'react-router-dom';
 
 interface HeaderProps {
-  onAddCode: (code: string) => { success: boolean; message: string };
+  onAddCode: (code: string) => { success: boolean; message: string; persisted?: boolean };
   activeCount?: number;
   totalCount?: number;
 }

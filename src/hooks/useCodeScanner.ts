@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useLayoutEffect, useRef } from 'react';
 import { RedemptionCode } from '@/types/code';
 import { getAllEmblemCodes, KNOWN_ACTIVE_CODES, EmblemCodeData, normalizeCodeInput, verifyCodeFormat } from '@/services/codeScraperService';
 
@@ -433,8 +433,10 @@ export function useCodeScanner() {
   const unsavedManualCodesRef = useRef<RedemptionCode[]>([]);
   // Lets the cross-tab handler read current codes without re-subscribing on
   // every render, and without doing side effects inside a state updater.
+  // Layout effect so a storage event fired between commit and passive effects
+  // cannot roll state back to the previous render's codes.
   const codesRef = useRef(codes);
-  useEffect(() => {
+  useLayoutEffect(() => {
     codesRef.current = codes;
   }, [codes]);
 
@@ -453,13 +455,15 @@ export function useCodeScanner() {
         manual.push(code);
       }
 
-      // Anything now confirmed in storage no longer needs the in-memory copy.
-      if (stored.available && stored.readable) {
-        const persisted = new Set(stored.codes.map(code => code.code));
-        unsavedManualCodesRef.current = unsavedManualCodesRef.current.filter(
-          code => !persisted.has(code.code)
-        );
-      }
+      // Track everything not confirmed on disk: for those, this is the only
+      // surviving copy, so it must outlive the current collection.
+      const persisted =
+        stored.available && stored.readable
+          ? new Set(stored.codes.map(code => code.code))
+          : null;
+      unsavedManualCodesRef.current = persisted
+        ? manual.filter(code => !persisted.has(code.code))
+        : manual;
 
       return manual;
     },

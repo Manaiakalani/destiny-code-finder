@@ -80,7 +80,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
             href="https://www.bungie.net/7/en/Codes/Redeem"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-solar min-h-[44px] min-w-[200px] font-heading font-semibold tracking-wide text-white btn-haptic gaming-glow inline-flex items-center justify-center h-11 rounded-md px-8"
+            className="btn-solar min-h-[44px] min-w-[200px] font-heading font-semibold tracking-wide btn-haptic gaming-glow inline-flex items-center justify-center h-11 rounded-md px-8"
           >
             <ExternalLink className="w-4 h-4 mr-2" />
             Redeem on Bungie.net

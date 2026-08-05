@@ -4,11 +4,12 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
+import { normalizeCodeInput, verifyCodeFormat } from '@/services/codeScraperService';
 
 interface AddCodeModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (code: RedemptionCode) => { success: boolean; message: string } | void;
+  onSubmit: (code: RedemptionCode) => { success: boolean; message: string; persisted?: boolean } | void;
 }
 
 export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
@@ -32,22 +33,20 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const trimmedCode = code.trim();
-    const codePattern = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
-
-    if (!codePattern.test(trimmedCode)) {
+    const normalizedCode = normalizeCodeInput(code);
+    if (!verifyCodeFormat(normalizedCode)) {
       setValidationError('Use format XXX-XXX-XXX (Bungie charset only)');
       return;
     }
 
     const redemptionCode: RedemptionCode = {
       id: `manual-${Date.now()}`,
-      code: trimmedCode.toUpperCase(),
+      code: normalizedCode,
       status: 'unknown',
       source: 'Manual Entry',
       foundAt: new Date(),
       description: 'Manually added code',
-      isNew: true
+      isNew: true,
     };
 
     const result = onSubmit(redemptionCode);
@@ -55,21 +54,26 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
       setValidationError(result.message);
       return;
     }
-    toast.success('Code added and pinned to the top');
+    if (result && result.persisted === false) {
+      toast.warning(result.message);
+    } else {
+      toast.success(result?.message ?? 'Code added and pinned to the top');
+    }
     setCode('');
     setValidationError(null);
     onClose();
   };
 
   const handleCodeChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const nextValue = e.target.value.toUpperCase();
+    const nextValue = normalizeCodeInput(e.target.value);
     setCode(nextValue);
     if (validationError) {
       setValidationError(null);
     }
   };
 
-  const isSubmitDisabled = code.trim().length !== 11;
+  const normalizedCode = normalizeCodeInput(code);
+  const isSubmitDisabled = !verifyCodeFormat(normalizedCode);
 
   return (
     <Dialog open={isOpen} onOpenChange={() => onClose()}>

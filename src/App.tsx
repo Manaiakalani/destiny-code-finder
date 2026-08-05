@@ -1,10 +1,12 @@
 import { Toaster } from "sonner";
 import { HashRouter, Routes, Route } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import { MouseParticles } from "@/components/MouseParticles";
 import Index from "./pages/Index";
-import About from "./pages/About";
-import Privacy from "./pages/Privacy";
-import NotFound from "./pages/NotFound";
+
+const About = lazy(() => import("./pages/About"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const App = () => (
   <>
@@ -17,12 +19,14 @@ const App = () => (
       }}
     />
     <HashRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/privacy" element={<Privacy />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="orbit-loader" /></div>}>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
     </HashRouter>
   </>
 );

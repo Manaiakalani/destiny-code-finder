@@ -115,7 +115,18 @@
     --solar-secondary: 14 75% 34%;
     --solar-accent: 28 80% 36%;
     --stasis: 190 80% 30%; /* Stasis */
+    --stasis-secondary: 201 50% 25%;
+    --stasis-accent: 205 75% 20%;
     --strand: 145 65% 30%; /* Strand green */
+    --strand-secondary: 145 70% 25%;
+    --strand-accent: 135 80% 25%;
+    
+    --destructive: 9 98% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 142 76% 26%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 40%;
+    --warning-foreground: 0 0% 100%;
   }
 
   .light-mode body {

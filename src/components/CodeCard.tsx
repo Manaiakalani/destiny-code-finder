@@ -1,5 +1,5 @@
 import { ExternalLink, Copy, Check, Clock, Sparkles } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, type MouseEvent, type MutableRefObject } from 'react';
 import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ interface CodeCardProps {
 
 const REDEEM_URL = 'https://www.bungie.net/7/en/Codes/Redeem';
 
-function createConfetti(x: number, y: number) {
+function createConfetti(x: number, y: number, timeoutRef: MutableRefObject<number[]>) {
   const colors = ['#FFD700', '#7C3AED', '#22D3EE', '#F97316', '#10B981'];
   const confettiCount = 12;
 
@@ -27,7 +27,8 @@ function createConfetti(x: number, y: number) {
     confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
 
     document.body.appendChild(confetti);
-    setTimeout(() => confetti.remove(), 1500);
+    const timerId = window.setTimeout(() => confetti.remove(), 1500);
+    timeoutRef.current.push(timerId);
   }
 }
 
@@ -36,16 +37,19 @@ export function CodeCard({ code }: CodeCardProps) {
   const [imageError, setImageError] = useState(false);
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
-  const [lastLoadedCode, setLastLoadedCode] = useState('');
-
-  // Reset error state when code changes (derived state pattern)
-  if (code.code !== lastLoadedCode) {
-    setLastLoadedCode(code.code);
-    setImageError(false);
-    setEmblemImageUrl(null);
-  }
+  const copyResetTimeoutRef = useRef<number | null>(null);
+  const confettiTimeoutsRef = useRef<number[]>([]);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setImageError(false);
+    setEmblemImageUrl(null);
+    setResolvedEmblemName(null);
+  }, [code.code, code.emblemName]);
+
+  useEffect(() => {
+    mountedRef.current = true;
     let mounted = true;
 
     async function loadEmblemImage() {
@@ -53,7 +57,7 @@ export function CodeCard({ code }: CodeCardProps) {
         await initEmblemDatabase();
       }
 
-      if (!mounted) return;
+      if (!mounted || !mountedRef.current) return;
 
       const url = getEmblemIcon(code.code, code.emblemName);
       setEmblemImageUrl(url);
@@ -64,51 +68,96 @@ export function CodeCard({ code }: CodeCardProps) {
 
     void loadEmblemImage();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+      mountedRef.current = false;
+      if (copyResetTimeoutRef.current !== null) {
+        window.clearTimeout(copyResetTimeoutRef.current);
+        copyResetTimeoutRef.current = null;
+      }
+      confettiTimeoutsRef.current.forEach((timerId) => window.clearTimeout(timerId));
+      confettiTimeoutsRef.current = [];
+    };
   }, [code.code, code.emblemName]);
 
   const copyCodeToClipboard = useCallback(async (sourceElement?: HTMLElement | null) => {
-    try {
-      await navigator.clipboard.writeText(code.code);
-      return true;
-    } catch {
-      const selection = window.getSelection();
-      const range = document.createRange();
-      const codeEl = sourceElement?.closest('[data-code-card]')?.querySelector('[data-code-display]') as HTMLElement | null;
-      if (selection && codeEl) {
-        range.selectNodeContents(codeEl);
-        selection.removeAllRanges();
-        selection.addRange(range);
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(code.code);
+        return true;
+      } catch {
+        // Fall through to a browser-compatible fallback.
       }
-      return false;
     }
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    const codeEl = sourceElement?.closest('[data-code-card]')?.querySelector('[data-code-display]') as HTMLElement | null;
+    if (selection && codeEl) {
+      range.selectNodeContents(codeEl);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    try {
+      if (document.execCommand('copy')) {
+        return true;
+      }
+    } catch {
+      // Ignore and fall through to the textarea fallback.
+    }
+
+    const temporaryInput = document.createElement('textarea');
+    temporaryInput.value = code.code;
+    temporaryInput.setAttribute('readonly', '');
+    temporaryInput.style.position = 'fixed';
+    temporaryInput.style.left = '-9999px';
+    temporaryInput.style.top = '-9999px';
+    document.body.appendChild(temporaryInput);
+    temporaryInput.select();
+    const didCopy = document.execCommand('copy');
+    temporaryInput.remove();
+    return didCopy;
   }, [code.code]);
 
-  const handleCopy = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const clearCopyResetTimer = useCallback(() => {
+    if (copyResetTimeoutRef.current !== null) {
+      window.clearTimeout(copyResetTimeoutRef.current);
+      copyResetTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleCopy = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     const success = await copyCodeToClipboard(e.currentTarget);
 
     if (success) {
       toast.success('Code copied and ready to redeem');
     } else {
       toast.warning('Clipboard unavailable', {
-        description: 'The code is highlighted for manual copying.'
+        description: 'The code is highlighted for manual copying.',
       });
     }
 
     setCopied(true);
-    createConfetti(e.clientX, e.clientY);
+    createConfetti(e.clientX, e.clientY, confettiTimeoutsRef);
 
-    if (navigator.vibrate) {
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
       navigator.vibrate(50);
     }
 
-    window.setTimeout(() => setCopied(false), 1800);
-  }, [copyCodeToClipboard]);
+    clearCopyResetTimer();
+    copyResetTimeoutRef.current = window.setTimeout(() => {
+      copyResetTimeoutRef.current = null;
+      if (mountedRef.current) {
+        setCopied(false);
+      }
+    }, 1800);
+  }, [clearCopyResetTimer, copyCodeToClipboard]);
 
-  const handleRedeemClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleRedeemClick = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (e.button === 0 && navigator.vibrate) {
+    if (e.button === 0 && typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
       navigator.vibrate([30, 50, 30]);
     }
 
@@ -122,8 +171,14 @@ export function CodeCard({ code }: CodeCardProps) {
       toast.info('Bungie opened — paste the code manually if needed.');
     }
 
-    window.setTimeout(() => setCopied(false), 2000);
-  }, [code.code, copyCodeToClipboard]);
+    clearCopyResetTimer();
+    copyResetTimeoutRef.current = window.setTimeout(() => {
+      copyResetTimeoutRef.current = null;
+      if (mountedRef.current) {
+        setCopied(false);
+      }
+    }, 2000);
+  }, [clearCopyResetTimer, code.code, copyCodeToClipboard]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });

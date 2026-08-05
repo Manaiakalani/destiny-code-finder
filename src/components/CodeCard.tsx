@@ -1,5 +1,5 @@
 import { ExternalLink, Copy, Check, Clock, Sparkles } from 'lucide-react';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef, type MouseEvent, type MutableRefObject } from 'react';
 import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,7 @@ interface CodeCardProps {
 
 const REDEEM_URL = 'https://www.bungie.net/7/en/Codes/Redeem';
 
-function createConfetti(x: number, y: number) {
+function createConfetti(x: number, y: number, elementsRef: MutableRefObject<HTMLElement[]>) {
   const colors = ['#FFD700', '#7C3AED', '#22D3EE', '#F97316', '#10B981'];
   const confettiCount = 12;
 
@@ -27,7 +27,18 @@ function createConfetti(x: number, y: number) {
     confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
 
     document.body.appendChild(confetti);
-    setTimeout(() => confetti.remove(), 1500);
+    elementsRef.current.push(confetti);
+
+    // Tie removal to the animation rather than a timer, so cancelling timers
+    // on unmount cannot strand these nodes on document.body.
+    confetti.addEventListener(
+      'animationend',
+      () => {
+        confetti.remove();
+        elementsRef.current = elementsRef.current.filter((el) => el !== confetti);
+      },
+      { once: true }
+    );
   }
 }
 
@@ -36,16 +47,19 @@ export function CodeCard({ code }: CodeCardProps) {
   const [imageError, setImageError] = useState(false);
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
-  const [lastLoadedCode, setLastLoadedCode] = useState('');
-
-  // Reset error state when code changes (derived state pattern)
-  if (code.code !== lastLoadedCode) {
-    setLastLoadedCode(code.code);
-    setImageError(false);
-    setEmblemImageUrl(null);
-  }
+  const copyResetTimeoutRef = useRef<number | null>(null);
+  const confettiElementsRef = useRef<HTMLElement[]>([]);
+  const mountedRef = useRef(true);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setImageError(false);
+    setEmblemImageUrl(null);
+    setResolvedEmblemName(null);
+  }, [code.code, code.emblemName]);
+
+  useEffect(() => {
+    mountedRef.current = true;
     let mounted = true;
 
     async function loadEmblemImage() {
@@ -53,7 +67,7 @@ export function CodeCard({ code }: CodeCardProps) {
         await initEmblemDatabase();
       }
 
-      if (!mounted) return;
+      if (!mounted || !mountedRef.current) return;
 
       const url = getEmblemIcon(code.code, code.emblemName);
       setEmblemImageUrl(url);
@@ -64,66 +78,123 @@ export function CodeCard({ code }: CodeCardProps) {
 
     void loadEmblemImage();
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+      mountedRef.current = false;
+      if (copyResetTimeoutRef.current !== null) {
+        window.clearTimeout(copyResetTimeoutRef.current);
+        copyResetTimeoutRef.current = null;
+      }
+      confettiElementsRef.current.forEach((el) => el.remove());
+      confettiElementsRef.current = [];
+    };
   }, [code.code, code.emblemName]);
 
   const copyCodeToClipboard = useCallback(async (sourceElement?: HTMLElement | null) => {
-    try {
-      await navigator.clipboard.writeText(code.code);
-      return true;
-    } catch {
-      const selection = window.getSelection();
-      const range = document.createRange();
-      const codeEl = sourceElement?.closest('[data-code-card]')?.querySelector('[data-code-display]') as HTMLElement | null;
-      if (selection && codeEl) {
-        range.selectNodeContents(codeEl);
-        selection.removeAllRanges();
-        selection.addRange(range);
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(code.code);
+        return true;
+      } catch {
+        // Fall through to a browser-compatible fallback.
       }
+    }
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    const codeEl = sourceElement?.closest('[data-code-card]')?.querySelector('[data-code-display]') as HTMLElement | null;
+    if (selection && codeEl) {
+      range.selectNodeContents(codeEl);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    try {
+      if (document.execCommand('copy')) {
+        return true;
+      }
+    } catch {
+      // Ignore and fall through to the textarea fallback.
+    }
+
+    const temporaryInput = document.createElement('textarea');
+    temporaryInput.value = code.code;
+    temporaryInput.setAttribute('readonly', '');
+    temporaryInput.style.position = 'fixed';
+    temporaryInput.style.left = '-9999px';
+    temporaryInput.style.top = '-9999px';
+    document.body.appendChild(temporaryInput);
+    temporaryInput.select();
+
+    try {
+      return document.execCommand('copy');
+    } catch {
       return false;
+    } finally {
+      temporaryInput.remove();
     }
   }, [code.code]);
 
-  const handleCopy = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const clearCopyResetTimer = useCallback(() => {
+    if (copyResetTimeoutRef.current !== null) {
+      window.clearTimeout(copyResetTimeoutRef.current);
+      copyResetTimeoutRef.current = null;
+    }
+  }, []);
+
+  const handleCopy = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     const success = await copyCodeToClipboard(e.currentTarget);
 
     if (success) {
       toast.success('Code copied and ready to redeem');
-    } else {
-      toast.warning('Clipboard unavailable', {
-        description: 'The code is highlighted for manual copying.'
-      });
+      setCopied(true);
+      createConfetti(e.clientX, e.clientY, confettiElementsRef);
+
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+
+      clearCopyResetTimer();
+      copyResetTimeoutRef.current = window.setTimeout(() => {
+        copyResetTimeoutRef.current = null;
+        if (mountedRef.current) {
+          setCopied(false);
+        }
+      }, 1800);
+      return;
     }
 
-    setCopied(true);
-    createConfetti(e.clientX, e.clientY);
+    toast.warning('Clipboard unavailable', {
+      description: 'The code is highlighted for manual copying.',
+    });
+  }, [clearCopyResetTimer, copyCodeToClipboard]);
 
-    if (navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-
-    window.setTimeout(() => setCopied(false), 1800);
-  }, [copyCodeToClipboard]);
-
-  const handleRedeemClick = useCallback(async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleRedeemClick = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    if (e.button === 0 && navigator.vibrate) {
+    if (e.button === 0 && typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
       navigator.vibrate([30, 50, 30]);
     }
 
     const success = await copyCodeToClipboard(e.currentTarget);
     window.open(`${REDEEM_URL}?token=${code.code}`, '_blank', 'noopener,noreferrer');
 
-    setCopied(true);
-    if (success) {
-      toast.success('Code copied — Bungie opened');
-    } else {
+    if (!success) {
       toast.info('Bungie opened — paste the code manually if needed.');
+      return;
     }
 
-    window.setTimeout(() => setCopied(false), 2000);
-  }, [code.code, copyCodeToClipboard]);
+    toast.success('Code copied — Bungie opened');
+    setCopied(true);
+
+    clearCopyResetTimer();
+    copyResetTimeoutRef.current = window.setTimeout(() => {
+      copyResetTimeoutRef.current = null;
+      if (mountedRef.current) {
+        setCopied(false);
+      }
+    }, 2000);
+  }, [clearCopyResetTimer, code.code, copyCodeToClipboard]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -153,7 +224,7 @@ export function CodeCard({ code }: CodeCardProps) {
           ? 'bg-card border-border hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)] shadow-sm'
           : isD1
             ? 'bg-card border-solar/30 hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)] shadow-sm'
-            : 'bg-muted/50 border-border/40 opacity-60',
+            : 'bg-muted/50 border-border/40',
         'hover:-translate-y-1'
       )}
     >
@@ -196,6 +267,7 @@ export function CodeCard({ code }: CodeCardProps) {
         <div className="text-center py-2 flex flex-col items-center">
           <div className={cn(
             'relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-secondary border border-border/50 shadow-md transition-transform duration-300',
+            !isActive && !isD1 && 'grayscale-[0.7] opacity-70',
             getRarityClass()
           )}>
             {emblemImageUrl && !imageError ? (
@@ -295,7 +367,8 @@ export function CodeCard({ code }: CodeCardProps) {
             <Button
               type="button"
               onClick={handleRedeemClick}
-              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
+              variant="solar"
+              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Copy & Redeem

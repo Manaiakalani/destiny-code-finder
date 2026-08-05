@@ -126,10 +126,10 @@ function readManualCodes(): RedemptionCode[] {
   }
 }
 
-function writeManualCodes(codes: RedemptionCode[]) {
+function writeManualCodes(codes: RedemptionCode[]): boolean {
   const storage = getStorage();
   if (!storage) {
-    return;
+    return false;
   }
 
   const manual = codes.filter(isManualCode);
@@ -140,28 +140,61 @@ function writeManualCodes(codes: RedemptionCode[]) {
     } else {
       storage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(manual));
     }
+    return true;
   } catch {
-    // localStorage unavailable or quota exceeded — in-memory state still holds them
+    // Quota exceeded or storage blocked.
+    return false;
   }
 }
 
 /**
- * Pulls user-submitted codes out of a cache payload that is about to be
+ * Pulls user-submitted codes out of a cache payload before that payload is
  * discarded. The v1 cache predates `schemaVersion`, so it always fails
  * validation — without this, upgrading users lose every code they added.
+ *
+ * Returns false only when there was something to rescue and it could not be
+ * persisted, in which case the caller must NOT delete the source payload: at
+ * that point it is the only surviving copy.
  */
-function rescueManualCodes(value: unknown) {
+function rescueManualCodes(value: unknown): boolean {
   const rescued = normalizeManualCodes((value as Partial<CachedData> | null)?.codes);
   if (rescued.length === 0) {
-    return;
+    return true;
   }
 
   const existing = readManualCodes();
   const known = new Set(existing.map(code => code.code));
-  const merged = [...existing, ...rescued.filter(code => !known.has(code.code))];
+  const missing = rescued.filter(code => !known.has(code.code));
 
-  if (merged.length > existing.length) {
-    writeManualCodes(merged);
+  if (missing.length === 0) {
+    return true;
+  }
+
+  return writeManualCodes([...existing, ...missing]);
+}
+
+function purgeLegacyCache() {
+  const storage = getStorage();
+  if (!storage) {
+    return;
+  }
+
+  try {
+    const raw = storage.getItem(LEGACY_STORAGE_KEY);
+    if (!raw) {
+      return;
+    }
+
+    if (rescueManualCodes(JSON.parse(raw))) {
+      storage.removeItem(LEGACY_STORAGE_KEY);
+    }
+  } catch {
+    // Unparseable: nothing to rescue, so dropping it loses nothing.
+    try {
+      storage.removeItem(LEGACY_STORAGE_KEY);
+    } catch {
+      // noop
+    }
   }
 }
 
@@ -170,6 +203,11 @@ function readCachedData(): CachedData | null {
   if (!storage) {
     return null;
   }
+
+  // Migrate first. Once a valid v2 cache exists the loop below returns before
+  // it ever reaches the legacy key, so a legacy payload whose earlier rescue
+  // failed would otherwise be orphaned with no further retry.
+  purgeLegacyCache();
 
   const storageKeys = [STORAGE_KEY, LEGACY_STORAGE_KEY];
   for (const storageKey of storageKeys) {
@@ -185,8 +223,9 @@ function readCachedData(): CachedData | null {
         !Array.isArray(parsedCache.codes) ||
         typeof parsedCache.timestamp !== 'number'
       ) {
-        rescueManualCodes(parsedCache);
-        storage.removeItem(storageKey);
+        if (rescueManualCodes(parsedCache)) {
+          storage.removeItem(storageKey);
+        }
         continue;
       }
 
@@ -194,14 +233,32 @@ function readCachedData(): CachedData | null {
         .map((code, index) => normalizeCachedCode(code as Partial<RedemptionCode>, index))
         .filter((code): code is RedemptionCode => Boolean(code));
 
-      if (normalizedCodes.length === 0) {
-        storage.removeItem(storageKey);
+      // Earlier builds stored manual codes inside the catalogue cache. Move any
+      // stragglers to the dedicated key and hand back catalogue entries only,
+      // so callers never mistake a user code for a catalogue one.
+      const catalogueCodes = normalizedCodes.filter(code => !isManualCode(code));
+      if (catalogueCodes.length !== normalizedCodes.length) {
+        // Only strip them from the cache once they are safely in the other key.
+        if (rescueManualCodes({ codes: normalizedCodes })) {
+          try {
+            storage.setItem(storageKey, JSON.stringify({
+              schemaVersion: CACHE_SCHEMA_VERSION,
+              codes: catalogueCodes,
+              timestamp: parsedCache.timestamp,
+            }));
+          } catch {
+            // Cache stays mixed; it is filtered on every read regardless.
+          }
+        }
+      }
+
+      if (catalogueCodes.length === 0) {
         continue;
       }
 
       return {
         schemaVersion: CACHE_SCHEMA_VERSION,
-        codes: normalizedCodes,
+        codes: catalogueCodes,
         timestamp: parsedCache.timestamp,
       };
     } catch {
@@ -217,6 +274,10 @@ function readCachedData(): CachedData | null {
 }
 
 function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()) {
+  // Manual codes first, and always: they are the only unrecoverable data here,
+  // whereas the catalogue cache can be rebuilt from the bundled catalogue.
+  writeManualCodes(codes);
+
   const storage = getStorage();
   if (!storage) {
     return;
@@ -224,19 +285,17 @@ function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()
 
   const cacheData: CachedData = {
     schemaVersion: CACHE_SCHEMA_VERSION,
-    codes,
+    codes: codes.filter(code => !isManualCode(code)),
     timestamp,
   };
 
   try {
     storage.setItem(STORAGE_KEY, JSON.stringify(cacheData));
-    storage.removeItem(LEGACY_STORAGE_KEY);
   } catch {
     // localStorage unavailable or quota exceeded — skip caching
   }
 
-  // Mirrored separately so they outlive cache expiry and schema bumps.
-  writeManualCodes(codes);
+  purgeLegacyCache();
 }
 
 // Initialize with known codes immediately (don't wait for API)
@@ -333,12 +392,10 @@ export function useCodeScanner() {
 
   const refreshCodes = useCallback(async () => {
     try {
-      // Keep the current cache in place so loadCodes can carry over
-      // user-submitted codes; forceRefresh already bypasses it for reads.
-      const storage = getStorage();
-      if (storage) {
-        storage.removeItem(LEGACY_STORAGE_KEY);
-      }
+      // Keep the v2 cache in place so loadCodes can carry over user-submitted
+      // codes; forceRefresh already bypasses it for reads. The legacy key is
+      // migrated rather than dropped, so a manual code cannot be lost here.
+      purgeLegacyCache();
       await loadCodes(true);
     } catch (error) {
       console.error('Error refreshing codes:', error);

@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 import { AddCodeModal } from './AddCodeModal';
 import { ThemeToggle } from './ThemeToggle';
 import { RedemptionCode } from '@/types/code';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface HeaderProps {
-  onAddCode: (code: string) => { success: boolean; message: string };
+  onAddCode: (code: string) => { success: boolean; message: string; persisted?: boolean };
   activeCount?: number;
   totalCount?: number;
 }
@@ -15,7 +15,6 @@ interface HeaderProps {
 export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -65,7 +64,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
               <div className="flex items-center gap-6 px-4 py-2 rounded-lg glass-card">
                 <div className="text-center">
                   <p className="font-heading text-2xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">Active</p>
+                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">D2 Active</p>
                 </div>
                 <div className="w-px h-10 bg-accent/20" />
                 <div className="text-center">
@@ -80,7 +79,8 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 type="button"
                 onClick={() => setIsModalOpen(true)}
                 size="sm"
-                className="min-h-[44px] btn-solar text-white font-heading tracking-wider"
+                variant="solar"
+              className="min-h-[44px] font-heading tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code
@@ -104,7 +104,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
               <div className="flex items-center justify-center gap-8 py-3">
                 <div className="text-center">
                   <p className="font-heading text-xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">Active</p>
+                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">D2 Active</p>
                 </div>
                 <div className="w-px h-10 bg-accent/20" />
                 <div className="text-center">
@@ -121,7 +121,8 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                   setIsModalOpen(true);
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full min-h-[44px] btn-solar text-white font-heading tracking-wider"
+                variant="solar"
+                className="w-full min-h-[44px] font-heading tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code

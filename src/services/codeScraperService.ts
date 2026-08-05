@@ -1,6 +1,8 @@
 // Code Catalogue Service
 // Curated, verified emblem codes from destinyemblemcollector.com, rewards.mijago.net, and blueberries.gg
 
+import { RedemptionCode } from '@/types/code';
+
 export interface EmblemCodeData {
   code: string;
   emblemName: string;
@@ -111,7 +113,7 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: '6RG-HRH-T9T', emblemName: 'Together We Ramen', source: 'D2 Creator Hub', isActive: false, note: 'Creator Hub emblem; creator program only' },
   { code: 'J3X-GNT-JAF', emblemName: 'Emblem of the Hibiscus', source: 'Netcafe Vendor', isActive: false, note: 'Netcafe vendor emblem; no universal code' },
   { code: 'TCN-HCD-TGY', emblemName: 'Emblem of the Fleet', source: 'Unknown', isActive: false, note: 'No known universal code' },
-]
+];
 
 /**
  * Get all available emblem codes from the curated catalogue.
@@ -122,12 +124,29 @@ export async function getAllEmblemCodes(): Promise<EmblemCodeData[]> {
   return [...KNOWN_ACTIVE_CODES];
 }
 
+export function normalizeCodeInput(code: string): string {
+  return code.trim().toUpperCase();
+}
+
+export function normalizeSearchText(value: string): string {
+  return value.normalize('NFKC').trim().toLowerCase();
+}
+
+export function buildSearchableText(code: RedemptionCode): string {
+  return [code.code, code.emblemName ?? '', code.description ?? '', code.source]
+    .filter(Boolean)
+    .join(' ')
+    .normalize('NFKC')
+    .toLowerCase();
+}
+
 /**
  * Verify if a code is valid by checking Bungie's redemption page.
  * Note: Client-side validation is limited due to CORS restrictions.
  * This only checks basic format validity against Bungie's charset.
  */
 export function verifyCodeFormat(code: string): boolean {
-  const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/i;
-  return bungieCharset.test(code);
+  const normalizedCode = normalizeCodeInput(code);
+  const bungieCharset = /^[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}-[ACDFGHJKLMNPRTVXY34679]{3}$/;
+  return normalizedCode.length === 11 && bungieCharset.test(normalizedCode);
 }

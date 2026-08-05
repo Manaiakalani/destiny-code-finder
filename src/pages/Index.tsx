@@ -47,6 +47,11 @@ const Index = () => {
     }
 
     result.sort((a, b) => {
+      // User-submitted codes pin to the top, as the add-code toast promises.
+      const aManual = a.id.startsWith('manual-');
+      const bManual = b.id.startsWith('manual-');
+      if (aManual !== bManual) return aManual ? -1 : 1;
+
       const statusOrder = { active: 0, d1: 1, unknown: 2, expired: 3 };
       const aOrder = statusOrder[a.status] ?? 2;
       const bOrder = statusOrder[b.status] ?? 2;

@@ -156,7 +156,8 @@ export default function About() {
             </p>
             <Button
               onClick={() => window.open('https://github.com/Manaiakalani/destiny-code-finder', '_blank')}
-              className="btn-solar font-heading"
+              variant="solar"
+              className="font-heading"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               View on GitHub

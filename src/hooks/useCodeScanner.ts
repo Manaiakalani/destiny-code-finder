@@ -6,6 +6,11 @@ const STORAGE_KEY = 'destiny2-codes-cache-v2';
 const LEGACY_STORAGE_KEY = 'destiny2-codes-cache';
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
 const CACHE_SCHEMA_VERSION = 2;
+const MANUAL_ID_PREFIX = 'manual-';
+
+function isManualCode(code: RedemptionCode): boolean {
+  return code.id.startsWith(MANUAL_ID_PREFIX);
+}
 
 interface CachedData {
   schemaVersion: number;
@@ -180,9 +185,17 @@ export function useCodeScanner() {
         codeDataToRedemptionCode(code, index)
       );
 
-      writeCachedData(redemptionCodes);
+      // User-submitted codes are not in the catalogue, so a refresh would
+      // otherwise silently discard them.
+      const catalogueCodes = new Set(redemptionCodes.map(c => c.code));
+      const preservedManualCodes = readCachedData()?.codes
+        .filter(c => isManualCode(c) && !catalogueCodes.has(c.code)) ?? [];
 
-      setCodes(redemptionCodes);
+      const mergedCodes = [...preservedManualCodes, ...redemptionCodes];
+
+      writeCachedData(mergedCodes);
+
+      setCodes(mergedCodes);
       setLastUpdateTime(new Date());
       setErrorMessage(null);
     } catch (error) {
@@ -204,9 +217,10 @@ export function useCodeScanner() {
 
   const refreshCodes = useCallback(async () => {
     try {
+      // Keep the current cache in place so loadCodes can carry over
+      // user-submitted codes; forceRefresh already bypasses it for reads.
       const storage = getStorage();
       if (storage) {
-        storage.removeItem(STORAGE_KEY);
         storage.removeItem(LEGACY_STORAGE_KEY);
       }
       await loadCodes(true);
@@ -234,7 +248,7 @@ export function useCodeScanner() {
       }
 
       const newCode: RedemptionCode = {
-        id: `manual-${Date.now()}`,
+        id: `${MANUAL_ID_PREFIX}${Date.now()}`,
         code: normalizedCode,
         status: 'unknown',
         source: 'User Submitted',

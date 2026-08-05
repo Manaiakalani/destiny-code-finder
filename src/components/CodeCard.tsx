@@ -351,7 +351,8 @@ export function CodeCard({ code }: CodeCardProps) {
             <Button
               type="button"
               onClick={handleRedeemClick}
-              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-solar-foreground font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
+              variant="solar"
+              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Copy & Redeem

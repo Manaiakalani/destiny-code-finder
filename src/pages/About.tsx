@@ -26,9 +26,9 @@ export default function About() {
               <h2 className="font-heading text-2xl font-bold">What We Do</h2>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              Code Vault automatically scans multiple sources across the web to find and track Destiny 2 emblem redemption codes. 
-              We aggregate codes from official Bungie announcements, community sources, and partner programs to provide you with 
-              the most comprehensive and up-to-date collection of active codes.
+              Code Vault is a hand-curated catalogue of Destiny 2 emblem redemption codes. Every code is verified against
+              official Bungie announcements, community databases, and partner programs before it ships, so what you see
+              here is checked rather than guessed.
             </p>
           </section>
 
@@ -42,16 +42,16 @@ export default function About() {
             </div>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
-                Our automated scraping system continuously monitors multiple data sources to keep the code database fresh:
+                The catalogue is compiled and verified before each release, drawing on these sources:
               </p>
               <ul className="space-y-2 ml-6">
                 <li className="flex items-start gap-2">
                   <span className="text-strand mt-1">◆</span>
-                  <span><strong className="text-foreground">Reddit Communities:</strong> We scan r/DestinyTheGame, r/destiny2, and r/raidsecrets for newly shared codes</span>
+                  <span><strong className="text-foreground">Destiny Emblem Collector:</strong> The community's reference list of universal emblem codes and their availability</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-strand mt-1">◆</span>
-                  <span><strong className="text-foreground">Blueberries.gg:</strong> Comprehensive Destiny 2 resource database with community-verified codes</span>
+                  <span><strong className="text-foreground">Reddit &amp; community sources:</strong> r/DestinyTheGame, r/destiny2, and r/raidsecrets are reviewed for newly shared codes</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-strand mt-1">◆</span>
@@ -59,12 +59,13 @@ export default function About() {
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-strand mt-1">◆</span>
-                  <span><strong className="text-foreground">Known Active Codes:</strong> Curated database of 20+ verified working codes</span>
+                  <span><strong className="text-foreground">Curated catalogue:</strong> 79 codes, each labelled active, expired, restricted, or Destiny 1</span>
                 </li>
               </ul>
               <p className="leading-relaxed pt-2">
-                All discovered codes are cached locally for 30 minutes to reduce server load and provide fast access. 
-                You can manually refresh at any time to get the latest updates.
+                The catalogue ships with the site and is cached in your browser for 30 minutes for fast loading. Refresh
+                at any time to reload it. Because codes are verified by hand rather than scraped live, always confirm a
+                code at Bungie's redemption page before relying on it.
               </p>
             </div>
           </section>
@@ -155,7 +156,7 @@ export default function About() {
             </p>
             <Button
               onClick={() => window.open('https://github.com/Manaiakalani/destiny-code-finder', '_blank')}
-              className="btn-solar text-white font-heading"
+              className="btn-solar font-heading"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               View on GitHub

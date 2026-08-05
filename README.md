@@ -6,7 +6,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7-646cff?style=flat-square&logo=vite)](https://vitejs.dev)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-A fast, privacy-focused web application for discovering and redeeming Destiny 2 emblem codes. Aggregates codes from multiple community sources in real-time.
+A fast, privacy-focused web application for discovering and redeeming Destiny 2 emblem codes. Ships a curated, hand-verified catalogue of community-sourced codes.
 
 ## 📸 Screenshots
 
@@ -36,12 +36,12 @@ A fast, privacy-focused web application for discovering and redeeming Destiny 2 
 
 ## ✨ Features
 
-- **🔍 Multi-Source Aggregation** — Automatically scrapes Reddit, Blueberries.gg, and curated databases
+- **🔍 Curated Catalogue** — 79 hand-verified codes, each labelled active, expired, restricted, or Destiny 1
 - **🖼️ Official Emblem Previews** — Displays high-quality images directly from Bungie's CDN
 - **⚡ Lightning Fast** — Built with Vite + React for instant page loads
 - **🎨 Beautiful UI** — NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
 - **📱 Fully Responsive** — Works flawlessly on desktop, tablet, and mobile
-- **🔒 Privacy-First** — Zero cookies, zero tracking, zero analytics
+- **🔒 Privacy-First** — No cookies, no user accounts, cookieless privacy-focused analytics
 - **🌙 Theme Support** — Dark, OLED, and Light modes
 - **✨ Visual Effects** — Shooting stars, particle effects, and emblem shine animations
 
@@ -187,9 +187,10 @@ The UI features a NASA-inspired "Deep Space" theme:
 Code Vault is built with privacy as a core principle:
 
 - ✅ No cookies
-- ✅ No analytics or tracking
+- ✅ No cross-site tracking, advertising, or data selling
+- ✅ Cookieless, privacy-focused analytics (aggregate page counts only)
 - ✅ No user accounts required
-- ✅ All data stored locally in your browser
+- ✅ All code data stored locally in your browser
 - ✅ Open source and auditable
 
 See our [Privacy Policy](/privacy) for complete details.

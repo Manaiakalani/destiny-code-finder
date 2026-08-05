@@ -24,7 +24,7 @@ export function MouseParticles() {
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: 0, y: 0, moving: false });
   const lastMoveTimeRef = useRef(Date.now());
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     // Respect reduced motion preference
@@ -138,6 +138,7 @@ export function MouseParticles() {
   return (
     <canvas
       ref={canvasRef}
+      aria-hidden="true"
       className="fixed inset-0 pointer-events-none z-50"
       style={{ mixBlendMode: 'screen' }}
     />

@@ -132,26 +132,26 @@ export function CodeCard({ code }: CodeCardProps) {
 
     if (success) {
       toast.success('Code copied and ready to redeem');
-    } else {
-      toast.warning('Clipboard unavailable', {
-        description: 'The code is highlighted for manual copying.',
-      });
-    }
+      setCopied(true);
+      createConfetti(e.clientX, e.clientY, confettiTimeoutsRef);
 
-    setCopied(true);
-    createConfetti(e.clientX, e.clientY, confettiTimeoutsRef);
-
-    if (typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
-      navigator.vibrate(50);
-    }
-
-    clearCopyResetTimer();
-    copyResetTimeoutRef.current = window.setTimeout(() => {
-      copyResetTimeoutRef.current = null;
-      if (mountedRef.current) {
-        setCopied(false);
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
+        navigator.vibrate(50);
       }
-    }, 1800);
+
+      clearCopyResetTimer();
+      copyResetTimeoutRef.current = window.setTimeout(() => {
+        copyResetTimeoutRef.current = null;
+        if (mountedRef.current) {
+          setCopied(false);
+        }
+      }, 1800);
+      return;
+    }
+
+    toast.warning('Clipboard unavailable', {
+      description: 'The code is highlighted for manual copying.',
+    });
   }, [clearCopyResetTimer, copyCodeToClipboard]);
 
   const handleRedeemClick = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
@@ -208,7 +208,7 @@ export function CodeCard({ code }: CodeCardProps) {
           ? 'bg-card border-border hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)] shadow-sm'
           : isD1
             ? 'bg-card border-solar/30 hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)] shadow-sm'
-            : 'bg-muted/50 border-border/40 opacity-60',
+            : 'bg-muted/50 border-border/40',
         'hover:-translate-y-1'
       )}
     >
@@ -251,6 +251,7 @@ export function CodeCard({ code }: CodeCardProps) {
         <div className="text-center py-2 flex flex-col items-center">
           <div className={cn(
             'relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-secondary border border-border/50 shadow-md transition-transform duration-300',
+            !isActive && !isD1 && 'grayscale-[0.7] opacity-70',
             getRarityClass()
           )}>
             {emblemImageUrl && !imageError ? (
@@ -350,7 +351,7 @@ export function CodeCard({ code }: CodeCardProps) {
             <Button
               type="button"
               onClick={handleRedeemClick}
-              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-white font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
+              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 text-solar-foreground font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Copy & Redeem

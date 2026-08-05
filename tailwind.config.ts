@@ -73,6 +73,7 @@ export default {
           DEFAULT: "hsl(var(--solar))",
           secondary: "hsl(var(--solar-secondary))",
           accent: "hsl(var(--solar-accent))",
+          foreground: "hsl(var(--solar-foreground))",
         },
         stasis: {
           DEFAULT: "hsl(var(--stasis))",

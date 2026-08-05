@@ -9,6 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint .",
+    "typecheck": "tsc -b --force",
+    "verify:catalogue": "node scripts/verify-catalogue-parity.mjs",
     "scrape:emblems": "node scripts/scrape-emblems.js",
     "download:emblems": "node scripts/download-emblems.js"
   },

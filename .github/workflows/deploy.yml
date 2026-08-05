@@ -37,7 +37,10 @@ jobs:
         run: npm run lint
 
       - name: Type check
-        run: npx tsc --noEmit
+        run: npm run typecheck
+
+      - name: Verify code catalogue parity
+        run: npm run verify:catalogue
 
       - name: Build
         run: npm run build

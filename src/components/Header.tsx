@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { AddCodeModal } from './AddCodeModal';
 import { ThemeToggle } from './ThemeToggle';
 import { RedemptionCode } from '@/types/code';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface HeaderProps {
   onAddCode: (code: string) => { success: boolean; message: string };
@@ -15,7 +15,6 @@ interface HeaderProps {
 export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
 
   useEffect(() => {
     if (!isMobileMenuOpen) return;
@@ -80,7 +79,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 type="button"
                 onClick={() => setIsModalOpen(true)}
                 size="sm"
-                className="min-h-[44px] btn-solar text-white font-heading tracking-wider"
+                className="min-h-[44px] btn-solar font-heading tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code
@@ -121,7 +120,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                   setIsModalOpen(true);
                   setIsMobileMenuOpen(false);
                 }}
-                className="w-full min-h-[44px] btn-solar text-white font-heading tracking-wider"
+                className="w-full min-h-[44px] btn-solar font-heading tracking-wider"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Code

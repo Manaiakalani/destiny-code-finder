@@ -12,7 +12,7 @@ interface CodeCardProps {
 
 const REDEEM_URL = 'https://www.bungie.net/7/en/Codes/Redeem';
 
-function createConfetti(x: number, y: number, timeoutRef: MutableRefObject<number[]>) {
+function createConfetti(x: number, y: number, elementsRef: MutableRefObject<HTMLElement[]>) {
   const colors = ['#FFD700', '#7C3AED', '#22D3EE', '#F97316', '#10B981'];
   const confettiCount = 12;
 
@@ -27,8 +27,18 @@ function createConfetti(x: number, y: number, timeoutRef: MutableRefObject<numbe
     confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
 
     document.body.appendChild(confetti);
-    const timerId = window.setTimeout(() => confetti.remove(), 1500);
-    timeoutRef.current.push(timerId);
+    elementsRef.current.push(confetti);
+
+    // Tie removal to the animation rather than a timer, so cancelling timers
+    // on unmount cannot strand these nodes on document.body.
+    confetti.addEventListener(
+      'animationend',
+      () => {
+        confetti.remove();
+        elementsRef.current = elementsRef.current.filter((el) => el !== confetti);
+      },
+      { once: true }
+    );
   }
 }
 
@@ -38,7 +48,7 @@ export function CodeCard({ code }: CodeCardProps) {
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
   const copyResetTimeoutRef = useRef<number | null>(null);
-  const confettiTimeoutsRef = useRef<number[]>([]);
+  const confettiElementsRef = useRef<HTMLElement[]>([]);
   const mountedRef = useRef(true);
 
   useEffect(() => {
@@ -75,8 +85,8 @@ export function CodeCard({ code }: CodeCardProps) {
         window.clearTimeout(copyResetTimeoutRef.current);
         copyResetTimeoutRef.current = null;
       }
-      confettiTimeoutsRef.current.forEach((timerId) => window.clearTimeout(timerId));
-      confettiTimeoutsRef.current = [];
+      confettiElementsRef.current.forEach((el) => el.remove());
+      confettiElementsRef.current = [];
     };
   }, [code.code, code.emblemName]);
 
@@ -115,9 +125,14 @@ export function CodeCard({ code }: CodeCardProps) {
     temporaryInput.style.top = '-9999px';
     document.body.appendChild(temporaryInput);
     temporaryInput.select();
-    const didCopy = document.execCommand('copy');
-    temporaryInput.remove();
-    return didCopy;
+
+    try {
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      temporaryInput.remove();
+    }
   }, [code.code]);
 
   const clearCopyResetTimer = useCallback(() => {
@@ -133,7 +148,7 @@ export function CodeCard({ code }: CodeCardProps) {
     if (success) {
       toast.success('Code copied and ready to redeem');
       setCopied(true);
-      createConfetti(e.clientX, e.clientY, confettiTimeoutsRef);
+      createConfetti(e.clientX, e.clientY, confettiElementsRef);
 
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
         navigator.vibrate(50);

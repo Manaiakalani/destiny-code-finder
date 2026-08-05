@@ -139,8 +139,9 @@ export default function About() {
               <h2 className="font-heading text-2xl font-bold">Update Frequency</h2>
             </div>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              The code database is automatically refreshed whenever you visit the site or manually click the refresh button. 
-              To reduce load on source servers and provide faster performance, we cache results locally for 30 minutes.
+              The catalogue ships with the site, so it updates when a new version is released rather than on a timer.
+              Your browser keeps a local copy for 30 minutes purely to make repeat visits load instantly; the refresh
+              button reloads it at any time.
             </p>
             <p className="text-sm text-muted-foreground italic">
               "The Light provides... but patience is a virtue." — Commander Zavala

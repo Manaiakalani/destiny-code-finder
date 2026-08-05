@@ -63,7 +63,7 @@ function normalizeCachedCode(code: Partial<RedemptionCode> | null | undefined, i
   }
 
   return {
-    id: code?.id ?? `cache-${index}`,
+    id: typeof code?.id === 'string' ? code.id : `cache-${index}`,
     code: normalizedCode,
     status,
     source: typeof code?.source === 'string' ? code.source : 'Community',

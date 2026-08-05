@@ -107,18 +107,27 @@ function normalizeManualCodes(value: unknown): RedemptionCode[] {
   return manual;
 }
 
-function readManualCodes(): RedemptionCode[] {
+interface ManualCodesRead {
+  codes: RedemptionCode[];
+  /**
+   * False when the stored payload could not be parsed AND could not be set
+   * aside — meaning it is still the only copy of whatever it holds, and must
+   * not be overwritten.
+   */
+  readable: boolean;
+}
+
+function readManualCodes(): ManualCodesRead {
   const storage = getStorage();
   if (!storage) {
-    return [];
+    return { codes: [], readable: true };
   }
 
   try {
     const raw = storage.getItem(MANUAL_STORAGE_KEY);
-    return raw ? normalizeManualCodes(JSON.parse(raw)) : [];
+    return { codes: raw ? normalizeManualCodes(JSON.parse(raw)) : [], readable: true };
   } catch {
-    quarantineCorruptPayload(storage, MANUAL_STORAGE_KEY);
-    return [];
+    return { codes: [], readable: quarantineCorruptPayload(storage, MANUAL_STORAGE_KEY) };
   }
 }
 
@@ -143,10 +152,15 @@ function writeManualCodes(codes: RedemptionCode[]): boolean {
   }
 
   const existing = readManualCodes();
-  const known = new Set(existing.map(code => code.code));
-  const merged = [...existing, ...incoming.filter(code => !known.has(code.code))];
+  if (!existing.readable) {
+    // Overwriting now would destroy a payload we could not preserve.
+    return false;
+  }
 
-  if (merged.length === existing.length) {
+  const known = new Set(existing.codes.map(code => code.code));
+  const merged = [...existing.codes, ...incoming.filter(code => !known.has(code.code))];
+
+  if (merged.length === existing.codes.length) {
     return true;
   }
 
@@ -176,16 +190,21 @@ function rescueManualCodes(value: unknown): boolean {
  * Moves a payload we cannot parse out of the way instead of deleting it. It
  * may still contain a user code behind the corruption, and that is the one
  * thing here we cannot regenerate.
+ *
+ * Returns false when the original could not be set aside, in which case it is
+ * left untouched and callers must not overwrite it.
  */
-function quarantineCorruptPayload(storage: Storage, storageKey: string) {
+function quarantineCorruptPayload(storage: Storage, storageKey: string): boolean {
   try {
     const raw = storage.getItem(storageKey);
     if (raw !== null) {
       storage.setItem(`${storageKey}-corrupt`, raw);
     }
     storage.removeItem(storageKey);
+    return true;
   } catch {
     // Could not set it aside — leave the original rather than lose it.
+    return false;
   }
 }
 
@@ -214,8 +233,8 @@ function purgeLegacyCache() {
  * stored them inline. Must run before any overwrite of that key — including on
  * the force-refresh path, which never reads the cache at all.
  *
- * Returns false only when inline codes were found and could not be persisted,
- * meaning the existing payload is still their only copy.
+ * Returns false when the existing payload may still be the only copy of a user
+ * code, meaning the caller must not overwrite it.
  */
 function migrateInlineManualCodes(storage: Storage, storageKey: string): boolean {
   try {
@@ -226,8 +245,9 @@ function migrateInlineManualCodes(storage: Storage, storageKey: string): boolean
 
     return rescueManualCodes(JSON.parse(raw));
   } catch {
-    // Unparseable, so there is nothing to lift out of it.
-    return true;
+    // Unparseable, but corruption can hide an intact user code — set it aside
+    // rather than let the caller write straight over it.
+    return quarantineCorruptPayload(storage, storageKey);
   }
 }
 
@@ -353,7 +373,7 @@ export function useCodeScanner() {
     const seen = new Set<string>();
     const manual: RedemptionCode[] = [];
 
-    for (const code of [...manualCodesRef.current, ...readManualCodes()]) {
+    for (const code of [...manualCodesRef.current, ...readManualCodes().codes]) {
       if (catalogueCodes.has(code.code) || seen.has(code.code)) {
         continue;
       }
@@ -399,11 +419,12 @@ export function useCodeScanner() {
       // User-submitted codes are not in the catalogue, so a refresh would
       // otherwise silently discard them.
       const catalogueCodes = new Set(redemptionCodes.map(c => c.code));
-      const preservedManualCodes = collectManualCodes(catalogueCodes);
+      writeCachedData([...collectManualCodes(catalogueCodes), ...redemptionCodes]);
 
-      const mergedCodes = [...preservedManualCodes, ...redemptionCodes];
-
-      writeCachedData(mergedCodes);
+      // Re-collect: writeCachedData migrates user codes out of any older
+      // payload, and on a force refresh that is the first time this run sees
+      // them. Skipping this would hide them until the next load.
+      const mergedCodes = [...collectManualCodes(catalogueCodes), ...redemptionCodes];
 
       setCodes(mergedCodes);
       setLastUpdateTime(new Date());

@@ -4,6 +4,10 @@ import { getAllEmblemCodes, KNOWN_ACTIVE_CODES, EmblemCodeData, normalizeCodeInp
 
 const STORAGE_KEY = 'destiny2-codes-cache-v2';
 const LEGACY_STORAGE_KEY = 'destiny2-codes-cache';
+// User-submitted codes live outside the catalogue cache: they are the only
+// data here the user cannot get back, so they must survive cache expiry,
+// schema bumps and invalid-cache purges.
+const MANUAL_STORAGE_KEY = 'destiny2-manual-codes';
 const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
 const CACHE_SCHEMA_VERSION = 2;
 const MANUAL_ID_PREFIX = 'manual-';
@@ -19,11 +23,17 @@ interface CachedData {
 }
 
 function getStorage(): Storage | null {
-  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
+  // Accessing window.localStorage throws SecurityError outright when the
+  // browser blocks storage for the site, so the access itself must be guarded.
+  try {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+
+    return window.localStorage ?? null;
+  } catch {
     return null;
   }
-
-  return window.localStorage;
 }
 
 // Convert scraped code data to our RedemptionCode format
@@ -76,6 +86,85 @@ function normalizeCachedCode(code: Partial<RedemptionCode> | null | undefined, i
   };
 }
 
+function normalizeManualCodes(value: unknown): RedemptionCode[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  const seen = new Set<string>();
+  const manual: RedemptionCode[] = [];
+
+  for (const [index, entry] of value.entries()) {
+    const normalized = normalizeCachedCode(entry as Partial<RedemptionCode>, index);
+    if (!normalized || !isManualCode(normalized) || seen.has(normalized.code)) {
+      continue;
+    }
+
+    seen.add(normalized.code);
+    manual.push(normalized);
+  }
+
+  return manual;
+}
+
+function readManualCodes(): RedemptionCode[] {
+  const storage = getStorage();
+  if (!storage) {
+    return [];
+  }
+
+  try {
+    const raw = storage.getItem(MANUAL_STORAGE_KEY);
+    return raw ? normalizeManualCodes(JSON.parse(raw)) : [];
+  } catch {
+    try {
+      storage.removeItem(MANUAL_STORAGE_KEY);
+    } catch {
+      // noop
+    }
+    return [];
+  }
+}
+
+function writeManualCodes(codes: RedemptionCode[]) {
+  const storage = getStorage();
+  if (!storage) {
+    return;
+  }
+
+  const manual = codes.filter(isManualCode);
+
+  try {
+    if (manual.length === 0) {
+      storage.removeItem(MANUAL_STORAGE_KEY);
+    } else {
+      storage.setItem(MANUAL_STORAGE_KEY, JSON.stringify(manual));
+    }
+  } catch {
+    // localStorage unavailable or quota exceeded — in-memory state still holds them
+  }
+}
+
+/**
+ * Pulls user-submitted codes out of a cache payload that is about to be
+ * discarded. The v1 cache predates `schemaVersion`, so it always fails
+ * validation — without this, upgrading users lose every code they added.
+ */
+function rescueManualCodes(value: unknown) {
+  const rescued = normalizeManualCodes((value as Partial<CachedData> | null)?.codes);
+  if (rescued.length === 0) {
+    return;
+  }
+
+  const existing = readManualCodes();
+  const known = new Set(existing.map(code => code.code));
+  const merged = [...existing, ...rescued.filter(code => !known.has(code.code))];
+
+  if (merged.length > existing.length) {
+    writeManualCodes(merged);
+  }
+}
+
 function readCachedData(): CachedData | null {
   const storage = getStorage();
   if (!storage) {
@@ -96,6 +185,7 @@ function readCachedData(): CachedData | null {
         !Array.isArray(parsedCache.codes) ||
         typeof parsedCache.timestamp !== 'number'
       ) {
+        rescueManualCodes(parsedCache);
         storage.removeItem(storageKey);
         continue;
       }
@@ -144,6 +234,9 @@ function writeCachedData(codes: RedemptionCode[], timestamp: number = Date.now()
   } catch {
     // localStorage unavailable or quota exceeded — skip caching
   }
+
+  // Mirrored separately so they outlive cache expiry and schema bumps.
+  writeManualCodes(codes);
 }
 
 // Initialize with known codes immediately (don't wait for API)
@@ -157,6 +250,26 @@ export function useCodeScanner() {
   const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const requestIdRef = useRef(0);
+  // Fallback for browsers that block localStorage, where the persisted copy
+  // silently no-ops and the only surviving record is this session's state.
+  const manualCodesRef = useRef<RedemptionCode[]>([]);
+
+  const collectManualCodes = useCallback((catalogueCodes: Set<string>) => {
+    const seen = new Set<string>();
+    const manual: RedemptionCode[] = [];
+
+    for (const code of [...manualCodesRef.current, ...readManualCodes()]) {
+      if (catalogueCodes.has(code.code) || seen.has(code.code)) {
+        continue;
+      }
+
+      seen.add(code.code);
+      manual.push(code);
+    }
+
+    manualCodesRef.current = manual;
+    return manual;
+  }, []);
 
   const loadCodes = useCallback(async (forceRefresh = false) => {
     const currentRequestId = ++requestIdRef.current;
@@ -169,8 +282,11 @@ export function useCodeScanner() {
         if (cachedData) {
           const age = Date.now() - cachedData.timestamp;
           if (age < CACHE_DURATION) {
+            const cachedCodes = new Set(cachedData.codes.map(c => c.code));
+            const restoredManualCodes = collectManualCodes(cachedCodes);
+
             if (currentRequestId !== requestIdRef.current) return;
-            setCodes(cachedData.codes);
+            setCodes([...restoredManualCodes, ...cachedData.codes]);
             setLastUpdateTime(new Date(cachedData.timestamp));
             setIsLoading(false);
             return;
@@ -188,8 +304,7 @@ export function useCodeScanner() {
       // User-submitted codes are not in the catalogue, so a refresh would
       // otherwise silently discard them.
       const catalogueCodes = new Set(redemptionCodes.map(c => c.code));
-      const preservedManualCodes = readCachedData()?.codes
-        .filter(c => isManualCode(c) && !catalogueCodes.has(c.code)) ?? [];
+      const preservedManualCodes = collectManualCodes(catalogueCodes);
 
       const mergedCodes = [...preservedManualCodes, ...redemptionCodes];
 
@@ -201,14 +316,15 @@ export function useCodeScanner() {
     } catch (error) {
       if (currentRequestId !== requestIdRef.current) return;
       console.error('Error loading codes:', error);
-      setCodes(INITIAL_CODES);
+      const fallbackCodes = new Set(INITIAL_CODES.map(c => c.code));
+      setCodes([...collectManualCodes(fallbackCodes), ...INITIAL_CODES]);
       setErrorMessage('We could not refresh the latest codes. Showing the last available set.');
     } finally {
       if (currentRequestId === requestIdRef.current) {
         setIsLoading(false);
       }
     }
-  }, []);
+  }, [collectManualCodes]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -258,6 +374,7 @@ export function useCodeScanner() {
       };
 
       const updatedCodes = [newCode, ...prevCodes.map(c => ({ ...c, isNew: false }))];
+      manualCodesRef.current = updatedCodes.filter(isManualCode);
       writeCachedData(updatedCodes);
       return updatedCodes;
     });

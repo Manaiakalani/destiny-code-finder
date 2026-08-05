@@ -84,6 +84,9 @@ export default function Privacy() {
                   <strong className="text-foreground">Cache Duration:</strong> 30 minutes
                 </p>
                 <p className="text-sm mt-2">
+                  <strong className="text-foreground">Saved Codes Key:</strong> <code className="text-accent">destiny2-manual-codes</code> — codes you add yourself, kept separately so they never expire with the cache
+                </p>
+                <p className="text-sm mt-2">
                   <strong className="text-foreground">Data Location:</strong> Your browser only (never sent to our servers)
                 </p>
               </div>

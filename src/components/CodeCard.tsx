@@ -179,12 +179,13 @@ export function CodeCard({ code }: CodeCardProps) {
     const success = await copyCodeToClipboard(e.currentTarget);
     window.open(`${REDEEM_URL}?token=${code.code}`, '_blank', 'noopener,noreferrer');
 
-    setCopied(true);
-    if (success) {
-      toast.success('Code copied — Bungie opened');
-    } else {
+    if (!success) {
       toast.info('Bungie opened — paste the code manually if needed.');
+      return;
     }
+
+    toast.success('Code copied — Bungie opened');
+    setCopied(true);
 
     clearCopyResetTimer();
     copyResetTimeoutRef.current = window.setTimeout(() => {

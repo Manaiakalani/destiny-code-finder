@@ -1,0 +1,68 @@
+# Weekly check for emblem codes that exist in the community but not in our
+# catalogue. It never edits the catalogue — codes redeem once per account, so a
+# wrong entry costs a real redemption. It files an issue for a human to verify.
+name: Discover codes
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: discover-codes
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Reddit's anonymous API returns 403. These secrets are optional: without
+      # them that source is skipped and the run still checks the primary source.
+      - name: Discover codes
+        id: discover
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+        run: |
+          set +e
+          node scripts/discover-codes.mjs --json > discovery.json
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Summarise
+        id: summary
+        run: node scripts/discovery-report.mjs discovery.json
+
+      - name: File an issue for candidate codes
+        if: steps.summary.outputs.has_candidates == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TITLE: 'Code discovery: unverified candidate codes'
+        run: |
+          existing=$(gh issue list --state open --search "$TITLE in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body-file candidates.md
+          else
+            gh issue create --title "$TITLE" --body-file candidates.md
+          fi
+
+      # A run where every source failed proves nothing. Warn rather than fail so
+      # upstream flakiness does not train maintainers to ignore this workflow.
+      - name: Warn when no source was readable
+        if: steps.discover.outputs.exit_code == '2'
+        run: echo "::warning::Every discovery source failed. This run confirms nothing."

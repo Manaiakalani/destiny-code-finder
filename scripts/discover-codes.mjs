@@ -80,8 +80,9 @@ async function fetchText(url, headers = {}) {
 async function fetchEmblemCollector() {
   const html = await fetchText('https://destinyemblemcollector.com/availability/universalcode');
   const sightings = [];
+  const blocks = html.split('gridemblem-index').slice(1);
 
-  for (const block of html.split('gridemblem-index').slice(1)) {
+  for (const block of blocks) {
     // Some entries ship an empty "Emblem Code:" label but still carry the code
     // in the redeem link, so fall back to the token rather than lose the row.
     const code =
@@ -101,10 +102,21 @@ async function fetchEmblemCollector() {
     });
   }
 
-  if (sightings.length === 0) {
+  if (blocks.length === 0) {
     // Better to fail loudly than to silently report "no new codes" because the
     // page markup changed underneath us.
-    throw new Error('parsed 0 codes — page structure may have changed');
+    throw new Error('found 0 emblem blocks — page structure may have changed');
+  }
+
+  // Every entry on a universal-code page has a code by definition, so a block we
+  // cannot parse is a parser defect, not an empty row. Failing the whole source
+  // is the right call: a partial read would print "catalogue looks current"
+  // while quietly skipping the one new code this exists to find.
+  if (sightings.length < blocks.length) {
+    throw new Error(
+      `parsed ${sightings.length} of ${blocks.length} emblem blocks — ` +
+        'parser is out of date, treating this read as unusable'
+    );
   }
 
   return sightings;

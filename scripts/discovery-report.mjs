@@ -22,6 +22,9 @@ try {
 
 const candidates = report.candidates ?? [];
 const sources = report.sources ?? [];
+// A run that read nothing proves nothing. Without this, an all-sources-down week
+// would headline "No unknown codes found" and read as reassurance.
+const readAnySource = sources.some(source => source.status === 'ok');
 
 const sourceLines = sources.map(source =>
   source.status === 'ok'
@@ -37,7 +40,13 @@ const lines = [
   '',
 ];
 
-if (candidates.length === 0) {
+if (!readAnySource) {
+  lines.push(
+    '**Inconclusive run — no source could be read.**',
+    '',
+    'This says nothing about whether the catalogue is current.'
+  );
+} else if (candidates.length === 0) {
   lines.push('No unknown codes found.');
 } else {
   lines.push(

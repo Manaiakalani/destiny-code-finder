@@ -113,8 +113,43 @@ destiny-code-finder/
 | `npm run build` | Create production build |
 | `npm run preview` | Preview production build locally |
 | `npm run lint` | Run ESLint |
+| `npm run typecheck` | Type-check the app and the test suite |
+| `npm run test:e2e` | Run the Playwright end-to-end suite |
+| `npm run test:e2e:ui` | Run the end-to-end suite in Playwright's UI mode |
+| `npm run verify:catalogue` | Check the code catalogue and emblem database are in parity |
+| `npm run discover:codes` | Report community codes missing from the catalogue |
 | `npm run scrape:emblems` | Fetch latest emblem data from Bungie API |
 | `npm run download:emblems` | Download and cache emblem images |
+
+### End-to-End Tests
+
+`npm run test:e2e` builds nothing on its own — run `npm run build` first, since the
+suite is served from `dist` via `vite preview`. The specs cover appearance and the
+localStorage rescue, migration, and quarantine paths that hold user-added codes.
+
+```bash
+npm run build
+npx playwright install --with-deps chromium   # first run only
+npm run test:e2e
+```
+
+### Discovering New Codes
+
+`npm run discover:codes` checks community sources for emblem codes that are not yet
+in `src/services/codeScraperService.ts` and prints them with links.
+
+It never edits the catalogue. A Destiny code can only be redeemed once per account,
+so an unverified entry costs a user a real redemption — every candidate is meant to
+be confirmed against Bungie by hand before it is added.
+
+```bash
+npm run discover:codes            # human-readable report
+npm run discover:codes -- --json  # machine-readable, used by the weekly workflow
+```
+
+Reddit rejects anonymous API requests, so that source is skipped unless
+`REDDIT_CLIENT_ID` and `REDDIT_CLIENT_SECRET` are set (create a "script" app at
+<https://www.reddit.com/prefs/apps>). The primary source needs no credentials.
 
 ### Running Emblem Scripts
 

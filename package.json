@@ -11,6 +11,9 @@
     "lint": "eslint .",
     "typecheck": "tsc -b --force",
     "verify:catalogue": "node scripts/verify-catalogue-parity.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "discover:codes": "node scripts/discover-codes.mjs",
     "scrape:emblems": "node scripts/scrape-emblems.js",
     "download:emblems": "node scripts/download-emblems.js"
   },

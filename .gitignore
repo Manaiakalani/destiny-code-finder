@@ -30,3 +30,9 @@ dist-ssr
 
 # TypeScript incremental build artifacts
 *.tsbuildinfo
+
+# Playwright
+test-results
+playwright-report
+blob-report
+playwright/.cache

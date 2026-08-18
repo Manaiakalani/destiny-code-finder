@@ -51,9 +51,9 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 <div className="absolute inset-0 w-10 h-10 bg-accent/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <div>
-                <h1 className="font-heading text-lg font-bold tracking-wider text-foreground">
+                <p className="font-heading text-lg font-bold tracking-wider text-foreground">
                   CODE VAULT
-                </h1>
+                </p>
                 <p className="text-[10px] text-accent/70 uppercase tracking-[0.2em]">
                   Guardian Archives
                 </p>
@@ -72,6 +72,19 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                   <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
                 </div>
               </div>
+
+              <Link
+                to="/about"
+                className="text-sm text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
+              >
+                About
+              </Link>
+              <Link
+                to="/privacy"
+                className="text-sm text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
+              >
+                Privacy
+              </Link>
 
               <ThemeToggle />
 
@@ -113,6 +126,23 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 </div>
                 <div className="w-px h-10 bg-accent/20" />
                 <ThemeToggle />
+              </div>
+
+              <div className="flex items-center justify-center gap-6 text-sm">
+                <Link
+                  to="/about"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
+                >
+                  About
+                </Link>
+                <Link
+                  to="/privacy"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
+                >
+                  Privacy
+                </Link>
               </div>
 
               <Button

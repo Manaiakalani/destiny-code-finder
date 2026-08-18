@@ -1,12 +1,14 @@
 # Destiny 2 Code Vault 🔐
 
 [![Destiny 2](https://img.shields.io/badge/Destiny%202-Code%20Vault-7b68ee?style=for-the-badge)](https://www.bungie.net/7/en/Destiny)
-[![React](https://img.shields.io/badge/React-18-61dafb?style=flat-square&logo=react)](https://react.dev)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
-[![Vite](https://img.shields.io/badge/Vite-7-646cff?style=flat-square&logo=vite)](https://vitejs.dev)
+[![React](https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![Vite](https://img.shields.io/badge/Vite-8-646cff?style=flat-square&logo=vite)](https://vitejs.dev)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 
-A fast, privacy-focused web application for discovering and redeeming Destiny 2 emblem codes. Ships a curated, hand-verified catalogue of community-sourced codes.
+**Live:** [manaiakalani.github.io/destiny-code-finder](https://manaiakalani.github.io/destiny-code-finder/)
+
+A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled against [Destiny Emblem Collector](https://destinyemblemcollector.com/availability/universalcode): **49 universal Destiny 2 emblems** (including the July 2026 Bungie Day set), plus cosmetics, Destiny 1 codes labelled separately, and restricted/expired entries.
 
 ## 📸 Screenshots
 
@@ -36,7 +38,7 @@ A fast, privacy-focused web application for discovering and redeeming Destiny 2 
 
 ## ✨ Features
 
-- **🔍 Curated Catalogue** — 79 hand-verified codes, each labelled active, expired, restricted, or Destiny 1
+- **🔍 Curated Catalogue** — 79 hand-verified codes: 49 D2 emblems, 10 D2 cosmetics, 14 Destiny 1, 6 restricted/expired
 - **🖼️ Official Emblem Previews** — Displays high-quality images directly from Bungie's CDN
 - **⚡ Lightning Fast** — Built with Vite + React for instant page loads
 - **🎨 Beautiful UI** — NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
@@ -117,6 +119,7 @@ destiny-code-finder/
 | `npm run test:e2e` | Run the Playwright end-to-end suite |
 | `npm run test:e2e:ui` | Run the end-to-end suite in Playwright's UI mode |
 | `npm run verify:catalogue` | Check the code catalogue and emblem database are in parity |
+| `npm run audit:ci` | Fail on any untriaged production `npm audit` advisory |
 | `npm run discover:codes` | Report community codes missing from the catalogue |
 | `npm run scrape:emblems` | Fetch latest emblem data from Bungie API |
 | `npm run download:emblems` | Download and cache emblem images |
@@ -197,7 +200,7 @@ The app aggregates emblem codes from multiple sources:
 | **Reddit** | r/DestinyTheGame, r/destiny2, r/raidsecrets |
 | **Blueberries.gg** | Community-verified emblem database |
 | **Bungie API** | Official emblem images and metadata |
-| **Curated List** | 37+ manually verified active codes |
+| **Curated List** | 49 D2 emblems + cosmetics, D1, and restricted codes |
 
 ## 🎨 Design System
 
@@ -311,6 +314,26 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 
 ### Version
 - Bumped `package.json` version to **2.4.0**
+
+## 📋 v2.8.0 Updates (August 2026)
+
+### Catalogue
+- Reconciled against Destiny Emblem Collector on 2026-08-18: **no new public codes** since Bungie Day (July 7, 2026).
+- Relabelled 11 Destiny 1-only codes that redeem to the Tower kiosk, not Destiny 2 Collections.
+- Bungie Day 2026 emblems stay listed as D2 active: Broken and Bruised, Gloriabundus, Last Blush, Little Light, Lofty Wail, Red Shift Returning, Tethered Storm.
+
+### Security
+- Landed Dependabot updates (sonner 2.0.8, typescript-eslint 8.67.0, globals 17.11.0, eslint-plugin-react-refresh 0.5.4).
+- Added a triaged production `npm audit` gate on CI and deploy. Zero production advisories.
+- Pinned GitHub Actions to commit SHAs.
+
+### SEO & UX
+- Real `/about` and `/privacy` URLs (BrowserRouter + GitHub Pages 404 restore). Old `#/…` links redirect.
+- Canonical, Open Graph, Twitter, JSON-LD FAQ, sitemap, and `og-image.png`.
+- Redeem is a native link again (middle-click / Ctrl-click works).
+
+### Version
+- Bumped `package.json` to **2.8.0**.
 
 ---
 

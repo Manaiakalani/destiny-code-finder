@@ -14,31 +14,24 @@ export interface EmblemCodeData {
   isD1?: boolean;
 }
 
+const D1_KIOSK_NOTE =
+  'Redeems on Bungie.net but delivers to the Destiny 1 Tower kiosk, not Destiny 2 Collections.';
+
 /**
- * Known emblem codes - verified against destinyemblemcollector.com, rewards.mijago.net, and blueberries.gg
- * Last updated: July 2026
+ * Known emblem codes — verified against destinyemblemcollector.com (49 universal
+ * D2 emblems as of 2026-08-18), blueberries.gg, and community sources.
+ * Last reconciled: August 2026. No new public codes since Bungie Day 2026.
  */
 export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   // ═══════════════════════════════════════════
-  // D2 UNIVERSAL EMBLEM CODES (60 verified)
+  // D2 UNIVERSAL EMBLEM CODES (49 on DEC)
   // ═══════════════════════════════════════════
-  { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Promotional', isActive: true },
-  { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Promotional', isActive: true },
-  { code: 'A7L-FYC-44X', emblemName: 'Flames of Forgotten Truth', source: 'Promotional', isActive: true },
-  { code: 'JD7-4CM-HJG', emblemName: 'Illusion of Light', source: 'Promotional', isActive: true },
-  { code: 'JDT-NLC-JKM', emblemName: 'Ab Aeterno', source: 'Promotional', isActive: true },
-  { code: 'JNX-DMH-XLA', emblemName: 'Field of Light', source: 'Promotional', isActive: true },
-  { code: 'N3L-XN6-PXF', emblemName: 'The Reflective Proof', source: 'Promotional', isActive: true },
-  { code: 'X9F-GMA-H6D', emblemName: 'The Unimagined Plane', source: 'Promotional', isActive: true },
-  { code: '7F9-767-F74', emblemName: 'Sign of the Finite', source: 'Promotional', isActive: true },
-  { code: 'X4C-FGX-MX3', emblemName: 'Note of Conquest', source: 'Promotional', isActive: true },
-  { code: 'F6K-D44-JH4', emblemName: 'Gloriabundus', source: 'Bungie Social Media', isActive: true, description: 'Released July 7, 2026' },
-  { code: 'JA9-PRC-XKX', emblemName: 'Take the Mantle', source: 'Pre-Release Event', isActive: true, description: 'Released March 26, 2026' },
   { code: 'YRC-C3D-YNC', emblemName: 'A Classy Order', source: 'TWAB Reward', isActive: true },
   { code: '9FY-KDD-PRT', emblemName: 'Adventurous Spirit', source: 'Community', isActive: true },
   { code: 'HN3-7K9-93G', emblemName: 'Airlock Invitation', source: 'Fall Guys Promo', isActive: true },
   { code: 'PTD-GKG-CVN', emblemName: 'Archived', source: 'TFS Collector\'s Edition', isActive: true },
   { code: 'ML3-FD4-ND9', emblemName: 'Be True', source: 'Trans Awareness', isActive: true },
+  { code: 'VMG-HXK-VAL', emblemName: 'Broken and Bruised', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
   { code: 'A67-C7X-3GN', emblemName: 'Bulbul Tarang', source: 'Promotional', isActive: true },
   { code: 'VHT-6A7-3MM', emblemName: 'Conqueror of Infinity', source: 'Promotional', isActive: true },
   { code: 'PHV-6LF-9CP', emblemName: 'Countdown to Convergence', source: 'TWQ Collector\'s Edition', isActive: true },
@@ -48,19 +41,25 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: '3J9-AMM-7MG', emblemName: 'Folding Space', source: 'TFS Collector\'s Edition', isActive: true },
   { code: '7LV-GTK-T7J', emblemName: 'Future in Shadow', source: 'BL Collector\'s Edition', isActive: true },
   { code: 'JYN-JAA-Y7D', emblemName: 'Galilean Excursion', source: 'BL Collector\'s Edition', isActive: true },
+  { code: 'F6K-D44-JH4', emblemName: 'Gloriabundus', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
   { code: '3CV-D6K-RD4', emblemName: 'Gone Home', source: 'TFS Collector\'s Edition', isActive: true },
   { code: 'VXN-V3T-MRP', emblemName: 'Harmonic Commencement', source: 'Promotional', isActive: true },
   { code: 'L7T-CVV-3RD', emblemName: 'Heliotrope Warren', source: '30th Anniversary', isActive: true },
   { code: 'XVK-RLA-RAM', emblemName: 'In Urbe Inventa', source: 'Promotional', isActive: true },
   { code: 'J6P-9YH-LLP', emblemName: 'In Vino Mendacium', source: 'Promotional', isActive: true },
   { code: 'TNN-DKM-6LG', emblemName: 'Jade\'s Burrow', source: 'Lunar New Year 2023', isActive: true },
+  { code: 'JRR-7YA-CCC', emblemName: 'Last Blush', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
   { code: 'VA7-L7H-PNC', emblemName: 'Liminal Nadir', source: 'TWQ Collector\'s Edition', isActive: true },
   { code: 'XMY-G9M-6XH', emblemName: 'Limitless Horizon', source: 'Lightfall Collector\'s Edition', isActive: true },
+  { code: 'FCX-P94-JCV', emblemName: 'Little Light', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
+  { code: '7LD-PLJ-FN3', emblemName: 'Lofty Wail', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
   { code: 'JND-HLR-L69', emblemName: 'M:\\>START', source: 'Marathon ARG', isActive: true },
   { code: 'FMM-44A-RKP', emblemName: 'Myopia', source: 'TFS Collector\'s Edition', isActive: true },
   { code: 'YAA-37T-FCN', emblemName: 'Neon Mirage', source: 'Promotional', isActive: true },
   { code: 'L3P-XXR-GJ4', emblemName: 'Out the Airlock', source: 'EA/BioWare Partnership', isActive: true },
+  { code: 'J64-HYC-HTD', emblemName: 'Red Shift Returning', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
   { code: 'THR-33A-YKC', emblemName: 'Risen', source: 'BiliBili Partnership', isActive: true },
+  { code: 'DXL-XHC-X37', emblemName: 'Runner', source: 'Special Offer', isActive: true },
   { code: '9LX-7YC-6TX', emblemName: 'Schrödinger\'s Gun', source: 'Telesto Event', isActive: true },
   { code: 'JGN-PX4-DFN', emblemName: 'Secret Signal', source: 'Aion Archives ARG', isActive: true },
   { code: '7D4-PKR-MD7', emblemName: 'Sequence Flourish', source: 'Splicer Puzzle', isActive: true },
@@ -68,20 +67,14 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'F99-KPX-NCF', emblemName: 'Shadow\'s Light', source: 'TWQ Collector\'s Edition', isActive: true },
   { code: '6LJ-GH7-TPA', emblemName: 'Sneer of the Oni', source: 'TWQ Collector\'s Edition', isActive: true },
   { code: 'T67-JXY-PH6', emblemName: 'Stag\'s Spirit', source: 'Nightmare Containment', isActive: true },
+  { code: 'JA9-PRC-XKX', emblemName: 'Take the Mantle', source: 'Pre-Release Event', isActive: true, description: 'Released March 26, 2026' },
   { code: 'PKH-JL6-L4R', emblemName: 'Tangled Web', source: 'TWAB 2022-02-10', isActive: true },
+  { code: '9NG-KDD-PNG', emblemName: 'Tethered Storm', source: 'Bungie Day 2026', isActive: true, description: 'Released July 7, 2026' },
   { code: 'XFV-KHP-N97', emblemName: 'The Visionary', source: 'Curse of Osiris', isActive: true },
   { code: '6AJ-XFR-9ND', emblemName: 'Tigris Fati', source: 'TFS Dev Stream Twitch Drop', isActive: true },
   { code: '993-H3H-M6K', emblemName: 'Visio Spei', source: 'Promotional', isActive: true },
   { code: 'HG7-YRG-HHF', emblemName: 'Year of the Snake', source: 'BiliBili Promo', isActive: true },
   { code: 'JVG-VNT-GGG', emblemName: 'соняшник', source: 'Ukraine Support', isActive: true, description: 'соняшник (Sunflower)' },
-  { code: 'DXL-XHC-X37', emblemName: 'Runner', source: 'Special Offer', isActive: true },
-  { code: 'VMG-HXK-VAL', emblemName: 'Broken and Bruised', source: 'Promotional', isActive: true },
-  { code: 'JRR-7YA-CCC', emblemName: 'Last Blush', source: 'Promotional', isActive: true },
-  { code: 'FCX-P94-JCV', emblemName: 'Little Light', source: 'Promotional', isActive: true },
-  { code: '7LD-PLJ-FN3', emblemName: 'Lofty Wail', source: 'Promotional', isActive: true },
-  { code: 'J64-HYC-HTD', emblemName: 'Red Shift Returning', source: 'Promotional', isActive: true },
-  { code: '9NG-KDD-PNG', emblemName: 'Tethered Storm', source: 'Promotional', isActive: true },
-  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Promotional', isActive: true },
 
   // ═══════════════════════════════════════════
   // D2 NON-EMBLEM REWARD CODES (10 verified)
@@ -98,8 +91,20 @@ export const KNOWN_ACTIVE_CODES: EmblemCodeData[] = [
   { code: 'M3L-7DA-67C', emblemName: 'Evergreen Destrier', source: 'Monument of Triumph', isActive: true, description: 'Sparrow' },
 
   // ═══════════════════════════════════════════
-  // DESTINY 1 SHADER CODES (3 verified)
+  // DESTINY 1 CODES (14) — still redeem, D1 only
+  // Confirmed absent from DEC's Destiny 2 universal list (2026-08-18).
   // ═══════════════════════════════════════════
+  { code: 'JDT-NLC-JKM', emblemName: 'Ab Aeterno', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'FJ9-LAM-67F', emblemName: 'Binding Focus', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'JNX-DMH-XLA', emblemName: 'Field of Light', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'A7L-FYC-44X', emblemName: 'Flames of Forgotten Truth', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'JD7-4CM-HJG', emblemName: 'Illusion of Light', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: '3VF-LGC-RLX', emblemName: 'Insula Thesauria', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: '7CP-94V-LFP', emblemName: 'Lone Focus, Jagged Edge', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'X4C-FGX-MX3', emblemName: 'Note of Conquest', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: '7F9-767-F74', emblemName: 'Sign of the Finite', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'N3L-XN6-PXF', emblemName: 'The Reflective Proof', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
+  { code: 'X9F-GMA-H6D', emblemName: 'The Unimagined Plane', source: 'Destiny 1', isActive: true, isD1: true, description: 'Destiny 1 emblem', note: D1_KIOSK_NOTE },
   { code: 'D6T-3JR-CKX', emblemName: 'Prismatic Expanse', source: 'D1 Shader Code', isActive: true, isD1: true, description: 'Destiny 1 Shader' },
   { code: '7MM-VPD-MHP', emblemName: 'Double Banshee', source: 'D1 Shader Code', isActive: true, isD1: true, description: 'Destiny 1 Shader' },
   { code: 'RXC-9XJ-4MH', emblemName: 'Oracle 99', source: 'D1 Shader Code', isActive: true, isD1: true, description: 'Destiny 1 Shader' },

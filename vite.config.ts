@@ -15,4 +15,20 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    target: "esnext",
+    cssCodeSplit: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("react-dom") || id.includes("react-router-dom") || id.includes("node_modules/react/")) {
+            return "react-vendor";
+          }
+          if (id.includes("@radix-ui")) {
+            return "ui-vendor";
+          }
+        },
+      },
+    },
+  },
 });

@@ -8,6 +8,15 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
+User-agent: Slurp
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
 # Block AI training crawlers
 User-agent: GPTBot
 Disallow: /
@@ -33,6 +42,9 @@ Disallow: /
 User-agent: Bytespider
 Disallow: /
 
+User-agent: PerplexityBot
+Disallow: /
+
 User-agent: FacebookBot
 Disallow: /
 
@@ -55,3 +67,5 @@ Disallow: /
 # Default rule: allow all other bots
 User-agent: *
 Allow: /
+
+Sitemap: https://manaiakalani.github.io/destiny-code-finder/sitemap.xml

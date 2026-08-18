@@ -130,6 +130,12 @@ const Index = () => {
 
               <div className="flex items-center gap-5 text-sm text-muted-foreground/60">
                 <Link
+                  to="/about"
+                  className="hover:text-accent transition-colors"
+                >
+                  About
+                </Link>
+                <Link
                   to="/privacy"
                   className="hover:text-accent transition-colors flex items-center gap-1.5"
                 >

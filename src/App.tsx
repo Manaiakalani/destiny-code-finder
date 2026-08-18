@@ -1,9 +1,11 @@
 import { Toaster } from "sonner";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect, useState } from "react";
 import { MouseParticles } from "@/components/MouseParticles";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
+
+const basename = import.meta.env.BASE_URL;
 
 const About = lazy(() => import("./pages/About"));
 const Privacy = lazy(() => import("./pages/Privacy"));
@@ -43,9 +45,9 @@ const App = () => {
           className: "glass-card border-border/50",
         }}
       />
-      <HashRouter>
+      <BrowserRouter basename={basename}>
         <RouteErrorBoundary>
-          <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="orbit-loader" /></div>}>
+          <Suspense fallback={<div className="flex min-h-screen items-center justify-center"><div className="orbit-loader" aria-hidden="true" /></div>}>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/about" element={<About />} />
@@ -54,7 +56,7 @@ const App = () => {
             </Routes>
           </Suspense>
         </RouteErrorBoundary>
-      </HashRouter>
+      </BrowserRouter>
     </>
   );
 };

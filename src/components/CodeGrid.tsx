@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { RedemptionCode } from '@/types/code';
 import { CodeCard } from './CodeCard';
 
@@ -6,7 +7,7 @@ interface CodeGridProps {
   isLoading: boolean;
 }
 
-export function CodeGrid({ codes, isLoading }: CodeGridProps) {
+export const CodeGrid = memo(function CodeGrid({ codes, isLoading }: CodeGridProps) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20" role="status" aria-live="polite">
@@ -35,16 +36,17 @@ export function CodeGrid({ codes, isLoading }: CodeGridProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Destiny redemption codes">
       {codes.map((code, index) => (
         <div
           key={code.id}
-          className="animate-fade-in"
-          style={{ animationDelay: `${index * 50}ms` }}
+          role="listitem"
+          className="animate-fade-in [content-visibility:auto] [contain-intrinsic-size:auto_28rem]"
+          style={{ animationDelay: `${Math.min(index, 12) * 50}ms`, animationFillMode: 'backwards' }}
         >
           <CodeCard code={code} />
         </div>
       ))}
     </div>
   );
-}
+});

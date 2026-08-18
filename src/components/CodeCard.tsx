@@ -1,5 +1,5 @@
 import { ExternalLink, Copy, Check, Clock, Sparkles } from 'lucide-react';
-import { useState, useEffect, useCallback, useRef, type MouseEvent, type MutableRefObject } from 'react';
+import { useState, useEffect, useCallback, useRef, memo, type MouseEvent, type MutableRefObject } from 'react';
 import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
 import { Button } from '@/components/ui/button';
@@ -42,7 +42,7 @@ function createConfetti(x: number, y: number, elementsRef: MutableRefObject<HTML
   }
 }
 
-export function CodeCard({ code }: CodeCardProps) {
+export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
@@ -52,7 +52,6 @@ export function CodeCard({ code }: CodeCardProps) {
   const mountedRef = useRef(true);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setImageError(false);
     setEmblemImageUrl(null);
     setResolvedEmblemName(null);
@@ -169,15 +168,13 @@ export function CodeCard({ code }: CodeCardProps) {
     });
   }, [clearCopyResetTimer, copyCodeToClipboard]);
 
-  const handleRedeemClick = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
+  const handleRedeemClick = useCallback(async (e: MouseEvent<HTMLAnchorElement>) => {
+    // Leave the native <a> navigation alone (middle-click / Ctrl-click / Cmd-click).
     if (e.button === 0 && typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
       navigator.vibrate([30, 50, 30]);
     }
 
     const success = await copyCodeToClipboard(e.currentTarget);
-    window.open(`${REDEEM_URL}?token=${code.code}`, '_blank', 'noopener,noreferrer');
 
     if (!success) {
       toast.info('Bungie opened — paste the code manually if needed.');
@@ -194,7 +191,7 @@ export function CodeCard({ code }: CodeCardProps) {
         setCopied(false);
       }
     }, 2000);
-  }, [clearCopyResetTimer, code.code, copyCodeToClipboard]);
+  }, [clearCopyResetTimer, copyCodeToClipboard]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -365,17 +362,24 @@ export function CodeCard({ code }: CodeCardProps) {
 
           {(isActive || isD1) && (
             <Button
-              type="button"
-              onClick={handleRedeemClick}
+              asChild
               variant="solar"
               className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
-              Copy & Redeem
+              <a
+                href={`${REDEEM_URL}?token=${encodeURIComponent(code.code)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={handleRedeemClick}
+                aria-label={`Copy ${code.code} and redeem on Bungie.net`}
+              >
+                <ExternalLink className="w-4 h-4 mr-2" />
+                Copy & Redeem
+              </a>
             </Button>
           )}
         </div>
       </div>
     </div>
   );
-}
+});

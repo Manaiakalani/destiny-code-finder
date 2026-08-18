@@ -1,9 +1,21 @@
-import { ExternalLink, Zap, Database, RefreshCw, Shield } from 'lucide-react';
+import { ExternalLink, Zap, Database, RefreshCw, Shield, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 export default function About() {
   return (
     <div className="min-h-screen bg-background">
+      <div className="sticky top-0 z-50 glass-card backdrop-blur-xl border-b border-border/40">
+        <div className="container mx-auto px-4 py-3">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-accent hover:text-solar transition-colors group"
+          >
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-heading tracking-wider">Back to Code Vault</span>
+          </Link>
+        </div>
+      </div>
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         {/* Hero Section */}
         <div className="text-center mb-12">

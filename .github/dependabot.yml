@@ -10,6 +10,12 @@ updates:
     open-pull-requests-limit: 10
     labels:
       - "dependencies"
+    # typescript-eslint 8.x peers `typescript@>=4.8.4 <6.1.0`. TypeScript 7.0
+    # has no compiler API (support is expected with 7.1). Drop this ignore
+    # once typescript-eslint documents 7.x support.
+    ignore:
+      - dependency-name: "typescript"
+        versions: [">=7"]
     groups:
       npm:
         update-types:

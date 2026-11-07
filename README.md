@@ -16,7 +16,7 @@ A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled agai
   <img src="docs/screenshots/demo.gif" alt="Destiny Code Vault Demo" width="720" />
 </p>
 
-### Desktop — Deep Space Theme
+### Desktop: Deep Space Theme
 <p align="center">
   <img src="docs/screenshots/desktop-hero.png" alt="Desktop Hero View" width="720" />
 </p>
@@ -38,14 +38,14 @@ A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled agai
 
 ## ✨ Features
 
-- **🔍 Curated Catalogue** — 79 hand-verified codes: 49 D2 emblems, 10 D2 cosmetics, 14 Destiny 1, 6 restricted/expired
-- **🖼️ Official Emblem Previews** — Displays high-quality images directly from Bungie's CDN
-- **⚡ Lightning Fast** — Built with Vite + React for instant page loads
-- **🎨 Beautiful UI** — NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
-- **📱 Fully Responsive** — Works flawlessly on desktop, tablet, and mobile
-- **🔒 Privacy-First** — No cookies, no user accounts, cookieless privacy-focused analytics
-- **🌙 Theme Support** — Dark, OLED, and Light modes
-- **✨ Visual Effects** — Shooting stars, particle effects, and emblem shine animations
+- **🔍 Curated Catalogue**: 79 hand-verified codes: 49 D2 emblems, 10 D2 cosmetics, 14 Destiny 1, 6 restricted/expired
+- **🖼️ Official Emblem Previews**: Displays high-quality images directly from Bungie's CDN
+- **⚡ Lightning Fast**: Built with Vite + React for instant page loads
+- **🎨 Beautiful UI**: NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
+- **📱 Fully Responsive**: Works flawlessly on desktop, tablet, and mobile
+- **🔒 Privacy-First**: No cookies, no user accounts, cookieless privacy-focused analytics
+- **🌙 Theme Support**: Dark, OLED, and Light modes
+- **✨ Visual Effects**: Shooting stars, particle effects, and emblem shine animations
 
 ## 🚀 Quick Start
 
@@ -126,7 +126,7 @@ destiny-code-finder/
 
 ### End-to-End Tests
 
-`npm run test:e2e` builds nothing on its own — run `npm run build` first, since the
+`npm run test:e2e` builds nothing on its own: run `npm run build` first, since the
 suite is served from `dist` via `vite preview`. The specs cover appearance and the
 localStorage rescue, migration, and quarantine paths that hold user-added codes.
 
@@ -142,7 +142,7 @@ npm run test:e2e
 in `src/services/codeScraperService.ts` and prints them with links.
 
 It never edits the catalogue. A Destiny code can only be redeemed once per account,
-so an unverified entry costs a user a real redemption — every candidate is meant to
+so an unverified entry costs a user a real redemption: every candidate is meant to
 be confirmed against Bungie by hand before it is added.
 
 ```bash
@@ -269,26 +269,26 @@ Emblem codes are aggregated from publicly available community sources. Always ve
 This release directly addresses community feedback from [r/DestinyTheGame](https://www.reddit.com/r/DestinyTheGame/comments/1rewz3y/):
 
 ### Issues Fixed
-- **Wrong code→emblem mappings** — All 38 original code entries had incorrect emblem name associations (e.g., `YRC-C3D-YNC` was labeled "The Visionary" but is actually "A Classy Order"). Every mapping has been corrected against [destinyemblemcollector.com](https://destinyemblemcollector.com/availability/universalcode), [rewards.mijago.net](https://rewards.mijago.net), and [blueberries.gg](https://www.blueberries.gg/items/destiny-2-free-emblems/).
-- **Fabricated codes removed** — 6 codes that never existed as universal codes were removed (`JNX-DMH-XLA`, `A7L-FYC-44X`, `N3L-XN6-PXF`, `X9F-GMA-H6D`, `3VF-LGC-RLX`, `X4C-FGX-MX3`).
-- **Non-universal codes marked expired** — 7 codes for emblems that require special access (Game2Give donations, Bungie API developer program, Steelseries promos, Creator Hub, Netcafe vendors) are now marked "Expired" with dependency notes explaining how to actually obtain them.
-- **D1 shader codes properly labeled** — `D6T-3JR-CKX`, `7MM-VPD-MHP`, `RXC-9XJ-4MH` are Destiny 1 shaders (Prismatic Expanse, Double Banshee, Oracle 99), not D2 emblems. They now display under a dedicated "D1" filter.
-- **Add Code crash fixed** — `Uncaught TypeError: x.toUpperCase is not a function` caused by passing a `RedemptionCode` object where a string was expected.
-- **Code validation updated** — Regex now uses Bungie's official character set (`ACDFGHJKLMNPRTVXY34679`) and supports extended 14-character codes for Destiny: Rising promotions.
-- **Missing rewards added** — `R9J-79M-J6C` (End of the Rainbow transmat) and `TK7-D3P-FDF` (Rainbow Connection emote) now included.
+- **Wrong code→emblem mappings**: All 38 original code entries had incorrect emblem name associations (e.g., `YRC-C3D-YNC` was labeled "The Visionary" but is actually "A Classy Order"). Every mapping has been corrected against [destinyemblemcollector.com](https://destinyemblemcollector.com/availability/universalcode), [rewards.mijago.net](https://rewards.mijago.net), and [blueberries.gg](https://www.blueberries.gg/items/destiny-2-free-emblems/).
+- **Fabricated codes removed**: 6 codes that never existed as universal codes were removed (`JNX-DMH-XLA`, `A7L-FYC-44X`, `N3L-XN6-PXF`, `X9F-GMA-H6D`, `3VF-LGC-RLX`, `X4C-FGX-MX3`).
+- **Non-universal codes marked expired**: 7 codes for emblems that require special access (Game2Give donations, Bungie API developer program, Steelseries promos, Creator Hub, Netcafe vendors) are now marked "Expired" with dependency notes explaining how to actually obtain them.
+- **D1 shader codes properly labeled**: `D6T-3JR-CKX`, `7MM-VPD-MHP`, `RXC-9XJ-4MH` are Destiny 1 shaders (Prismatic Expanse, Double Banshee, Oracle 99), not D2 emblems. They now display under a dedicated "D1" filter.
+- **Add Code crash fixed**: `Uncaught TypeError: x.toUpperCase is not a function` caused by passing a `RedemptionCode` object where a string was expected.
+- **Code validation updated**: Regex now uses Bungie's official character set (`ACDFGHJKLMNPRTVXY34679`) and supports extended 14-character codes for Destiny: Rising promotions.
+- **Missing rewards added**: `R9J-79M-J6C` (End of the Rainbow transmat) and `TK7-D3P-FDF` (Rainbow Connection emote) now included.
 
 ### New Features
-- **D1 Filter** — Combined filter row: All / D2 Active / D2 Expired / D1
-- **Dependency Notes** — Expired and D1 cards display explanatory notes about how to obtain the item
+- **D1 Filter**: Combined filter row: All / D2 Active / D2 Expired / D1
+- **Dependency Notes**: Expired and D1 cards display explanatory notes about how to obtain the item
 
 ## 📋 v2.3.0 Updates
 
 ### New Codes
-- **`DXL-XHC-X37`** — **Runner** emblem (universal code, available Feb 5, 2026). Confirmed via [destinyemblemcollector.com](https://destinyemblemcollector.com/emblem?id=3079989879).
+- **`DXL-XHC-X37`**: **Runner** emblem (universal code, available Feb 5, 2026). Confirmed via [destinyemblemcollector.com](https://destinyemblemcollector.com/emblem?id=3079989879).
 
 ### Image Fixes
 - **Runner emblem** now shows correct Bungie CDN icon
-- **End of the Rainbow** and **Rainbow Connection** — removed fabricated icon paths that were 404ing on Bungie CDN. These are a transmat effect and emote (not emblems), so they correctly show a placeholder icon.
+- **End of the Rainbow** and **Rainbow Connection**: removed fabricated icon paths that were 404ing on Bungie CDN. These are a transmat effect and emote (not emblems), so they correctly show a placeholder icon.
 
 ### Scraper Improvements
 - Reddit and Blueberries.gg scrapers now validate discovered codes against **Bungie's official character set** (`ACDFGHJKLMNPRTVXY34679`), filtering out false matches with characters outside the valid set.
@@ -296,12 +296,12 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ## 📋 v2.4.0 Updates
 
 ### UX Improvements
-- **Middle-click support on Redeem buttons** — Redeem buttons are now native `<a>` elements instead of `<button>`, enabling middle-click / Ctrl+click to open codes in new browser tabs. Applies to both per-code Redeem buttons and the hero "Redeem on Bungie.net" button.
+- **Middle-click support on Redeem buttons**: Redeem buttons are now native `<a>` elements instead of `<button>`, enabling middle-click / Ctrl+click to open codes in new browser tabs. Applies to both per-code Redeem buttons and the hero "Redeem on Bungie.net" button.
 
 ### Code Quality & Refactoring
 - Removed unused imports (`CodeGridSkeleton`, `EmptyState` from Index page)
 - Removed dead types (`SortOrder`, unused `sourceUrl` field)
-- Removed redundant `description` fields from 48 code entries where they duplicated `emblemName` — `useCodeScanner` now falls back to `emblemName` automatically
+- Removed redundant `description` fields from 48 code entries where they duplicated `emblemName`: `useCodeScanner` now falls back to `emblemName` automatically
 - Removed dead default export from `codeScraperService`
 
 ### Docker Hardening

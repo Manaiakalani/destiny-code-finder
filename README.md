@@ -23,12 +23,12 @@ A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled agai
 
 ### Search & Filter
 <p align="center">
-  <img src="docs/screenshots/search-filter.png" alt="Search filtering for rainbow codes" width="720" />
+  <img src="docs/screenshots/search-filter.png" alt="Search filtering for Runner emblem" width="720" />
 </p>
 
-### Dark theme
+### Shooting Stars & Particle Effects
 <p align="center">
-  <img src="docs/screenshots/dark-theme.png" alt="Dark theme catalogue" width="720" />
+  <img src="docs/screenshots/dark-theme.png" alt="Dark theme with shooting star effects" width="720" />
 </p>
 
 ### Mobile Responsive
@@ -45,7 +45,7 @@ A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled agai
 - **📱 Fully Responsive**: Works flawlessly on desktop, tablet, and mobile
 - **🔒 Privacy-First**: No cookies, no user accounts, cookieless privacy-focused analytics
 - **🌙 Theme Support**: Dark, OLED, and Light modes
-- **Copy and redeem**: Copy a code, or copy it and open Bungie's redeem page
+- **✨ Visual Effects**: Shooting stars, particle effects, and emblem shine animations
 
 ## 🚀 Quick Start
 
@@ -315,19 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
-## 📋 v2.9.0 Updates (November 2026)
+## 📋 v2.9.1 Updates (November 2026)
 
-### Catalogue
-- The code list is the first screen. Each row shows the emblem, the code, and Copy / Copy & Redeem.
-- A code you add is pinned to the top, labelled Unknown until it is checked, and can be redeemed. Catalogue rows no longer show the cache clock as a found date.
-- Add Code accepts the 11-character Bungie set (`XXX-XXX-XXX`).
+The card catalogue, glitch codes, and starfield stay. v2.9.0 had replaced them with a plain list, and this puts that design back.
 
-### Interface
-- Dark, OLED, and light themes stay. The page no longer uses the starfield, confetti, or mouse particles.
-- Search and status filters stay in the URL.
-
-### Version
-- Bumped `package.json` to **2.9.0**.
+- Refresh keeps the cards on screen instead of swapping in the scanner.
+- A code you add can be copied and redeemed. The card says when you added it. Catalogue cards no longer show the cache clock as a found date.
+- If a refresh fails, the page says so and keeps the last set.
+- A phone-width screen keeps each card inside the viewport.
 
 ## 📋 v2.8.0 Updates (August 2026)
 

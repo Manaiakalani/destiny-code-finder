@@ -77,9 +77,9 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
-      <DialogContent className="border border-border bg-background sm:max-w-md w-[calc(100%-1rem)]">
+      <DialogContent className="glass-card border-border/50 sm:max-w-md w-[calc(100%-1rem)]">
         <DialogHeader>
-          <DialogTitle className="text-xl">Submit a Code</DialogTitle>
+          <DialogTitle className="font-heading text-xl tracking-wider">Submit a Code</DialogTitle>
           <DialogDescription>
             Share a code you found in-game, in a community post, or from a friend.
           </DialogDescription>
@@ -96,7 +96,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
               value={code}
               onChange={handleCodeChange}
               placeholder="XXX-XXX-XXX"
-              className="code-display min-h-11 text-center text-lg"
+              className="min-h-[44px] font-heading text-lg tracking-widest text-center bg-secondary/50 border-border/50"
               maxLength={11}
               spellCheck={false}
               autoComplete="off"
@@ -125,7 +125,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
             </Button>
             <Button
               type="submit"
-              className="min-h-11 flex-1"
+              className="flex-1 min-h-[44px] font-heading tracking-wider"
               disabled={isSubmitDisabled}
             >
               Add Code

@@ -781,16 +781,6 @@
     animation: count-up 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Badge pulse animation - very subtle */
-  @keyframes badge-pulse {
-    0%, 100% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.02); opacity: 0.95; }
-  }
-
-  .badge-animated {
-    animation: badge-pulse 3s ease-in-out infinite;
-  }
-
   /* Hexagonal divider pattern */
   .hex-divider {
     height: 2px;
@@ -804,19 +794,6 @@
     );
     position: relative;
   }
-
-  .hex-divider::before,
-  .hex-divider::after {
-    content: '◆';
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(124, 58, 237, 0.8);
-    font-size: 12px;
-  }
-
-  .hex-divider::before { left: 0; }
-  .hex-divider::after { right: 0; }
 
   /* Floating particles */
   @keyframes particle-float {
@@ -1162,26 +1139,6 @@
     opacity: 1;
   }
 
-  /* 3. STATUS BADGES - Enhanced Pulse */
-  .badge-pulse-active {
-    position: relative;
-  }
-
-  .badge-pulse-active::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: inherit;
-    background: hsl(var(--strand));
-    opacity: 0;
-    animation: badge-glow-pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes badge-glow-pulse {
-    0%, 100% { opacity: 0; transform: scale(1); }
-    50% { opacity: 0.3; transform: scale(1.1); }
-  }
-
   /* 4. TYPOGRAPHY - Enhanced Text Shadows */
   .title-shadow {
     text-shadow: 
@@ -1384,3 +1341,14 @@
     pointer-events: none;
   }
 }
+
+/* Filter chips and card status words. The page-level subclass tokens clear
+   4.5:1 on the page, and miss it on a light card or a same-hue tint. Kept
+   outside @layer so they win over the utility color. */
+.light-mode [aria-pressed="true"].tone-strand,
+.light-mode .status-strand { color: hsl(145 75% 18%); }
+.light-mode [aria-pressed="true"].tone-stasis,
+.light-mode .status-stasis { color: hsl(192 90% 18%); }
+.light-mode [aria-pressed="true"].tone-solar,
+.light-mode .status-solar { color: hsl(18 90% 24%); }
+.light-mode [aria-pressed="true"].tone-accent { color: hsl(265 75% 32%); }

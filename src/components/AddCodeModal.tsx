@@ -76,10 +76,10 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
   const isSubmitDisabled = !verifyCodeFormat(normalizedCode);
 
   return (
-    <Dialog open={isOpen} onOpenChange={() => onClose()}>
-      <DialogContent className="glass-card border-border/50 sm:max-w-md w-[calc(100%-1rem)]">
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="border border-border bg-background sm:max-w-md w-[calc(100%-1rem)]">
         <DialogHeader>
-          <DialogTitle className="font-heading text-xl tracking-wider">Submit a Code</DialogTitle>
+          <DialogTitle className="text-xl">Submit a Code</DialogTitle>
           <DialogDescription>
             Share a code you found in-game, in a community post, or from a friend.
           </DialogDescription>
@@ -96,7 +96,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
               value={code}
               onChange={handleCodeChange}
               placeholder="XXX-XXX-XXX"
-              className="min-h-[44px] font-heading text-lg tracking-widest text-center bg-secondary/50 border-border/50"
+              className="code-display min-h-11 text-center text-lg"
               maxLength={11}
               spellCheck={false}
               autoComplete="off"
@@ -125,7 +125,7 @@ export function AddCodeModal({ isOpen, onClose, onSubmit }: AddCodeModalProps) {
             </Button>
             <Button
               type="submit"
-              className="flex-1 min-h-[44px] font-heading tracking-wider"
+              className="min-h-11 flex-1"
               disabled={isSubmitDisabled}
             >
               Add Code

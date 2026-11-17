@@ -315,6 +315,13 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.3 Updates (November 2026)
+
+The cards, glitch codes, and starfield stay. Status on a card is a word, and each catalogue filter is a name with its count set apart.
+
+- Card corners say Destiny 2, Destiny 1, Expired, or Unknown. The status dots are gone.
+- Archive Database is one heading. The filters read All, Destiny 2, Expired, Destiny 1, and Unknown.
+
 ## 📋 v2.9.2 Updates (November 2026)
 
 The same cards, glitch codes, and starfield. The bar across the top is one surface now, and About, Privacy, and missing pages use it too.

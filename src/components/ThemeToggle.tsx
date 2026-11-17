@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
 type Theme = 'light' | 'dark' | 'oled';
 
 function readStoredTheme(): Theme {
@@ -76,7 +78,11 @@ export function ThemeToggle() {
       variant="ghost"
       size="sm"
       onClick={cycleTheme}
-      className="min-h-11 gap-1.5 px-2.5 text-sm text-muted-foreground hover:text-foreground"
+      className={cn(
+        'gap-1.5 h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors btn-haptic',
+        theme === 'oled' && 'text-accent',
+        theme === 'light' && 'text-solar'
+      )}
       title={`Current: ${getLabel()} mode. Click to cycle.`}
     >
       {getIcon()}

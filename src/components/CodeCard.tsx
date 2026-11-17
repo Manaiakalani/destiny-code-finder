@@ -1,5 +1,5 @@
-import { ExternalLink, Copy, Check, Clock, Sparkles } from 'lucide-react';
-import { useState, useEffect, useCallback, useRef, memo, type MouseEvent, type MutableRefObject } from 'react';
+import { ExternalLink, Copy, Check } from 'lucide-react';
+import { useState, useEffect, useCallback, useRef, memo, type MouseEvent } from 'react';
 import { toast } from 'sonner';
 import { RedemptionCode } from '@/types/code';
 import { Button } from '@/components/ui/button';
@@ -8,47 +8,24 @@ import { getEmblemIcon, initEmblemDatabase, isDatabaseReady, getEmblemNameByCode
 
 interface CodeCardProps {
   code: RedemptionCode;
+  eagerImage?: boolean;
 }
 
 const REDEEM_URL = 'https://www.bungie.net/7/en/Codes/Redeem';
 
-function createConfetti(x: number, y: number, elementsRef: MutableRefObject<HTMLElement[]>) {
-  const colors = ['#FFD700', '#7C3AED', '#22D3EE', '#F97316', '#10B981'];
-  const confettiCount = 12;
+const STATUS_LABEL: Record<RedemptionCode['status'], string> = {
+  active: 'Active',
+  d1: 'Destiny 1',
+  expired: 'Expired',
+  unknown: 'Unknown',
+};
 
-  for (let i = 0; i < confettiCount; i++) {
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = `${x}px`;
-    confetti.style.top = `${y}px`;
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-    confetti.style.animation = `confetti-fall ${1 + Math.random()}s ease-out forwards`;
-    confetti.style.setProperty('--x', `${(Math.random() - 0.5) * 200}px`);
-
-    document.body.appendChild(confetti);
-    elementsRef.current.push(confetti);
-
-    // Tie removal to the animation rather than a timer, so cancelling timers
-    // on unmount cannot strand these nodes on document.body.
-    confetti.addEventListener(
-      'animationend',
-      () => {
-        confetti.remove();
-        elementsRef.current = elementsRef.current.filter((el) => el !== confetti);
-      },
-      { once: true }
-    );
-  }
-}
-
-export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
+export const CodeCard = memo(function CodeCard({ code, eagerImage = false }: CodeCardProps) {
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [emblemImageUrl, setEmblemImageUrl] = useState<string | null>(null);
   const [resolvedEmblemName, setResolvedEmblemName] = useState<string | null>(null);
   const copyResetTimeoutRef = useRef<number | null>(null);
-  const confettiElementsRef = useRef<HTMLElement[]>([]);
   const mountedRef = useRef(true);
 
   useEffect(() => {
@@ -84,8 +61,6 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
         window.clearTimeout(copyResetTimeoutRef.current);
         copyResetTimeoutRef.current = null;
       }
-      confettiElementsRef.current.forEach((el) => el.remove());
-      confettiElementsRef.current = [];
     };
   }, [code.code, code.emblemName]);
 
@@ -141,32 +116,34 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
     }
   }, []);
 
+  const markCopied = useCallback(() => {
+    setCopied(true);
+    clearCopyResetTimer();
+    copyResetTimeoutRef.current = window.setTimeout(() => {
+      copyResetTimeoutRef.current = null;
+      if (mountedRef.current) {
+        setCopied(false);
+      }
+    }, 1800);
+  }, [clearCopyResetTimer]);
+
   const handleCopy = useCallback(async (e: MouseEvent<HTMLButtonElement>) => {
     const success = await copyCodeToClipboard(e.currentTarget);
 
     if (success) {
       toast.success('Code copied and ready to redeem');
-      setCopied(true);
-      createConfetti(e.clientX, e.clientY, confettiElementsRef);
+      markCopied();
 
       if (typeof navigator !== 'undefined' && 'vibrate' in navigator && navigator.vibrate) {
         navigator.vibrate(50);
       }
-
-      clearCopyResetTimer();
-      copyResetTimeoutRef.current = window.setTimeout(() => {
-        copyResetTimeoutRef.current = null;
-        if (mountedRef.current) {
-          setCopied(false);
-        }
-      }, 1800);
       return;
     }
 
     toast.warning('Clipboard unavailable', {
       description: 'The code is highlighted for manual copying.',
     });
-  }, [clearCopyResetTimer, copyCodeToClipboard]);
+  }, [copyCodeToClipboard, markCopied]);
 
   const handleRedeemClick = useCallback(async (e: MouseEvent<HTMLAnchorElement>) => {
     // Leave the native <a> navigation alone (middle-click / Ctrl-click / Cmd-click).
@@ -177,208 +154,138 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
     const success = await copyCodeToClipboard(e.currentTarget);
 
     if (!success) {
-      toast.info('Bungie opened — paste the code manually if needed.');
+      toast.info('Bungie opened. Paste the code manually if needed.');
       return;
     }
 
-    toast.success('Code copied — Bungie opened');
-    setCopied(true);
-
-    clearCopyResetTimer();
-    copyResetTimeoutRef.current = window.setTimeout(() => {
-      copyResetTimeoutRef.current = null;
-      if (mountedRef.current) {
-        setCopied(false);
-      }
-    }, 2000);
-  }, [clearCopyResetTimer, copyCodeToClipboard]);
+    toast.success('Code copied. Bungie opened');
+    markCopied();
+  }, [copyCodeToClipboard, markCopied]);
 
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  const isActive = code.status === 'active';
-  const isD1 = code.status === 'd1';
   const isExpired = code.status === 'expired';
-
-  const getRarityClass = () => {
-    const name = (resolvedEmblemName || code.emblemName || '').toLowerCase();
-    if (name.includes('exotic') || name.includes('gilded') || name.includes('flawless')) {
-      return 'rarity-exotic';
-    }
-    if (name.includes('raid') || name.includes('triumph') || name.includes('seal')) {
-      return 'rarity-legendary';
-    }
-    return '';
-  };
+  const isManual = code.id.startsWith('manual-');
+  const canRedeem = !isExpired;
+  const name = resolvedEmblemName || code.emblemName;
+  const expiresLabel = isExpired ? 'Not available' : code.status === 'unknown' ? 'Not checked' : 'No expiration';
 
   return (
     <div
       data-code-card
-      className={cn(
-        'group relative rounded-xl overflow-hidden transition-[transform,box-shadow,border-color,background-color,opacity] duration-200 ease-out border h-full flex flex-col destiny-border destiny-item-card',
-        isActive
-          ? 'bg-card border-border hover:border-accent/50 hover:drop-shadow-[0_8px_24px_hsl(var(--accent)/0.15)] shadow-sm'
-          : isD1
-            ? 'bg-card border-solar/30 hover:border-solar/50 hover:drop-shadow-[0_8px_24px_hsl(var(--solar)/0.15)] shadow-sm'
-            : 'bg-muted/50 border-border/40',
-        'hover:-translate-y-1'
-      )}
+      className="flex flex-col gap-3 bg-background px-4 py-3 sm:flex-row sm:items-center"
     >
-      {isActive && (
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-accent/5 to-transparent pointer-events-none" />
-      )}
-      {isD1 && (
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-solar/5 to-transparent pointer-events-none" />
-      )}
-
-      <div className="relative p-4 space-y-3 flex-1 flex flex-col">
-        <div className="flex items-center justify-end">
-          {isActive && (
-            <div className="badge-pulse-active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-strand/15 border border-strand/25">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-strand opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-strand"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-strand">Active</span>
-            </div>
-          )}
-          {isD1 && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-solar/15 border border-solar/25">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-solar"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-solar">Destiny 1</span>
-            </div>
-          )}
-          {isExpired && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stasis/15 border border-stasis/25">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-stasis"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-stasis">Expired</span>
-            </div>
+      <div className="flex min-w-0 flex-1 items-start gap-3">
+        <div className="h-12 w-12 shrink-0 overflow-hidden rounded-md border border-border bg-secondary">
+          {emblemImageUrl && !imageError ? (
+            <img
+              src={emblemImageUrl}
+              alt={code.emblemName || 'Emblem'}
+              loading={eagerImage ? 'eager' : 'lazy'}
+              decoding="async"
+              fetchPriority={eagerImage ? 'high' : 'auto'}
+              className="h-full w-full object-cover"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <span className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">No art</span>
           )}
         </div>
 
-        <div className="text-center py-2 flex flex-col items-center">
-          <div className={cn(
-            'relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-secondary border border-border/50 shadow-md transition-transform duration-300',
-            !isActive && !isD1 && 'grayscale-[0.7] opacity-70',
-            getRarityClass()
-          )}>
-            {emblemImageUrl && !imageError ? (
-              <img
-                src={emblemImageUrl}
-                alt={code.emblemName || 'Emblem'}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-accent/20 to-accent/5">
-                <Sparkles className="w-7 h-7 text-accent/60" />
-              </div>
-            )}
-            <div className="emblem-shine" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+            {name && <p className="text-base text-foreground">{name}</p>}
+            <p className={cn(
+              'text-sm',
+              code.status === 'active' && 'text-strand',
+              code.status === 'd1' && 'text-solar',
+              code.status === 'expired' && 'text-stasis',
+              code.status === 'unknown' && 'text-muted-foreground'
+            )}>
+              {STATUS_LABEL[code.status]}
+            </p>
           </div>
 
           <button
             type="button"
-            className="code-display glitch-text text-2xl md:text-3xl font-bold text-foreground mb-1.5 select-all cursor-pointer hover:text-accent transition-colors"
+            className="code-display mt-1 inline-flex min-h-11 max-w-full items-center whitespace-nowrap text-left text-lg text-foreground"
             data-code-display
-            data-text={code.code}
             aria-label={`Copy ${code.code}`}
             onClick={handleCopy}
           >
             {code.code}
           </button>
-          {(resolvedEmblemName || code.emblemName) && (
-            <p className="text-sm text-muted-foreground font-medium">
-              {resolvedEmblemName || code.emblemName}
-            </p>
-          )}
-          {code.description && code.description !== (resolvedEmblemName || code.emblemName) && (
-            <p className="text-xs text-accent/70 font-medium mt-0.5">
-              {code.description}
-            </p>
+
+          {code.description && code.description !== name && (
+            <p className="mt-1 text-sm text-muted-foreground">{code.description}</p>
           )}
           {code.note && (
-            <p className="text-xs text-stasis/70 italic mt-1 px-2">
-              {code.note}
-            </p>
+            <p className="mt-1 text-sm text-muted-foreground">{code.note}</p>
           )}
-        </div>
 
-        <div className="space-y-1.5 pt-2 border-t border-border/50">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground/50">Source</span>
-            <span className="text-muted-foreground font-medium">{code.source}</span>
-          </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground/50">Found</span>
-            <span className="text-muted-foreground font-medium">{formatDate(code.foundAt)}</span>
-          </div>
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-muted-foreground/50 flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              Expires
-            </span>
-            <span className={cn(
-              'font-medium',
-              isExpired ? 'text-stasis' : 'text-strand'
-            )}>
-              {isExpired ? 'Not available' : 'No expiration'}
-            </span>
-          </div>
+          <dl className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+            <div>
+              <dt className="sr-only">Source</dt>
+              <dd>{code.source}</dd>
+            </div>
+            {isManual && (
+              <div>
+                <dt className="inline">Added </dt>
+                <dd className="inline">{formatDate(code.foundAt)}</dd>
+              </div>
+            )}
+            <div>
+              <dt className="sr-only">Expires</dt>
+              <dd className={isExpired ? 'text-stasis' : 'text-foreground'}>{expiresLabel}</dd>
+            </div>
+          </dl>
         </div>
+      </div>
 
-        <div className="flex gap-2 pt-2">
+      <div className="flex shrink-0 gap-2 sm:flex-col">
+        <Button
+          type="button"
+          onClick={handleCopy}
+          variant="outline"
+          size="sm"
+          className={cn(
+            'min-h-11 flex-1 whitespace-nowrap sm:flex-none',
+            copied && 'border-strand text-strand'
+          )}
+        >
+          {copied ? (
+            <>
+              <Check className="h-4 w-4" aria-hidden="true" />
+              Copied!
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4" aria-hidden="true" />
+              Copy
+            </>
+          )}
+        </Button>
+
+        {canRedeem && (
           <Button
-            type="button"
-            onClick={handleCopy}
-            variant="outline"
-            size="sm"
-            className={cn(
-              'flex-1 min-h-[44px] h-11 font-semibold transition-[transform,background-color,color,border-color,box-shadow] duration-200 ease-out text-sm btn-haptic',
-              copied
-                ? 'border-strand/40 text-strand bg-strand/10 copy-success'
-                : 'border-border text-muted-foreground hover:border-accent/50 hover:text-foreground hover:bg-accent/10'
-            )}
+            asChild
+            variant="solar"
+            className="min-h-11 flex-1 whitespace-nowrap text-sm sm:flex-none"
           >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4 mr-2" />
-                Copied!
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4 mr-2" />
-                Copy
-              </>
-            )}
-          </Button>
-
-          {(isActive || isD1) && (
-            <Button
-              asChild
-              variant="solar"
-              className="flex-1 min-h-[44px] h-11 text-sm bg-gradient-to-r from-solar via-solar-accent to-solar hover:brightness-110 font-bold shadow-lg shadow-solar/30 transition-[transform,filter,box-shadow,background-color] duration-200 ease-out btn-haptic"
+            <a
+              href={`${REDEEM_URL}?token=${encodeURIComponent(code.code)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={handleRedeemClick}
+              aria-label={`Copy ${code.code} and redeem on Bungie.net`}
             >
-              <a
-                href={`${REDEEM_URL}?token=${encodeURIComponent(code.code)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={handleRedeemClick}
-                aria-label={`Copy ${code.code} and redeem on Bungie.net`}
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                Copy & Redeem
-              </a>
-            </Button>
-          )}
-        </div>
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              Copy & Redeem
+            </a>
+          </Button>
+        )}
       </div>
     </div>
   );

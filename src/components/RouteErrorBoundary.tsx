@@ -73,7 +73,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="text-center max-w-md">
-          <h1 className="font-heading text-2xl font-bold mb-3">This page failed to load</h1>
+          <h1 className="mb-3">This page failed to load</h1>
           <p className="text-muted-foreground mb-6">
             {this.state.isChunkError
               ? "The site was likely updated while this tab was open. Reloading should fix it."
@@ -82,7 +82,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="inline-flex items-center justify-center h-11 min-h-[44px] rounded-md px-8 btn-solar text-solar-foreground font-heading tracking-wider"
+            className="btn-solar inline-flex h-11 min-h-11 items-center justify-center rounded-md px-8"
           >
             Reload
           </button>

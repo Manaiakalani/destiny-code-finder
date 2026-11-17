@@ -1,4 +1,4 @@
-import { Shield, Database, Cookie, ExternalLink, Lock, Eye, ArrowLeft } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -11,42 +11,32 @@ export default function Privacy() {
   return (
     <div className="min-h-screen bg-background pt-0">
       {/* Back Button - Fixed at top */}
-      <div className="sticky top-0 z-50 glass-card backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 py-3">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-accent hover:text-solar transition-colors group"
-          >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-heading tracking-wider">Back to Code Vault</span>
+      <div className="sticky top-0 z-40 border-b border-border bg-background">
+        <div className="mx-auto w-full max-w-3xl px-4 py-3">
+          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+            Back to Code Vault
           </Link>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-accent via-stasis to-arc bg-clip-text text-transparent">
+      <div className="mx-auto w-full max-w-3xl px-4 py-10">
+        <div className="mb-10">
+          <h1 className="mb-3">
             Privacy Policy
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground">
             Your privacy is protected. We don't collect, store, or share any personal information.
           </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          <p className="mt-2 text-sm text-muted-foreground">
+            Last updated: November 17, 2026
           </p>
         </div>
 
         {/* Main Content */}
         <div className="space-y-8">
           {/* No Data Collection */}
-          <section className="glass-card p-6 rounded-lg border-2 border-strand/20">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-strand/10">
-                <Shield className="w-6 h-6 text-strand" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">No Personal Data Collection</h2>
-            </div>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">No Personal Data Collection</h2>
             <p className="text-muted-foreground leading-relaxed">
               Code Vault does not collect, store, or transmit any personal information. We don't require accounts, 
               emails, passwords, or any form of registration. You can use this service completely anonymously.
@@ -54,42 +44,35 @@ export default function Privacy() {
           </section>
 
           {/* Local Storage */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Database className="w-6 h-6 text-accent" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">Local Storage</h2>
-            </div>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">Local Storage</h2>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
                 We use your browser's localStorage to temporarily cache emblem code data. This improves performance 
                 and reduces load on external data sources. The cached data includes:
               </p>
-              <ul className="space-y-2 ml-6">
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
-                  <span>Emblem codes and their metadata (name, status, expiry date)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
-                  <span>Timestamp of last data refresh</span>
-                </li>
+              <ul className="list-disc space-y-2 pl-5">
+                <li>Emblem codes and their metadata (name, status, expiry date)</li>
+                <li>Timestamp of last data refresh</li>
               </ul>
-              <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg mt-4">
-                <p className="text-sm">
-                  <strong className="text-foreground">Storage Key:</strong> <code className="text-accent">destiny2-codes-cache-v2</code>
-                </p>
-                <p className="text-sm mt-2">
-                  <strong className="text-foreground">Cache Duration:</strong> 30 minutes
-                </p>
-                <p className="text-sm mt-2">
-                  <strong className="text-foreground">Saved Codes Key:</strong> <code className="text-accent">destiny2-manual-codes</code> — codes you add yourself, kept separately so they never expire with the cache
-                </p>
-                <p className="text-sm mt-2">
-                  <strong className="text-foreground">Data Location:</strong> Your browser only (never sent to our servers)
-                </p>
-              </div>
+              <dl className="space-y-2 border-t border-border pt-4 text-sm">
+                <div>
+                  <dt className="inline font-medium text-foreground">Storage Key: </dt>
+                  <dd className="inline text-foreground">destiny2-codes-cache-v2</dd>
+                </div>
+                <div>
+                  <dt className="inline font-medium text-foreground">Cache Duration: </dt>
+                  <dd className="inline">30 minutes</dd>
+                </div>
+                <div>
+                  <dt className="inline font-medium text-foreground">Saved Codes Key: </dt>
+                  <dd className="inline text-foreground">destiny2-manual-codes. Codes you add yourself, kept separately so they never expire with the cache</dd>
+                </div>
+                <div>
+                  <dt className="inline font-medium text-foreground">Data Location: </dt>
+                  <dd className="inline">Your browser only (never sent to our servers)</dd>
+                </div>
+              </dl>
               <p className="leading-relaxed pt-2">
                 You can clear this cache at any time by clearing your browser's localStorage. Codes you add yourself
                 are kept across a refresh and persist until you clear localStorage.
@@ -98,13 +81,8 @@ export default function Privacy() {
           </section>
 
           {/* No Cookies */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-solar/10">
-                <Cookie className="w-6 h-6 text-solar" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">No Cookies</h2>
-            </div>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">No Cookies</h2>
             <p className="text-muted-foreground leading-relaxed">
               Code Vault does not use cookies of any kind. We don't create user profiles, follow you across other
               sites, or sell data. See the analytics section below for the one aggregate measurement we do collect.
@@ -112,77 +90,67 @@ export default function Privacy() {
           </section>
 
           {/* Third-Party Data Sources */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-stasis/10">
-                <ExternalLink className="w-6 h-6 text-stasis" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">Third-Party Data Sources</h2>
-            </div>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">Third-Party Data Sources</h2>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
                 Emblem codes are curated from publicly available community sources and verified manually.
                 Your browser contacts these third parties:
               </p>
-              <div className="grid gap-3">
-                <div className="p-4 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
+              <ul className="space-y-4">
+                <li className="border-b border-border pb-4">
+                  <div className="mb-1 flex items-baseline justify-between gap-3">
                     <span className="font-medium text-foreground">Bungie CDN</span>
                     <a
                       href="https://www.bungie.net"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-accent hover:text-accent/80 text-sm"
+                      className="text-sm underline underline-offset-4"
                     >
                       bungie.net
                     </a>
                   </div>
                   <p className="text-sm">Official Destiny 2 emblem images served directly from Bungie's content delivery network.</p>
-                </div>
-                <div className="p-4 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
+                </li>
+                <li className="border-b border-border pb-4">
+                  <div className="mb-1 flex items-baseline justify-between gap-3">
                     <span className="font-medium text-foreground">Destiny Emblem Collector CDN</span>
-                    <span className="text-muted-foreground text-sm">destinyemblemcollector.b-cdn.net</span>
+                    <span className="text-sm">destinyemblemcollector.b-cdn.net</span>
                   </div>
                   <p className="text-sm">Destiny 1 emblem artwork, which Bungie's own CDN no longer serves.</p>
-                </div>
-                <div className="p-4 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
+                </li>
+                <li className="border-b border-border pb-4">
+                  <div className="mb-1 flex items-baseline justify-between gap-3">
                     <span className="font-medium text-foreground">Analytics</span>
-                    <span className="text-muted-foreground text-sm">analytics.manaiakalani.info</span>
+                    <span className="text-sm">analytics.manaiakalani.info</span>
                   </div>
                   <p className="text-sm">Cookieless, aggregate page-view counts. Details in the analytics section below.</p>
-                </div>
-                <div className="p-4 border border-border/40 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
+                </li>
+                <li className="border-b border-border pb-4">
+                  <div className="mb-1 flex items-baseline justify-between gap-3">
                     <span className="font-medium text-foreground">Google Fonts</span>
-                    <span className="text-muted-foreground text-sm">fonts.googleapis.com</span>
+                    <span className="text-sm">fonts.googleapis.com</span>
                   </div>
                   <p className="text-sm">The Orbitron and Rajdhani typefaces used across the site.</p>
-                </div>
-              </div>
+                </li>
+              </ul>
               <p className="leading-relaxed pt-2">
-                The code catalogue itself is bundled with the app — no code data is fetched from an external API.
+                The code catalogue itself is bundled with the app. No code data is fetched from an external API.
               </p>
             </div>
           </section>
 
           {/* Privacy-Focused Analytics */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Eye className="w-6 h-6 text-accent" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">Privacy-Focused Analytics</h2>
-            </div>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">Privacy-Focused Analytics</h2>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
                 We use a minimal, privacy-focused analytics solution to understand general usage patterns
                 (page views, visit counts). This helps us improve the service.
               </p>
-              <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
-                <p className="text-sm"><strong className="text-foreground">What we collect:</strong> Page views, approximate visitor counts</p>
-                <p className="text-sm mt-2"><strong className="text-foreground">What we don't collect:</strong> Personal data, IP addresses, device fingerprints, or tracking cookies</p>
+              <div className="space-y-2 text-sm">
+                <p><strong className="text-foreground">What we collect:</strong> Page views, approximate visitor counts</p>
+                <p><strong className="text-foreground">What we don't collect:</strong> Personal data, IP addresses, device fingerprints, or tracking cookies</p>
               </div>
               <p className="leading-relaxed">
                 We don't use Google Analytics, Facebook Pixel, or any invasive tracking services.
@@ -192,27 +160,16 @@ export default function Privacy() {
           </section>
 
           {/* Data Security */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-solar/10">
-                <Lock className="w-6 h-6 text-solar" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">Data Security</h2>
-            </div>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">Data Security</h2>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
                 Since we don't collect any personal data, there's no sensitive information to protect. The only data 
                 stored is:
               </p>
-              <ul className="space-y-2 ml-6">
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
-                  <span>Publicly available emblem codes (already public information)</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
-                  <span>Cached in your browser's localStorage (you control this data)</span>
-                </li>
+              <ul className="list-disc space-y-2 pl-5">
+                <li>Publicly available emblem codes (already public information)</li>
+                <li>Cached in your browser's localStorage (you control this data)</li>
               </ul>
               <p className="leading-relaxed pt-2">
                 The website is served over HTTPS to ensure secure communication between your browser and our servers.
@@ -221,8 +178,8 @@ export default function Privacy() {
           </section>
 
           {/* Changes to Privacy Policy */}
-          <section className="glass-card p-6 rounded-lg">
-            <h2 className="font-heading text-xl mb-4">Changes to This Policy</h2>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">Changes to This Policy</h2>
             <p className="text-muted-foreground leading-relaxed">
               If we ever make changes to this privacy policy, we will update the "Last updated" date at the top of this page. 
               Since we don't collect contact information, we cannot notify you directly of changes.
@@ -230,8 +187,8 @@ export default function Privacy() {
           </section>
 
           {/* Contact */}
-          <section className="glass-card p-6 rounded-lg border-2 border-accent/20">
-            <h2 className="font-heading text-xl mb-4">Questions or Concerns?</h2>
+          <section className="border-b border-border py-6">
+            <h2 className="mb-3">Questions or Concerns?</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
               If you have any questions about this privacy policy or how Code Vault handles data, feel free to reach out 
               via GitHub or Twitter:
@@ -241,29 +198,27 @@ export default function Privacy() {
                 href="https://github.com/Manaiakalani/destiny-code-finder"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-lg border border-accent/40 hover:bg-accent/10 transition-colors text-sm flex items-center gap-2"
+                className="inline-flex min-h-11 items-center gap-2 text-sm underline underline-offset-4"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 GitHub
               </a>
               <a
                 href="https://twitter.com/manaiakalani"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-lg border border-accent/40 hover:bg-accent/10 transition-colors text-sm flex items-center gap-2"
+                className="inline-flex min-h-11 items-center gap-2 text-sm underline underline-offset-4"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
                 Twitter
               </a>
             </div>
           </section>
 
           {/* Guardian Quote */}
-          <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground italic">
-              "Your Light is yours alone. So is your privacy." — The Speaker
-            </p>
-          </div>
+          <p className="py-8 text-sm text-muted-foreground">
+            "Your Light is yours alone. So is your privacy." (The Speaker)
+          </p>
         </div>
       </div>
     </div>

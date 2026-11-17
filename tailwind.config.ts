@@ -57,13 +57,13 @@ export default {
         },
         // NASA Design System colors
         'nasa-blue': {
-          DEFAULT: '#0b3d91',  // NASA Blue
-          light: '#1c4f9c',
-          lighter: '#2563eb',
+          DEFAULT: "hsl(var(--primary))",
+          light: "hsl(var(--primary))",
+          lighter: "hsl(var(--ring))",
         },
         'nasa-red': {
-          DEFAULT: '#fc3d21',  // NASA Red
-          light: '#ff6b5a',
+          DEFAULT: "hsl(var(--destructive))",
+          light: "hsl(var(--destructive))",
         },
         arc: {
           DEFAULT: "hsl(var(--arc))",
@@ -87,8 +87,8 @@ export default {
         },
       },
       fontFamily: {
-        heading: ['Orbitron', 'sans-serif'],
-        body: ['Rajdhani', 'sans-serif'],
+        heading: ["var(--font-display)", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

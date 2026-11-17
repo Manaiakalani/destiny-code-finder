@@ -39,3 +39,6 @@ playwright/.cache
 
 # Accidental Windows redirect file from screenshot cleanup
 NUL
+
+# Hallmark redesign records
+.hallmark/

@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.2 Updates (November 2026)
+
+The same cards, glitch codes, and starfield. The bar across the top is one surface now, and About, Privacy, and missing pages use it too.
+
+- Catalogue counts sit with the links instead of inside a second glass card.
+- The current page is marked in the bar. The phone menu keeps Add Code, appearance, and the counts together.
+- About and Privacy read as pages, not a stack of identical cards.
+
 ## 📋 v2.9.1 Updates (November 2026)
 
 The card catalogue, glitch codes, and starfield stay. v2.9.0 had replaced them with a plain list, and this puts that design back.

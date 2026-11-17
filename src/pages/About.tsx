@@ -1,190 +1,156 @@
-import { ExternalLink, Zap, Database, RefreshCw, Shield, ArrowLeft } from 'lucide-react';
+import { ExternalLink, Zap, Database, RefreshCw, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Header } from '@/components/Header';
+import { useCodeScanner } from '@/hooks/useCodeScanner';
+
+const SOURCES = [
+  {
+    name: 'Bungie API',
+    detail: 'Official emblem data & images',
+    href: 'https://www.bungie.net',
+  },
+  {
+    name: 'Blueberries.gg',
+    detail: 'Comprehensive emblem guide',
+    href: 'https://www.blueberries.gg/items/destiny-2-free-emblems/',
+  },
+  {
+    name: 'r/DestinyTheGame',
+    detail: 'Main Destiny community',
+    href: 'https://www.reddit.com/r/DestinyTheGame',
+  },
+  {
+    name: 'r/raidsecrets',
+    detail: 'Destiny secrets & discoveries',
+    href: 'https://www.reddit.com/r/raidsecrets',
+  },
+];
 
 export default function About() {
-  return (
-    <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-50 glass-card backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 py-3">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-accent hover:text-solar transition-colors group"
-          >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-heading tracking-wider">Back to Code Vault</span>
-          </Link>
-        </div>
-      </div>
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-accent via-solar to-strand bg-clip-text text-transparent">
-            About Code Vault
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Your automated guardian for tracking and discovering Destiny 2 emblem redemption codes across the web
-          </p>
-        </div>
+  const { codes, addManualCode } = useCodeScanner();
+  const activeCount = codes.filter((code) => code.status === 'active').length;
 
-        {/* Main Content */}
-        <div className="space-y-8">
-          {/* What We Do */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-accent/10">
-                <Shield className="w-6 h-6 text-accent" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">What We Do</h2>
-            </div>
-            <p className="text-muted-foreground leading-relaxed">
+  return (
+    <div className="min-h-screen">
+      <Header onAddCode={addManualCode} activeCount={activeCount} totalCount={codes.length} />
+
+      <main className="container mx-auto max-w-3xl px-4 py-14">
+        <h1 className="font-heading text-4xl font-bold text-balance text-foreground title-shadow md:text-5xl">
+          About Code Vault
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          Your automated guardian for tracking and discovering Destiny 2 emblem redemption codes across the web
+        </p>
+
+        <div className="mt-12 space-y-10">
+          <section className="border-t border-border/40 pt-8">
+            <h2 className="mb-3 flex items-center gap-3 font-heading text-xl font-bold md:text-2xl">
+              <Shield className="h-5 w-5 text-accent" aria-hidden="true" />
+              What We Do
+            </h2>
+            <p className="leading-relaxed text-muted-foreground">
               Code Vault is a hand-curated catalogue of Destiny 2 emblem redemption codes. Every code is verified against
               official Bungie announcements, community databases, and partner programs before it ships, so what you see
               here is checked rather than guessed.
             </p>
           </section>
 
-          {/* How It Works */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-solar/10">
-                <Zap className="w-6 h-6 text-solar" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">How It Works</h2>
-            </div>
+          <section className="border-t border-border/40 pt-8">
+            <h2 className="mb-3 flex items-center gap-3 font-heading text-xl font-bold md:text-2xl">
+              <Zap className="h-5 w-5 text-solar" aria-hidden="true" />
+              How It Works
+            </h2>
             <div className="space-y-4 text-muted-foreground">
               <p className="leading-relaxed">
                 The catalogue is compiled and verified before each release, drawing on these sources:
               </p>
-              <ul className="space-y-2 ml-6">
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
-                  <span><strong className="text-foreground">Destiny Emblem Collector:</strong> The community's reference list of universal emblem codes and their availability</span>
+              <ul className="space-y-2">
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
+                  <span><strong className="text-foreground">Destiny Emblem Collector:</strong> The community&apos;s reference list of universal emblem codes and their availability</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
                   <span><strong className="text-foreground">Reddit &amp; community sources:</strong> r/DestinyTheGame, r/destiny2, and r/raidsecrets are reviewed for newly shared codes</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
-                  <span><strong className="text-foreground">Bungie API:</strong> Official emblem images and metadata from Bungie's manifest</span>
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
+                  <span><strong className="text-foreground">Bungie API:</strong> Official emblem images and metadata from Bungie&apos;s manifest</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
+                <li className="flex items-start gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
                   <span><strong className="text-foreground">Curated catalogue:</strong> 79 codes, each labelled active, expired, restricted, or Destiny 1</span>
                 </li>
               </ul>
-              <p className="leading-relaxed pt-2">
+              <p className="leading-relaxed">
                 The catalogue ships with the site and is cached in your browser for 30 minutes for fast loading. Refresh
                 at any time to reload it. Because codes are verified by hand rather than scraped live, always confirm a
-                code at Bungie's redemption page before relying on it.
+                code at Bungie&apos;s redemption page before relying on it.
               </p>
             </div>
           </section>
 
-          {/* Data Sources */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-strand/10">
-                <Database className="w-6 h-6 text-strand" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">Data Sources</h2>
-            </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              <a
-                href="https://www.bungie.net"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border border-border/40 hover:border-accent/40 transition-colors group"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">Bungie API</span>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
-                </div>
-                <p className="text-sm text-muted-foreground">Official emblem data & images</p>
-              </a>
-              <a
-                href="https://www.blueberries.gg/items/destiny-2-free-emblems/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border border-border/40 hover:border-accent/40 transition-colors group"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">Blueberries.gg</span>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
-                </div>
-                <p className="text-sm text-muted-foreground">Comprehensive emblem guide</p>
-              </a>
-              <a
-                href="https://www.reddit.com/r/DestinyTheGame"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border border-border/40 hover:border-accent/40 transition-colors group"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">r/DestinyTheGame</span>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
-                </div>
-                <p className="text-sm text-muted-foreground">Main Destiny community</p>
-              </a>
-              <a
-                href="https://www.reddit.com/r/raidsecrets"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border border-border/40 hover:border-accent/40 transition-colors group"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">r/raidsecrets</span>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-accent transition-colors" />
-                </div>
-                <p className="text-sm text-muted-foreground">Destiny secrets & discoveries</p>
-              </a>
-            </div>
+          <section className="border-t border-border/40 pt-8">
+            <h2 className="mb-3 flex items-center gap-3 font-heading text-xl font-bold md:text-2xl">
+              <Database className="h-5 w-5 text-strand" aria-hidden="true" />
+              Data Sources
+            </h2>
+            <ul className="divide-y divide-border/40 border-y border-border/40">
+              {SOURCES.map((source) => (
+                <li key={source.href}>
+                  <a
+                    href={source.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between gap-4 py-3"
+                  >
+                    <span>
+                      <span className="block font-medium text-foreground">{source.name}</span>
+                      <span className="text-sm text-muted-foreground">{source.detail}</span>
+                    </span>
+                    <ExternalLink className="h-4 w-4 shrink-0 text-muted-foreground transition-colors group-hover:text-accent" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </section>
 
-          {/* Update Frequency */}
-          <section className="glass-card p-6 rounded-lg">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-2 rounded-lg bg-solar/10">
-                <RefreshCw className="w-6 h-6 text-solar" />
-              </div>
-              <h2 className="font-heading text-2xl font-bold">Update Frequency</h2>
-            </div>
-            <p className="text-muted-foreground leading-relaxed mb-4">
+          <section className="border-t border-border/40 pt-8">
+            <h2 className="mb-3 flex items-center gap-3 font-heading text-xl font-bold md:text-2xl">
+              <RefreshCw className="h-5 w-5 text-solar" aria-hidden="true" />
+              Update Frequency
+            </h2>
+            <p className="mb-4 leading-relaxed text-muted-foreground">
               The catalogue ships with the site, so it updates when a new version is released rather than on a timer.
               Your browser keeps a local copy for 30 minutes purely to make repeat visits load instantly; the refresh
               button reloads it at any time.
             </p>
-            <p className="text-sm text-muted-foreground italic">
-              "The Light provides... but patience is a virtue." — Commander Zavala
+            <p className="text-sm italic text-muted-foreground">
+              &quot;The Light provides... but patience is a virtue.&quot; — Commander Zavala
             </p>
           </section>
 
-          {/* Open Source */}
-          <section className="glass-card p-6 rounded-lg border-2 border-accent/20">
-            <h2 className="font-heading text-xl mb-4">Open Source</h2>
-            <p className="text-muted-foreground leading-relaxed mb-4">
-              Code Vault is open source and built by Guardians, for Guardians. The entire codebase is available on GitHub 
+          <section className="border-t border-border/40 pt-8">
+            <h2 className="mb-3 font-heading text-xl font-bold">Open Source</h2>
+            <p className="mb-4 leading-relaxed text-muted-foreground">
+              Code Vault is open source and built by Guardians, for Guardians. The entire codebase is available on GitHub
               for transparency, contributions, and community improvements.
             </p>
             <Button
-              onClick={() => window.open('https://github.com/Manaiakalani/destiny-code-finder', '_blank')}
+              onClick={() => window.open('https://github.com/Manaiakalani/destiny-code-finder', '_blank', 'noopener,noreferrer')}
               variant="solar"
-              className="font-heading"
+              className="h-11 font-heading"
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
+              <ExternalLink className="h-4 w-4" />
               View on GitHub
             </Button>
           </section>
 
-          {/* Footer Quote */}
-          <div className="text-center py-8">
-            <p className="text-sm text-muted-foreground italic">
-              "Eyes up, Guardian. There are always more emblems to collect."
-            </p>
-          </div>
+          <p className="border-t border-border/40 pt-8 text-center text-sm italic text-muted-foreground">
+            &quot;Eyes up, Guardian. There are always more emblems to collect.&quot;
+          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

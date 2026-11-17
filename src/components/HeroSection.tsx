@@ -61,11 +61,8 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
 
       <div className="relative container mx-auto px-4 text-center">
         <div className="space-y-5 mb-10">
-          <p className="text-xs font-semibold text-accent/80 uppercase tracking-[0.25em]">
-            Guardian Archives
-          </p>
           <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground title-shadow">
-            Destiny 2{' '}
+            <span className="block md:inline">Destiny 2</span>{' '}
             <span className="bg-gradient-to-r from-solar via-solar-accent to-solar bg-clip-text text-transparent">
               Codes
             </span>

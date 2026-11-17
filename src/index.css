@@ -163,6 +163,30 @@
     outline-offset: 2px;
   }
 
+  ::selection {
+    background: hsl(var(--accent) / 0.35);
+    color: hsl(var(--foreground));
+  }
+
+  html {
+    scrollbar-color: hsl(var(--accent) / 0.45) hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent) / 0.4);
+    border: 2px solid hsl(var(--background));
+    border-radius: 999px;
+  }
+
   button,
   a,
   input,
@@ -196,6 +220,15 @@
 }
 
 @layer components {
+  /* Full-bleed bar over the starfield. One surface, not a card inside a card. */
+  .site-header {
+    background: hsl(var(--background) / 0.82);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid hsl(var(--border) / 0.75);
+    box-shadow: 0 12px 28px -20px hsl(220 40% 2% / 0.7);
+  }
+
   /* Glassmorphism card */
   .glass-card {
     @apply bg-card/70 backdrop-blur-md border border-border/50 rounded-lg;

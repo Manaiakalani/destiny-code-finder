@@ -4,12 +4,46 @@ import { useEffect, useState } from 'react';
 import { AddCodeModal } from './AddCodeModal';
 import { ThemeToggle } from './ThemeToggle';
 import { RedemptionCode } from '@/types/code';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import { cn } from '@/lib/utils';
 
 interface HeaderProps {
   onAddCode: (code: string) => { success: boolean; message: string; persisted?: boolean };
   activeCount?: number;
   totalCount?: number;
+}
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    'relative inline-flex h-11 items-center px-3 font-heading text-sm tracking-wider transition-colors',
+    isActive
+      ? 'text-foreground after:absolute after:bottom-1.5 after:left-3 after:right-3 after:h-px after:bg-accent'
+      : 'text-muted-foreground hover:text-foreground'
+  );
+
+const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
+  cn(
+    'flex h-11 items-center border-t border-border/50 font-heading text-sm tracking-wider',
+    isActive ? 'text-foreground' : 'text-muted-foreground'
+  );
+
+function VaultCount({
+  value,
+  label,
+  tone,
+}: {
+  value: number;
+  label: string;
+  tone: 'strand' | 'accent';
+}) {
+  return (
+    <p className="flex items-baseline gap-1.5">
+      <span className={cn('font-heading text-base tabular-nums', tone === 'strand' ? 'text-strand' : 'text-accent')}>
+        {value}
+      </span>
+      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
+    </p>
+  );
 }
 
 export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderProps) {
@@ -20,141 +54,124 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
     if (!isMobileMenuOpen) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-      }
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    const onResize = () => {
+      if (window.matchMedia('(min-width: 768px)').matches) setIsMobileMenuOpen(false);
     };
 
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    window.addEventListener('resize', onResize);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('resize', onResize);
+    };
   }, [isMobileMenuOpen]);
 
   const handleAddCode = (code: RedemptionCode) => {
     const result = onAddCode(code.code);
-    if (result.success) {
-      setIsModalOpen(false);
-    }
+    if (result.success) setIsModalOpen(false);
     return result;
+  };
+
+  const openAddCode = () => {
+    setIsModalOpen(true);
+    setIsMobileMenuOpen(false);
   };
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border/40 glass-card backdrop-blur-xl">
+      <header className="site-header sticky top-0 z-40 w-full">
         <div className="container mx-auto px-4">
-          <div className="flex h-16 items-center justify-between">
-            <Link to="/" className="flex items-center gap-3 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-md">
-              <div className="relative">
-                <Hexagon className="w-10 h-10 text-accent transition-all duration-300 group-hover:text-solar" strokeWidth={1.5} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-heading text-xs font-bold text-accent group-hover:text-solar transition-colors duration-300">D2</span>
-                </div>
-                <div className="absolute inset-0 w-10 h-10 bg-accent/20 rounded-full blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </div>
-              <div>
-                <p className="font-heading text-lg font-bold tracking-wider text-foreground">
+          <div className="flex h-16 items-center gap-4">
+            <NavLink
+              to="/"
+              end
+              className="flex min-w-0 items-center gap-3 rounded-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            >
+              <span className="relative shrink-0">
+                <Hexagon className="h-10 w-10 text-accent transition-colors duration-300 group-hover:text-solar" strokeWidth={1.5} />
+                <span className="absolute inset-0 flex items-center justify-center font-heading text-xs font-bold text-accent transition-colors duration-300 group-hover:text-solar">
+                  D2
+                </span>
+              </span>
+              <span className="min-w-0">
+                <span className="block font-heading text-base font-bold tracking-wider text-foreground sm:text-lg">
                   CODE VAULT
-                </p>
-                <p className="text-[10px] text-accent/70 uppercase tracking-[0.2em]">
+                </span>
+                <span className="block text-[10px] uppercase tracking-[0.18em] text-accent/80">
                   Guardian Archives
-                </p>
-              </div>
-            </Link>
+                </span>
+              </span>
+            </NavLink>
 
-            <nav className="hidden md:flex items-center gap-6">
-              <div className="flex items-center gap-6 px-4 py-2 rounded-lg glass-card">
-                <div className="text-center">
-                  <p className="font-heading text-2xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">D2 Active</p>
-                </div>
-                <div className="w-px h-10 bg-accent/20" />
-                <div className="text-center">
-                  <p className="font-heading text-2xl font-bold text-accent">{totalCount}</p>
-                  <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
-                </div>
+            <div className="ml-auto hidden items-center gap-2 md:flex">
+              <div className="mr-3 hidden items-center gap-4 lg:flex" aria-label="Catalogue size">
+                <VaultCount value={activeCount} label="D2 Active" tone="strand" />
+                <span className="h-3 w-px bg-border" aria-hidden="true" />
+                <VaultCount value={totalCount} label="Total" tone="accent" />
               </div>
 
-              <Link
-                to="/about"
-                className="text-sm text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
-              >
-                About
-              </Link>
-              <Link
-                to="/privacy"
-                className="text-sm text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
-              >
-                Privacy
-              </Link>
-
-              <ThemeToggle />
-
-              <Button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                size="sm"
-                variant="solar"
-              className="min-h-[44px] font-heading tracking-wider"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Code
-              </Button>
-            </nav>
+              <nav className="flex items-center gap-1" aria-label="Primary">
+                <NavLink to="/about" className={navLinkClass}>
+                  About
+                </NavLink>
+                <NavLink to="/privacy" className={navLinkClass}>
+                  Privacy
+                </NavLink>
+                <ThemeToggle />
+                <Button
+                  type="button"
+                  onClick={openAddCode}
+                  variant="solar"
+                  className="ml-2 h-11 px-4 font-heading tracking-wider"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Code
+                </Button>
+              </nav>
+            </div>
 
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden min-h-[44px] min-w-[44px] p-2 rounded-md hover:bg-secondary transition-colors touch-manipulation"
+              onClick={() => setIsMobileMenuOpen((open) => !open)}
+              className="ml-auto inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-secondary md:hidden"
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
 
           {isMobileMenuOpen && (
-            <div id="mobile-menu" className="md:hidden py-4 border-t border-border/40 space-y-4">
-              <div className="flex items-center justify-center gap-8 py-3">
-                <div className="text-center">
-                  <p className="font-heading text-xl font-bold text-strand">{activeCount}</p>
-                  <p className="text-[10px] text-strand/70 uppercase tracking-wider">D2 Active</p>
-                </div>
-                <div className="w-px h-10 bg-accent/20" />
-                <div className="text-center">
-                  <p className="font-heading text-xl font-bold text-accent">{totalCount}</p>
-                  <p className="text-[10px] text-accent/70 uppercase tracking-wider">Total</p>
-                </div>
-                <div className="w-px h-10 bg-accent/20" />
-                <ThemeToggle />
+            <div id="mobile-menu" className="md:hidden pb-4">
+              <div className="flex items-center justify-between gap-4 py-3">
+                <VaultCount value={activeCount} label="D2 Active" tone="strand" />
+                <VaultCount value={totalCount} label="Total" tone="accent" />
               </div>
-
-              <div className="flex items-center justify-center gap-6 text-sm">
-                <Link
-                  to="/about"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
-                >
+              <nav className="flex flex-col" aria-label="Primary">
+                <NavLink to="/about" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
                   About
-                </Link>
-                <Link
-                  to="/privacy"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="text-muted-foreground hover:text-accent transition-colors font-heading tracking-wider"
-                >
+                </NavLink>
+                <NavLink to="/privacy" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
                   Privacy
-                </Link>
+                </NavLink>
+              </nav>
+              <div className="flex h-12 items-center justify-between border-t border-border/50">
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Appearance</span>
+                <ThemeToggle showLabel />
               </div>
-
               <Button
                 type="button"
-                onClick={() => {
-                  setIsModalOpen(true);
-                  setIsMobileMenuOpen(false);
-                }}
+                onClick={openAddCode}
                 variant="solar"
-                className="w-full min-h-[44px] font-heading tracking-wider"
+                className="mt-2 h-11 w-full font-heading tracking-wider"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="h-4 w-4" />
                 Add Code
               </Button>
             </div>

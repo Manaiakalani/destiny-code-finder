@@ -22,7 +22,7 @@ function readStoredTheme(): Theme {
   return 'dark';
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ showLabel = false }: { showLabel?: boolean }) {
   const [theme, setTheme] = useState<Theme>(() => readStoredTheme());
 
   useEffect(() => {
@@ -79,14 +79,15 @@ export function ThemeToggle() {
       size="sm"
       onClick={cycleTheme}
       className={cn(
-        'gap-1.5 h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground transition-colors btn-haptic',
+        'h-11 gap-1.5 px-3 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground',
         theme === 'oled' && 'text-accent',
         theme === 'light' && 'text-solar'
       )}
-      title={`Current: ${getLabel()} mode. Click to cycle.`}
+      aria-label={`Appearance is ${getLabel()}. Switch theme.`}
+      title={`Appearance is ${getLabel()}. Switch theme.`}
     >
       {getIcon()}
-      <span className="hidden sm:inline font-medium">{getLabel()}</span>
+      <span className={cn('font-medium', showLabel ? 'inline' : 'hidden lg:inline')}>{getLabel()}</span>
     </Button>
   );
 }

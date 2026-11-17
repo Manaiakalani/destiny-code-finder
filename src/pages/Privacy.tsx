@@ -1,46 +1,34 @@
-import { Shield, Database, Cookie, ExternalLink, Lock, Eye, ArrowLeft } from 'lucide-react';
+import { Shield, Database, Cookie, ExternalLink, Lock, Eye } from 'lucide-react';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Header } from '@/components/Header';
+import { useCodeScanner } from '@/hooks/useCodeScanner';
 
 export default function Privacy() {
-  // Scroll to top when page loads
+  const { codes, addManualCode } = useCodeScanner();
+  const activeCount = codes.filter((code) => code.status === 'active').length;
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className="min-h-screen bg-background pt-0">
-      {/* Back Button - Fixed at top */}
-      <div className="sticky top-0 z-50 glass-card backdrop-blur-xl border-b border-border/40">
-        <div className="container mx-auto px-4 py-3">
-          <Link 
-            to="/" 
-            className="inline-flex items-center gap-2 text-accent hover:text-solar transition-colors group"
-          >
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-heading tracking-wider">Back to Code Vault</span>
-          </Link>
-        </div>
-      </div>
+    <div className="min-h-screen">
+      <Header onAddCode={addManualCode} activeCount={activeCount} totalCount={codes.length} />
 
-      <div className="container mx-auto px-4 py-12 max-w-4xl">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="font-heading text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-accent via-stasis to-arc bg-clip-text text-transparent">
-            Privacy Policy
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Your privacy is protected. We don't collect, store, or share any personal information.
-          </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            Last updated: November 17, 2026
-          </p>
-        </div>
+      <main className="container mx-auto max-w-3xl px-4 py-14">
+        <h1 className="font-heading text-4xl font-bold text-balance text-foreground title-shadow md:text-5xl">
+          Privacy Policy
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          Your privacy is protected. We don&apos;t collect, store, or share any personal information.
+        </p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Last updated: November 17, 2026
+        </p>
 
-        {/* Main Content */}
-        <div className="space-y-8">
+        <div className="mt-12 space-y-10">
           {/* No Data Collection */}
-          <section className="glass-card p-6 rounded-lg border-2 border-strand/20">
+          <section className="border-t border-border/40 pt-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-strand/10">
                 <Shield className="w-6 h-6 text-strand" />
@@ -54,7 +42,7 @@ export default function Privacy() {
           </section>
 
           {/* Local Storage */}
-          <section className="glass-card p-6 rounded-lg">
+          <section className="border-t border-border/40 pt-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-accent/10">
                 <Database className="w-6 h-6 text-accent" />
@@ -68,15 +56,15 @@ export default function Privacy() {
               </p>
               <ul className="space-y-2 ml-6">
                 <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
                   <span>Emblem codes and their metadata (name, status, expiry date)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
                   <span>Timestamp of last data refresh</span>
                 </li>
               </ul>
-              <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg mt-4">
+              <div className="p-4 rounded-lg bg-secondary/60 mt-4">
                 <p className="text-sm">
                   <strong className="text-foreground">Storage Key:</strong> <code className="text-accent">destiny2-codes-cache-v2</code>
                 </p>
@@ -98,7 +86,7 @@ export default function Privacy() {
           </section>
 
           {/* No Cookies */}
-          <section className="glass-card p-6 rounded-lg">
+          <section className="border-t border-border/40 pt-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-solar/10">
                 <Cookie className="w-6 h-6 text-solar" />
@@ -112,7 +100,7 @@ export default function Privacy() {
           </section>
 
           {/* Third-Party Data Sources */}
-          <section className="glass-card p-6 rounded-lg">
+          <section className="border-t border-border/40 pt-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-stasis/10">
                 <ExternalLink className="w-6 h-6 text-stasis" />
@@ -124,8 +112,8 @@ export default function Privacy() {
                 Emblem codes are curated from publicly available community sources and verified manually.
                 Your browser contacts these third parties:
               </p>
-              <div className="grid gap-3">
-                <div className="p-4 border border-border/40 rounded-lg">
+              <div className="border-b border-border/40">
+                <div className="border-t border-border/40 py-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-foreground">Bungie CDN</span>
                     <a
@@ -139,21 +127,21 @@ export default function Privacy() {
                   </div>
                   <p className="text-sm">Official Destiny 2 emblem images served directly from Bungie's content delivery network.</p>
                 </div>
-                <div className="p-4 border border-border/40 rounded-lg">
+                <div className="border-t border-border/40 py-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-foreground">Destiny Emblem Collector CDN</span>
                     <span className="text-muted-foreground text-sm">destinyemblemcollector.b-cdn.net</span>
                   </div>
                   <p className="text-sm">Destiny 1 emblem artwork, which Bungie's own CDN no longer serves.</p>
                 </div>
-                <div className="p-4 border border-border/40 rounded-lg">
+                <div className="border-t border-border/40 py-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-foreground">Analytics</span>
                     <span className="text-muted-foreground text-sm">analytics.invalid</span>
                   </div>
                   <p className="text-sm">Cookieless, aggregate page-view counts. Details in the analytics section below.</p>
                 </div>
-                <div className="p-4 border border-border/40 rounded-lg">
+                <div className="border-t border-border/40 py-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-medium text-foreground">Google Fonts</span>
                     <span className="text-muted-foreground text-sm">fonts.googleapis.com</span>
@@ -168,7 +156,7 @@ export default function Privacy() {
           </section>
 
           {/* Privacy-Focused Analytics */}
-          <section className="glass-card p-6 rounded-lg">
+          <section className="border-t border-border/40 pt-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-accent/10">
                 <Eye className="w-6 h-6 text-accent" />
@@ -180,7 +168,7 @@ export default function Privacy() {
                 We use a minimal, privacy-focused analytics solution to understand general usage patterns
                 (page views, visit counts). This helps us improve the service.
               </p>
-              <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
+              <div className="p-4 rounded-lg bg-secondary/60">
                 <p className="text-sm"><strong className="text-foreground">What we collect:</strong> Page views, approximate visitor counts</p>
                 <p className="text-sm mt-2"><strong className="text-foreground">What we don't collect:</strong> Personal data, IP addresses, device fingerprints, or tracking cookies</p>
               </div>
@@ -192,7 +180,7 @@ export default function Privacy() {
           </section>
 
           {/* Data Security */}
-          <section className="glass-card p-6 rounded-lg">
+          <section className="border-t border-border/40 pt-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 rounded-lg bg-solar/10">
                 <Lock className="w-6 h-6 text-solar" />
@@ -206,11 +194,11 @@ export default function Privacy() {
               </p>
               <ul className="space-y-2 ml-6">
                 <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
                   <span>Publicly available emblem codes (already public information)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-strand mt-1">◆</span>
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-strand" aria-hidden="true" />
                   <span>Cached in your browser's localStorage (you control this data)</span>
                 </li>
               </ul>
@@ -221,7 +209,7 @@ export default function Privacy() {
           </section>
 
           {/* Changes to Privacy Policy */}
-          <section className="glass-card p-6 rounded-lg">
+          <section className="border-t border-border/40 pt-8">
             <h2 className="font-heading text-xl mb-4">Changes to This Policy</h2>
             <p className="text-muted-foreground leading-relaxed">
               If we ever make changes to this privacy policy, we will update the "Last updated" date at the top of this page. 
@@ -230,7 +218,7 @@ export default function Privacy() {
           </section>
 
           {/* Contact */}
-          <section className="glass-card p-6 rounded-lg border-2 border-accent/20">
+          <section className="border-t border-border/40 pt-8">
             <h2 className="font-heading text-xl mb-4">Questions or Concerns?</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
               If you have any questions about this privacy policy or how Code Vault handles data, feel free to reach out 
@@ -265,7 +253,7 @@ export default function Privacy() {
             </p>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

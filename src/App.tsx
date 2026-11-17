@@ -1,7 +1,6 @@
 import { Toaster } from "sonner";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy, useEffect, useState } from "react";
-import { MouseParticles } from "@/components/MouseParticles";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 import Index from "./pages/Index";
 
@@ -37,12 +36,11 @@ const App = () => {
 
   return (
     <>
-      <MouseParticles />
       <Toaster
         theme={toasterTheme}
         position="bottom-right"
         toastOptions={{
-          className: "glass-card border-border/50",
+          className: "border border-border bg-background text-foreground",
         }}
       />
       <BrowserRouter basename={basename}>

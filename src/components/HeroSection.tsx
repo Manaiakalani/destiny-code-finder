@@ -9,24 +9,29 @@ interface HeroSectionProps {
 }
 
 function generateStars(count: number) {
-  return Array.from({ length: count }, (_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-    size: Math.random() * 2 + 1,
-    duration: Math.random() * 3 + 2,
-    delay: Math.random() * 5,
-  }));
+  return Array.from({ length: count }, (_, i) => {
+    const roll = Math.random();
+    const tier = roll > 0.94 ? 'bright' : roll > 0.72 ? 'mid' : 'dim';
+    const size = tier === 'bright' ? 2 : tier === 'mid' ? 1.5 : 1;
+    return {
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      size,
+      duration: (tier === 'dim' ? 4.5 : 3) + Math.random() * 4,
+      delay: Math.random() * 8,
+      tier,
+    };
+  });
 }
 
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
-  const stars = useMemo(() => generateStars(50), []);
+  const stars = useMemo(() => generateStars(72), []);
   const shootingStars = useMemo(() => [
-    { id: 1, className: 'shooting-star-1' },
-    { id: 2, className: 'shooting-star-2' },
-    { id: 3, className: 'shooting-star-3' },
-    { id: 4, className: 'shooting-star-4' },
-    { id: 5, className: 'shooting-star-5' },
+    { id: 1, top: '18%', left: '-12%', delay: '1s', duration: '13s', angle: '26deg', travel: '78vw', drop: '42vh', width: '8.5rem' },
+    { id: 2, top: '8%', left: '6%', delay: '6.5s', duration: '16s', angle: '34deg', travel: '62vw', drop: '36vh', width: '6.5rem' },
+    { id: 3, top: '28%', left: '-6%', delay: '11s', duration: '15s', angle: '18deg', travel: '84vw', drop: '28vh', width: '10rem', warm: true },
+    { id: 4, top: '4%', left: '38%', delay: '3.2s', duration: '18s', angle: '42deg', travel: '48vw', drop: '46vh', width: '5.5rem' },
   ], []);
 
   return (
@@ -35,7 +40,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
         {stars.map((star) => (
           <div
             key={star.id}
-            className="star"
+            className={`star star-${star.tier}`}
             style={{
               left: star.left,
               top: star.top,
@@ -49,7 +54,17 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
         {shootingStars.map((star) => (
           <div
             key={`shooting-${star.id}`}
-            className={`shooting-star ${star.className}`}
+            className={`shooting-star${star.warm ? ' shooting-star-warm' : ''}`}
+            style={{
+              top: star.top,
+              left: star.left,
+              width: star.width,
+              '--delay': star.delay,
+              '--duration': star.duration,
+              '--angle': star.angle,
+              '--travel': star.travel,
+              '--drop': star.drop,
+            } as React.CSSProperties}
           />
         ))}
       </div>
@@ -61,11 +76,9 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
 
       <div className="relative container mx-auto px-4 text-center">
         <div className="space-y-5 mb-10">
-          <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold text-foreground title-shadow">
-            <span className="block md:inline">Destiny 2</span>{' '}
-            <span className="bg-gradient-to-r from-solar via-solar-accent to-solar bg-clip-text text-transparent">
-              Codes
-            </span>
+          <h1 className="hero-title font-heading text-5xl font-bold leading-[0.92] text-foreground md:text-6xl lg:text-7xl">
+            <span className="hero-word block md:inline">Destiny 2</span>{' '}
+            <span className="hero-word-solar mt-1 block md:mt-0 md:inline">Codes</span>
           </h1>
           <p className="text-sm text-muted-foreground/80 max-w-xl mx-auto">
             Curated emblem codes verified against Destiny Emblem Collector, Blueberries.gg, and the community.

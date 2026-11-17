@@ -37,12 +37,16 @@ export const CodeGrid = memo(function CodeGrid({ codes, isLoading }: CodeGridPro
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" role="list" aria-label="Destiny redemption codes">
+    <div
+      className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,18.5rem),1fr))] gap-4"
+      role="list"
+      aria-label="Destiny redemption codes"
+    >
       {codes.map((code, index) => (
         <div
           key={code.id}
           role="listitem"
-          className="animate-fade-in min-w-0 [content-visibility:auto] [contain-intrinsic-block-size:auto_28rem]"
+          className="animate-fade-in min-w-0 [content-visibility:auto] [contain-intrinsic-block-size:auto_22rem]"
           style={{ animationDelay: `${Math.min(index, 12) * 50}ms`, animationFillMode: 'backwards' }}
         >
           <CodeCard code={code} />

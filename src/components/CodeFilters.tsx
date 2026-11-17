@@ -13,9 +13,9 @@ interface CodeFiltersProps {
 
 const FILTERS: { value: FilterStatus; label: string }[] = [
   { value: 'all', label: 'All' },
-  { value: 'active', label: 'D2 Active' },
-  { value: 'expired', label: 'D2 Expired' },
-  { value: 'd1', label: 'D1' },
+  { value: 'active', label: 'Destiny 2' },
+  { value: 'expired', label: 'Expired' },
+  { value: 'd1', label: 'Destiny 1' },
   { value: 'unknown', label: 'Unknown' },
 ];
 
@@ -28,37 +28,30 @@ export function CodeFilters({
 }: CodeFiltersProps) {
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-accent/20 bg-secondary/50 p-1 shadow-lg backdrop-blur-sm w-full sm:w-auto">
+      <div className="flex flex-wrap items-center gap-1" role="group" aria-label="Filter the catalogue">
         {FILTERS.map(({ value, label }) => {
-          const getFilterStyle = () => {
-            if (filter !== value) return 'border border-transparent text-muted-foreground hover:text-foreground hover:bg-accent/10';
-            switch (value) {
-              case 'active': return 'bg-strand/20 text-strand border border-strand/30 shadow-md shadow-strand/10';
-              case 'expired': return 'bg-stasis/15 text-stasis border border-stasis/25 shadow-md shadow-stasis/10';
-              case 'd1': return 'bg-solar/20 text-solar border border-solar/30 shadow-md shadow-solar/10';
-              case 'unknown': return 'bg-accent/20 text-accent border border-accent/30 shadow-md shadow-accent/10';
-              default: return 'bg-accent/20 text-accent border border-accent/30 shadow-md shadow-accent/10';
-            }
-          };
+          const selected = filter === value;
+          const selectedTone = {
+            all: 'bg-secondary text-foreground',
+            active: 'tone-strand bg-strand/15 text-strand',
+            expired: 'tone-stasis bg-stasis/15 text-stasis',
+            d1: 'tone-solar bg-solar/15 text-solar',
+            unknown: 'tone-accent bg-accent/15 text-accent',
+          }[value];
 
           return (
             <button
               key={value}
               type="button"
               onClick={() => onFilterChange(value)}
-              aria-pressed={filter === value}
+              aria-pressed={selected}
               className={cn(
-                'min-h-[44px] px-3.5 py-2 text-sm font-bold rounded-md transition-[background-color,color,border-color,box-shadow,transform] duration-200 tracking-wide touch-manipulation',
-                getFilterStyle()
+                'inline-flex min-h-11 items-center gap-3 rounded-md px-3 text-sm tracking-wide transition-colors',
+                selected ? selectedTone : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
               )}
             >
-              {label}
-              <span className={cn(
-                'ml-2 text-[11px] font-semibold',
-                filter === value ? 'opacity-90' : 'opacity-60'
-              )}>
-                {counts[value]}
-              </span>
+              <span className="font-heading font-semibold">{label}</span>
+              <span className="min-w-[1.25rem] text-right font-medium tabular-nums">{counts[value]}</span>
             </button>
           );
         })}

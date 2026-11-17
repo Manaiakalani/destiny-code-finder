@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.4 Updates (November 2026)
+
+The cards, glitch codes, and starfield stay. The tiles keep a steadier size, the sky is finer, and the title reads as one lockup.
+
+- Catalogue cards share a tile width and a shorter height. The code stays on one line.
+- Stars vary in size and brightness. Shooting stars cross as short streaks.
+- Destiny 2 Codes sits tighter. Codes keeps the solar color, lit from the top.
+
 ## 📋 v2.9.3 Updates (November 2026)
 
 The cards, glitch codes, and starfield stay. Status on a card is a word, and each catalogue filter is a name with its count set apart.

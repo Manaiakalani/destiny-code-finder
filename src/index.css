@@ -857,193 +857,99 @@
 
   .star {
     position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
     border-radius: 50%;
-    opacity: 0;
-    animation: twinkle var(--duration, 3s) ease-in-out infinite;
+    background: #fff;
+    animation: twinkle var(--duration, 4s) ease-in-out infinite;
     animation-delay: var(--delay, 0s);
   }
 
-  .star::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: inherit;
-    border-radius: inherit;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.3);
+  .star-dim {
+    --tw-min: 0.18;
+    --tw-max: 0.5;
+    box-shadow: 0 0 3px rgba(255, 255, 255, 0.28);
+  }
+
+  .star-mid {
+    --tw-min: 0.35;
+    --tw-max: 0.9;
+    background: #eef3ff;
+    box-shadow: 0 0 5px rgba(200, 214, 255, 0.55);
+  }
+
+  .star-bright {
+    --tw-min: 0.7;
+    --tw-max: 1;
+    background: #f7f9ff;
+    box-shadow:
+      0 0 6px 1px rgba(255, 255, 255, 0.8),
+      8px 0 0 -2.5px rgba(255, 255, 255, 0.85),
+      -8px 0 0 -2.5px rgba(255, 255, 255, 0.85),
+      0 8px 0 -2.5px rgba(226, 232, 255, 0.7),
+      0 -8px 0 -2.5px rgba(226, 232, 255, 0.7);
   }
 
   @keyframes twinkle {
-    0%, 100% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 1; transform: scale(1); }
+    0%, 100% { opacity: var(--tw-min, 0.25); }
+    50% { opacity: var(--tw-max, 1); }
   }
 
-  /* Shooting stars - realistic with glowing head and fading tail */
+  /* A short streak, mostly off, so it reads as a meteor rather than a sliding bar. */
   .shooting-star {
     position: absolute;
-    width: 150px;
-    height: 2px;
-    background: linear-gradient(90deg, 
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,0.1) 30%,
-      rgba(200,220,255,0.4) 70%,
-      rgba(255,255,255,0.9) 90%,
-      rgba(255,255,255,1) 100%
+    height: 1px;
+    width: 8rem;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.02) 30%,
+      rgba(198, 214, 255, 0.45) 72%,
+      #fff 100%
     );
-    border-radius: 100px;
-    filter: drop-shadow(0 0 6px rgba(255,255,255,0.8));
+    border-radius: 999px;
     opacity: 0;
+    filter: drop-shadow(0 0 4px rgba(210, 224, 255, 0.85));
+    animation: meteor var(--duration, 14s) linear infinite;
+    animation-delay: var(--delay, 0s);
   }
 
   .shooting-star::before {
     content: '';
     position: absolute;
-    right: -4px;
+    right: 0;
     top: 50%;
+    width: 2px;
+    height: 2px;
     transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(200,220,255,0.8) 40%, transparent 70%);
     border-radius: 50%;
-    filter: drop-shadow(0 0 8px rgba(255,255,255,1)) drop-shadow(0 0 15px rgba(180,200,255,0.8));
+    background: #fff;
+    box-shadow: 0 0 6px 1px rgba(255, 255, 255, 0.85);
   }
 
-  .shooting-star-1 {
-    top: 15%;
-    left: -5%;
-    animation: shoot-1 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: 0s;
+  .shooting-star-warm {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--solar) / 0.05) 40%,
+      hsl(var(--solar-accent) / 0.7) 78%,
+      #fff 100%
+    );
+    filter: drop-shadow(0 0 5px hsl(var(--solar) / 0.7));
   }
 
-  .shooting-star-2 {
-    top: 8%;
-    left: 10%;
-    width: 100px;
-    animation: shoot-2 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: 2.5s;
-  }
-
-  .shooting-star-3 {
-    top: 25%;
-    left: -10%;
-    width: 180px;
-    animation: shoot-3 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: 4s;
-  }
-
-  .shooting-star-4 {
-    top: 5%;
-    left: 30%;
-    width: 120px;
-    animation: shoot-4 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: 7s;
-  }
-
-  .shooting-star-5 {
-    top: 20%;
-    left: 50%;
-    width: 90px;
-    animation: shoot-5 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    animation-delay: 10s;
-  }
-
-  @keyframes shoot-1 {
-    0% { 
-      transform: translateX(0) translateY(0) rotate(35deg); 
+  @keyframes meteor {
+    0% {
+      transform: translate3d(0, 0, 0) rotate(var(--angle, 28deg));
       opacity: 0;
     }
-    5% {
-      opacity: 1;
-    }
-    60% {
-      opacity: 1;
-    }
-    100% { 
-      transform: translateX(600px) translateY(350px) rotate(35deg); 
+    3% { opacity: 1; }
+    12% {
+      transform: translate3d(var(--travel, 64vw), var(--drop, 34vh), 0) rotate(var(--angle, 28deg));
       opacity: 0;
     }
-  }
-
-  @keyframes shoot-2 {
-    0% { 
-      transform: translateX(0) translateY(0) rotate(40deg); 
+    100% {
+      transform: translate3d(var(--travel, 64vw), var(--drop, 34vh), 0) rotate(var(--angle, 28deg));
       opacity: 0;
     }
-    8% {
-      opacity: 1;
-    }
-    55% {
-      opacity: 0.8;
-    }
-    100% { 
-      transform: translateX(500px) translateY(420px) rotate(40deg); 
-      opacity: 0;
-    }
-  }
-
-  @keyframes shoot-3 {
-    0% { 
-      transform: translateX(0) translateY(0) rotate(30deg); 
-      opacity: 0;
-    }
-    6% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 1;
-    }
-    100% { 
-      transform: translateX(700px) translateY(400px) rotate(30deg); 
-      opacity: 0;
-    }
-  }
-
-  @keyframes shoot-4 {
-    0% { 
-      transform: translateX(0) translateY(0) rotate(45deg); 
-      opacity: 0;
-    }
-    5% {
-      opacity: 1;
-    }
-    65% {
-      opacity: 0.7;
-    }
-    100% { 
-      transform: translateX(450px) translateY(450px) rotate(45deg); 
-      opacity: 0;
-    }
-  }
-
-  @keyframes shoot-5 {
-    0% { 
-      transform: translateX(0) translateY(0) rotate(38deg); 
-      opacity: 0;
-    }
-    7% {
-      opacity: 1;
-    }
-    60% {
-      opacity: 0.9;
-    }
-    100% { 
-      transform: translateX(400px) translateY(300px) rotate(38deg); 
-      opacity: 0;
-    }
-  }
-
-  /* Legacy shoot animation for backwards compatibility */
-  @keyframes shoot {
-    0% { transform: translateX(0) translateY(0) rotate(35deg); opacity: 0; }
-    5% { opacity: 1; }
-    70% { opacity: 1; }
-    100% { transform: translateX(500px) translateY(300px) rotate(35deg); opacity: 0; }
   }
 
   /* Traveler silhouette */
@@ -1145,6 +1051,31 @@
       0 0 20px rgba(124, 58, 237, 0.5),
       0 0 40px rgba(124, 58, 237, 0.3),
       0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Hero lockup. The global heading tracking is too open at this size, and a
+     purple shadow through the solar word turns it brown. */
+  .hero-title {
+    letter-spacing: -0.02em;
+  }
+
+  .hero-word {
+    text-shadow:
+      0 1px 0 hsl(220 40% 4% / 0.55),
+      0 12px 28px hsl(265 90% 71% / 0.16);
+  }
+
+  .hero-word-solar {
+    background-image: linear-gradient(
+      180deg,
+      hsl(var(--solar-accent)) 0%,
+      hsl(var(--solar)) 46%,
+      hsl(var(--solar-secondary)) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 10px 16px hsl(var(--solar) / 0.28));
   }
 
   .code-display {

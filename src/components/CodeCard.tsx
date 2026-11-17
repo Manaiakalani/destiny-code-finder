@@ -234,8 +234,8 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-solar/5 to-transparent pointer-events-none" />
       )}
 
-      <div className="relative p-4 space-y-3 flex-1 flex flex-col">
-        <div className="flex items-center justify-end">
+      <div className="relative flex flex-1 flex-col p-4 pt-7">
+        <div className="absolute right-3.5 top-2.5 flex items-center">
           {isActive && (
             <span className="status-strand text-[10px] font-bold uppercase tracking-wider text-strand">Destiny 2</span>
           )}
@@ -250,7 +250,7 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
           )}
         </div>
 
-        <div className="text-center py-2 flex flex-col items-center">
+        <div className="flex flex-col items-center text-center">
           <div className={cn(
             'relative w-16 h-16 mb-3 rounded-lg overflow-hidden bg-secondary border border-border/50 shadow-md transition-transform duration-300',
             isExpired && 'grayscale-[0.7] opacity-70',
@@ -275,7 +275,7 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
 
           <button
             type="button"
-            className="code-display glitch-text max-w-full whitespace-nowrap text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-1.5 select-all cursor-pointer hover:text-accent transition-colors"
+            className="code-display glitch-text mb-1.5 max-w-full cursor-pointer select-all whitespace-nowrap text-xl font-bold text-foreground transition-colors hover:text-accent"
             data-code-display
             data-text={code.code}
             aria-label={`Copy ${code.code}`}
@@ -300,7 +300,8 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
           )}
         </div>
 
-        <div className="space-y-1.5 pt-2 border-t border-border/50">
+        <div className="mt-auto space-y-3 pt-4">
+        <div className="space-y-1.5 border-t border-border/50 pt-3">
           <div className="flex items-center justify-between gap-3 text-xs min-w-0">
             <span className="text-muted-foreground/50 shrink-0">Source</span>
             <span className="text-muted-foreground font-medium text-right min-w-0 truncate">{code.source}</span>
@@ -325,7 +326,7 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 pt-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             type="button"
             onClick={handleCopy}
@@ -369,6 +370,7 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
               </a>
             </Button>
           )}
+        </div>
         </div>
       </div>
     </div>

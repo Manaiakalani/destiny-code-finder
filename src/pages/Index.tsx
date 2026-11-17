@@ -6,7 +6,7 @@ import { CodeGrid } from '@/components/CodeGrid';
 import { useCodeScanner } from '@/hooks/useCodeScanner';
 import { FilterStatus } from '@/types/code';
 import { Link } from 'react-router-dom';
-import { Shield, ExternalLink } from 'lucide-react';
+import { Shield, ExternalLink, Heart } from 'lucide-react';
 import { buildSearchableText, normalizeSearchText } from '@/services/codeScraperService';
 
 const GithubIcon = ({ className }: { className?: string }) => (
@@ -104,7 +104,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center gap-6">
             <p className="text-sm text-muted-foreground">
-              Made with <span className="text-red-500">♥</span> in Seattle, WA for the Destiny 2 community
+              Made with <Heart className="inline h-3.5 w-3.5 fill-solar text-solar" aria-hidden="true" /> in Seattle, WA for the Destiny 2 community
             </p>
 
             <div className="flex items-center gap-6 text-sm text-muted-foreground">

@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import { memo } from 'react';
 import { RedemptionCode } from '@/types/code';
 import { CodeCard } from './CodeCard';
@@ -23,7 +24,7 @@ export const CodeGrid = memo(function CodeGrid({ codes, isLoading }: CodeGridPro
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <div className="w-16 h-16 rounded-full bg-secondary/50 flex items-center justify-center mb-4">
-          <span className="text-2xl">🔍</span>
+          <Search className="h-7 w-7 text-accent" aria-hidden="true" />
         </div>
         <h3 className="font-heading text-lg font-semibold text-foreground mb-2">
           No codes found

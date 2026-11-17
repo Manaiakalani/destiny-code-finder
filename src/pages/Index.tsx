@@ -76,11 +76,9 @@ const Index = () => {
 
       <main className="container mx-auto px-4 py-12">
         <div className="space-y-6">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="font-heading text-2xl md:text-3xl font-bold tracking-wider text-foreground">
-              <span className="text-accent">Archive</span> Database
-            </h2>
-          </div>
+          <h2 className="font-heading text-2xl font-bold tracking-wider text-foreground md:text-3xl">
+            Archive Database
+          </h2>
 
           <CodeFilters
             filter={filter}

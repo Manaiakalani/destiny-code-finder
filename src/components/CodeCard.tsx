@@ -237,34 +237,16 @@ export const CodeCard = memo(function CodeCard({ code }: CodeCardProps) {
       <div className="relative p-4 space-y-3 flex-1 flex flex-col">
         <div className="flex items-center justify-end">
           {isActive && (
-            <div className="badge-pulse-active flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-strand/15 border border-strand/25">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-strand opacity-60"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-strand"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-strand">Active</span>
-            </div>
+            <span className="status-strand text-[10px] font-bold uppercase tracking-wider text-strand">Destiny 2</span>
           )}
           {isD1 && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-solar/15 border border-solar/25">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-solar"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-solar">Destiny 1</span>
-            </div>
+            <span className="status-solar text-[10px] font-bold uppercase tracking-wider text-solar">Destiny 1</span>
           )}
           {isExpired && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-stasis/15 border border-stasis/25">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-stasis"></span>
-              </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-stasis">Expired</span>
-            </div>
+            <span className="status-stasis text-[10px] font-bold uppercase tracking-wider text-stasis">Expired</span>
           )}
           {isUnknown && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary border border-border">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Unknown</span>
-            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Unknown</span>
           )}
         </div>
 

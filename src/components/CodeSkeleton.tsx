@@ -1,6 +1,6 @@
 export function CodeSkeleton() {
   return (
-    <div className="glass-card p-5 space-y-4">
+    <div className="space-y-4 py-4">
       {/* Emblem and code area */}
       <div className="flex items-start gap-4">
         {/* Emblem skeleton */}

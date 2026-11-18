@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.10.1 Updates (November 2026)
+
+About and Privacy share one reading layout, and both end on the same footer as the catalogue.
+
+- Section headings, lists, and source rows use the same size, icon, and gap.
+- Privacy keeps the November 17, 2026 date. About keeps the Zavala line and the title shadow.
+- The catalogue footer is the same component on the home page.
+
 ## 📋 v2.10.0 Updates (November 2026)
 
 The hero is a night limb of Earth, with the Traveler as a bone-white sphere.

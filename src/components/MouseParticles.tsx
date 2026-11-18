@@ -11,12 +11,13 @@ interface Particle {
   color: string;
 }
 
+// Void, Arc, then an occasional Solar. Alpha stays 0.6 so the draw loop can fade it.
 const COLORS = [
-  'rgba(124, 58, 237, 0.6)',   // Void purple
-  'rgba(6, 182, 212, 0.6)',     // Arc cyan
-  'rgba(249, 115, 22, 0.6)',    // Solar orange
-  'rgba(34, 197, 94, 0.6)',     // Strand green
-  'rgba(59, 130, 246, 0.6)',    // Stasis blue
+  'rgba(176, 132, 255, 0.6)',
+  'rgba(79, 185, 255, 0.6)',
+  'rgba(176, 132, 255, 0.6)',
+  'rgba(79, 185, 255, 0.6)',
+  'rgba(255, 150, 0, 0.6)',
 ];
 
 function particleAllowed() {
@@ -45,17 +46,32 @@ function ParticleCanvas() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    let cssWidth = 0;
+    let cssHeight = 0;
+
     const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // The canvas width attribute is a presentational hint, so inset: 0 does not stretch it.
+      cssWidth = document.documentElement.clientWidth;
+      cssHeight = window.innerHeight;
+      canvas.style.width = `${cssWidth}px`;
+      canvas.style.height = `${cssHeight}px`;
+      canvas.width = Math.max(1, Math.round(cssWidth * dpr));
+      canvas.height = Math.max(1, Math.round(cssHeight * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resize();
     window.addEventListener('resize', resize);
 
+    const pointerOnCanvas = (event: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    };
+
     let running = false;
 
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
       if (Date.now() - lastMoveTimeRef.current > 100) {
         mouseRef.current.moving = false;
       }
@@ -112,13 +128,14 @@ function ParticleCanvas() {
     };
 
     const handleMouseMove = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY, moving: true };
+      const point = pointerOnCanvas(e);
+      mouseRef.current = { x: point.x, y: point.y, moving: true };
       lastMoveTimeRef.current = Date.now();
 
       if (Math.random() > 0.7) {
         particlesRef.current.push({
-          x: e.clientX,
-          y: e.clientY,
+          x: point.x,
+          y: point.y,
           vx: (Math.random() - 0.5) * 2,
           vy: (Math.random() - 0.5) * 2 - 1,
           life: 1,
@@ -146,7 +163,6 @@ function ParticleCanvas() {
       ref={canvasRef}
       aria-hidden="true"
       className="fixed inset-0 pointer-events-none z-50"
-      style={{ mixBlendMode: 'screen' }}
     />
   );
 }

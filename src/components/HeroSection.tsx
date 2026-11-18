@@ -85,7 +85,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
             size="lg"
             onClick={onRefresh}
             disabled={isLoading}
-            className="min-h-[44px] min-w-[140px] border-accent/25 text-accent hover:bg-accent/10 hover:border-accent/40 font-heading btn-haptic"
+            className="hero-refresh min-h-[44px] min-w-[140px] border-accent/50 bg-background/50 text-accent font-heading btn-haptic"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
             Refresh

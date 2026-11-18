@@ -13,20 +13,6 @@ interface HeaderProps {
   totalCount?: number;
 }
 
-const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-  cn(
-    'relative inline-flex h-11 items-center px-3 font-heading text-sm tracking-wider transition-colors',
-    isActive
-      ? 'text-foreground after:absolute after:bottom-1.5 after:left-3 after:right-3 after:h-px after:bg-accent'
-      : 'text-muted-foreground hover:text-foreground'
-  );
-
-const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-  cn(
-    'flex h-11 items-center border-t border-border/50 font-heading text-sm tracking-wider',
-    isActive ? 'text-foreground' : 'text-muted-foreground'
-  );
-
 function VaultCount({
   value,
   label,
@@ -115,13 +101,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 <VaultCount value={totalCount} label="Total" tone="accent" />
               </div>
 
-              <nav className="flex items-center gap-1" aria-label="Primary">
-                <NavLink to="/about" className={navLinkClass}>
-                  About
-                </NavLink>
-                <NavLink to="/privacy" className={navLinkClass}>
-                  Privacy
-                </NavLink>
+              <div className="flex items-center gap-1">
                 <ThemeToggle />
                 <Button
                   type="button"
@@ -132,7 +112,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                   <Plus className="h-4 w-4" />
                   Add Code
                 </Button>
-              </nav>
+              </div>
             </div>
 
             <button
@@ -153,14 +133,6 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 <VaultCount value={activeCount} label="Destiny 2" tone="strand" />
                 <VaultCount value={totalCount} label="Total" tone="accent" />
               </div>
-              <nav className="flex flex-col" aria-label="Primary">
-                <NavLink to="/about" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
-                  About
-                </NavLink>
-                <NavLink to="/privacy" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
-                  Privacy
-                </NavLink>
-              </nav>
               <div className="flex h-12 items-center justify-between border-t border-border/50">
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">Appearance</span>
                 <ThemeToggle showLabel />

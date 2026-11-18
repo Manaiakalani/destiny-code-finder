@@ -1,4 +1,4 @@
-import { Shield, Database, Cookie, ExternalLink, Lock, Eye } from 'lucide-react';
+import { Shield, Database, Cookie, ExternalLink, Lock } from 'lucide-react';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -16,11 +16,6 @@ const PARTIES = [
     name: 'Destiny Emblem Collector CDN',
     detail: "Destiny 1 emblem artwork, which Bungie's own CDN no longer serves.",
     aside: { label: 'destinyemblemcollector.b-cdn.net' },
-  },
-  {
-    name: 'Analytics',
-    detail: 'Cookieless, aggregate page-view counts. Details in the analytics section below.',
-    aside: { label: 'analytics.invalid' },
   },
   {
     name: 'Google Fonts',
@@ -45,7 +40,7 @@ export default function Privacy() {
         <DocTitle
           title="Privacy Policy"
           lede="Your privacy is protected. We don't collect, store, or share any personal information."
-          meta="Last updated: November 17, 2026"
+          meta="Last updated: November 18, 2026"
         />
 
         <DocSections>
@@ -100,7 +95,7 @@ export default function Privacy() {
             <DocHeading icon={Cookie} tone="text-solar">No Cookies</DocHeading>
             <p className="leading-relaxed text-muted-foreground">
               Code Vault does not use cookies of any kind. We don't create user profiles, follow you across other
-              sites, or sell data. See the analytics section below for the one aggregate measurement we do collect.
+              sites, or sell data.
             </p>
           </DocSection>
 
@@ -135,30 +130,6 @@ export default function Privacy() {
               </DocRows>
               <p className="leading-relaxed">
                 The code catalogue itself is bundled with the app — no code data is fetched from an external API.
-              </p>
-            </DocProse>
-          </DocSection>
-
-          <DocSection>
-            <DocHeading icon={Eye} tone="text-accent">Privacy-Focused Analytics</DocHeading>
-            <DocProse>
-              <p className="leading-relaxed">
-                We use a minimal, privacy-focused analytics solution to understand general usage patterns
-                (page views, visit counts). This helps us improve the service.
-              </p>
-              <DocRows>
-                <li className="py-3">
-                  <span className="block font-medium text-foreground">What we collect</span>
-                  <span className="text-sm text-muted-foreground">Page views, approximate visitor counts</span>
-                </li>
-                <li className="py-3">
-                  <span className="block font-medium text-foreground">What we don&apos;t collect</span>
-                  <span className="text-sm text-muted-foreground">Personal data, IP addresses, device fingerprints, or tracking cookies</span>
-                </li>
-              </DocRows>
-              <p className="leading-relaxed">
-                We don't use Google Analytics, Facebook Pixel, or any invasive tracking services.
-                No personal data is ever shared with third parties.
               </p>
             </DocProse>
           </DocSection>

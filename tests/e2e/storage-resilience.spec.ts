@@ -17,9 +17,6 @@ import {
 
 test.describe('storage resilience', () => {
   test('renders normally when localStorage is denied outright', async ({ page }) => {
-    // The third-party analytics script throws its own error under this
-    // condition; block it so the assertion is about our code.
-    await page.route('**/analytics.invalid/**', route => route.abort());
     await page.addInitScript(blockAllStorage);
 
     const errors: string[] = [];

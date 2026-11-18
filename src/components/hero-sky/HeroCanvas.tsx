@@ -170,6 +170,7 @@ const moonFragment = /* glsl */ `
   void main() {
     vec3 albedo = texture2D(uColor, vUv).rgb;
     albedo = clamp((albedo - 0.42) * 1.35 + 0.42, 0.0, 1.0);
+    albedo = mix(vec3(0.04, 0.06, 0.10), vec3(0.86, 0.76, 0.60), albedo);
     float fine = 2.4;
     float broad = 5.5;
     float sx = (heightAt(vUv - vec2(uTexel.x, 0.0)) - heightAt(vUv + vec2(uTexel.x, 0.0))) * fine
@@ -182,6 +183,9 @@ const moonFragment = /* glsl */ `
     float micro = clamp(dot(n, lightDir) * 0.85 + 0.35, 0.15, 1.35);
     vec3 sun = vec3(1.08, 1.01, 0.92);
     vec3 color = albedo * sun * (0.05 + phase * micro);
+    vec3 viewDir = normalize(cameraPosition - vWorld);
+    float rim = pow(1.0 - max(dot(normalize(vNormal), viewDir), 0.0), 3.6);
+    color += rim * vec3(0.25, 0.58, 0.95) * 0.42;
     gl_FragColor = vec4(color, 1.0);
   }
 `;
@@ -316,14 +320,19 @@ const moonPlainFragment = /* glsl */ `
   uniform sampler2D uColor;
   varying vec2 vUv;
   varying vec3 vNormal;
+  varying vec3 vWorld;
   void main() {
     vec3 albedo = texture2D(uColor, vUv).rgb;
     albedo = clamp((albedo - 0.42) * 1.35 + 0.42, 0.0, 1.0);
+    albedo = mix(vec3(0.04, 0.06, 0.10), vec3(0.86, 0.76, 0.60), albedo);
     vec3 n = normalize(vNormal);
     vec3 lightDir = normalize(vec3(0.72, 0.34, 0.60));
     float phase = smoothstep(-0.02, 0.62, dot(n, lightDir));
     float micro = clamp(dot(n, lightDir) * 0.85 + 0.35, 0.15, 1.35);
     vec3 color = albedo * vec3(1.08, 1.01, 0.92) * (0.05 + phase * micro);
+    vec3 viewDir = normalize(cameraPosition - vWorld);
+    float rim = pow(1.0 - max(dot(n, viewDir), 0.0), 3.6);
+    color += rim * vec3(0.25, 0.58, 0.95) * 0.42;
     gl_FragColor = vec4(color, 1.0);
   }
 `;
@@ -551,7 +560,7 @@ function Stage({ still, lite }: { still: boolean; lite: boolean }) {
   return (
     <>
       <group ref={stars}>
-        <Starfield still={still} count={lite ? 480 : 1200} />
+        <Starfield still={still} count={lite ? 900 : 2400} />
         <Meteors still={still} />
       </group>
       <group ref={earth} position={[0.3, -2.05, 0]} scale={2.15}>

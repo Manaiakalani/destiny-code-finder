@@ -48,12 +48,12 @@ export function SiteFooter() {
           </div>
 
           <div className="flex w-full flex-col items-start justify-between gap-4 border-t border-border/10 pt-6 md:flex-row md:items-center">
-            <div className="space-y-0.5 text-xs text-muted-foreground/50">
+            <div className="space-y-0.5 text-xs text-muted-foreground/80">
               <p>Codes aggregated from public sources. Not affiliated with Bungie, Inc.</p>
               <p>Always verify codes at the official redemption site before use.</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground/60">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-foreground/85">
               <Link to="/about" className="transition-colors hover:text-accent">
                 About
               </Link>

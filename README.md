@@ -315,6 +315,16 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.10.4 Updates (November 2026)
+
+Light mode is a dim dusk slate, and the pointer trail uses the same Void, Arc, and Solar colors as the rest of the vault.
+
+- About and Privacy stay in the footer. They are no longer in the top bar.
+- Refresh keeps its Void label when you hover or tap it.
+- The Moon is graded to the night Earth: warm highlands, blue-black maria, and the same Arc rim.
+- The sky has more stars. Their size is unchanged.
+- The pointer trail sits on the cursor. It stays off on a touch screen and while the browser is saving data.
+
 ## 📋 v2.10.3 Updates (November 2026)
 
 The catalogue shows up on a phone before the sky finishes loading.

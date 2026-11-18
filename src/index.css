@@ -133,52 +133,52 @@
     --input: 0 0% 8%;
   }
 
-  /* Light Mode - Soft warm light theme */
+  /* Light mode is the Tower at dusk: a dim slate, still lighter than the night theme. */
   .light-mode {
-    --background: 220 15% 93%;
-    --foreground: 220 25% 12%;
-    --card: 220 12% 97%;
-    --card-foreground: 220 25% 12%;
-    --popover: 220 12% 97%;
-    --popover-foreground: 220 25% 12%;
-    --primary: 214 80% 34%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 12% 88%;
-    --secondary-foreground: 220 25% 18%;
-    --muted: 220 10% 86%;
-    --muted-foreground: 220 12% 38%;
-    --accent: 265 70% 44%; /* Void purple - softer */
-    --accent-foreground: 0 0% 100%;
-    --border: 220 12% 80%;
-    --input: 220 12% 89%;
-    --ring: 217 80% 50%;
-    
-    /* Subclass overrides for light mode (WCAG AA 4.5:1+) */
-    --arc: 202 80% 34%;    /* Arc blue */
-    --solar: 25 85% 36%;   /* Solar */
-    --solar-secondary: 14 75% 34%;
-    --solar-accent: 28 80% 36%;
-    --solar-foreground: 0 0% 100%;
-    --stasis: 190 80% 30%; /* Stasis */
-    --stasis-secondary: 201 50% 25%;
-    --stasis-accent: 205 75% 20%;
-    --strand: 145 65% 30%; /* Strand green */
-    --strand-secondary: 145 70% 25%;
-    --strand-accent: 135 80% 25%;
-    
-    --destructive: 9 98% 45%;
+    --background: 222 18% 18%;
+    --foreground: 220 16% 96%;
+    --card: 222 14% 24%;
+    --card-foreground: 220 16% 96%;
+    --popover: 222 16% 22%;
+    --popover-foreground: 220 16% 96%;
+    --primary: 214 80% 62%;
+    --primary-foreground: 222 30% 10%;
+    --secondary: 222 12% 28%;
+    --secondary-foreground: 220 16% 96%;
+    --muted: 222 12% 26%;
+    --muted-foreground: 220 12% 78%;
+    --accent: 265 90% 78%;
+    --accent-foreground: 260 40% 10%;
+    --border: 222 12% 40%;
+    --input: 222 12% 28%;
+    --ring: 265 90% 78%;
+
+    /* Bright enough to clear 4.5:1 on the dusk card. Solar ink stays dark. */
+    --arc: 202 100% 70%;
+    --solar: 34 100% 52%;
+    --solar-secondary: 14 85% 50%;
+    --solar-accent: 28 100% 60%;
+    --solar-foreground: 22 95% 8%;
+    --stasis: 187 100% 68%;
+    --stasis-secondary: 201 50% 78%;
+    --stasis-accent: 205 80% 74%;
+    --strand: 143 54% 62%;
+    --strand-secondary: 145 50% 70%;
+    --strand-accent: 135 60% 68%;
+
+    --destructive: 9 90% 62%;
     --destructive-foreground: 0 0% 100%;
-    --success: 142 76% 26%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 40%;
-    --warning-foreground: 0 0% 100%;
+    --success: 142 60% 58%;
+    --success-foreground: 150 40% 8%;
+    --warning: 38 92% 56%;
+    --warning-foreground: 30 50% 8%;
   }
 
   .light-mode body {
-    background: 
-      radial-gradient(ellipse at 20% 0%, hsl(220 20% 90%) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, hsl(225 15% 88%) 0%, transparent 50%),
-      hsl(220 15% 93%);
+    background:
+      radial-gradient(ellipse at 20% 0%, hsl(222 24% 26%) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(228 18% 14%) 0%, transparent 50%),
+      hsl(222 18% 18%);
   }
 }
 
@@ -1200,16 +1200,27 @@
   }
 }
 
-/* Filter chips and card status words. The page-level subclass tokens clear
-   4.5:1 on the page, and miss it on a light card or a same-hue tint. Kept
-   outside @layer so they win over the utility color. */
+/* Filter chips and card status words. Kept outside @layer so they win over the utility color. */
 .light-mode [aria-pressed="true"].tone-strand,
-.light-mode .status-strand { color: hsl(145 75% 18%); }
+.light-mode .status-strand { color: hsl(143 54% 62%); }
 .light-mode [aria-pressed="true"].tone-stasis,
-.light-mode .status-stasis { color: hsl(192 90% 18%); }
+.light-mode .status-stasis { color: hsl(187 100% 68%); }
 .light-mode [aria-pressed="true"].tone-solar,
-.light-mode .status-solar { color: hsl(18 90% 24%); }
-.light-mode [aria-pressed="true"].tone-accent { color: hsl(265 75% 32%); }
+.light-mode .status-solar { color: hsl(34 100% 58%); }
+.light-mode [aria-pressed="true"].tone-accent { color: hsl(265 90% 78%); }
+
+/* The outline variant's hover colour is the wrong ink on this night button. */
+.hero-sky .hero-refresh,
+.hero-sky .hero-refresh:hover,
+.hero-sky .hero-refresh:active {
+  color: hsl(var(--accent));
+}
+
+.hero-sky .hero-refresh:hover,
+.hero-sky .hero-refresh:active {
+  background-color: hsl(var(--accent) / 0.22);
+  border-color: hsl(var(--accent));
+}
 
 /* A landscape phone is wide enough for the desktop hero padding and too
    short to reach the catalogue. Kept outside @layer so it wins over md:py-20. */

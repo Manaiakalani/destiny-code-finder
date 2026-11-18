@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.6 Updates (November 2026)
+
+The hero is the Tower at night. A pearl sphere hangs low over a thin atmosphere, and the Void wash across the top stays.
+
+- The Traveler is bone-white and cropped along the bottom of the title.
+- Earth's limb is a thin arc. The field stays dark in light mode so the sphere still reads.
+- Stars stay clear of the title. The cards, glitch codes, and solar word stay.
+
 ## 📋 v2.9.5 Updates (November 2026)
 
 The bar uses the same names as the catalogue. Counts stay on a tablet. The clock under the title is when this browser loaded the list.

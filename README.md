@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.8 Updates (November 2026)
+
+The Traveler is a whole pearl in the lower sky. Earth is one bowed limb.
+
+- The sphere stays clear of the title, the buttons, and the clock.
+- The horizon is a single arc with a soft atmosphere. The hero stays night in light mode and on OLED.
+- Shooting stars keep a bright head and a long tail, and they stay off the title.
+
 ## 📋 v2.9.7 Updates (November 2026)
 
 The wakes have a bright head and a long tail. Earth is a bowed limb, and the Traveler rises behind it.

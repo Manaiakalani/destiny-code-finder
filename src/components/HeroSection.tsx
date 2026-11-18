@@ -25,7 +25,9 @@ function generateStars(count: number): SkyStar[] {
     guard += 1;
     const left = Math.random() * 100;
     const top = Math.random() * 100;
-    // The lockup sits in the middle. Keep that band clear.
+    // The lockup sits in the middle. The planet and the sphere own the lower left.
+    if (top > 78) continue;
+    if (left < 24 && top > 46) continue;
     if (left > 16 && left < 84 && top > 16 && top < 74) continue;
     const roll = Math.random();
     const tier = roll > 0.94 ? 'bright' : roll > 0.72 ? 'mid' : 'dim';
@@ -46,20 +48,20 @@ function generateStars(count: number): SkyStar[] {
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
   const stars = useMemo(() => generateStars(72), []);
   const shootingStars = useMemo(() => [
-    { id: 1, top: '7%', left: '-14%', delay: '1.4s', duration: '11s', angle: '14deg', travel: '92vw', drop: '18vh', width: '16rem', tone: 'arc' as const },
-    { id: 2, top: '3%', left: '18%', delay: '6.2s', duration: '15s', angle: '28deg', travel: '52vw', drop: '24vh', width: '10rem' },
-    { id: 3, top: '14%', left: '-20%', delay: '9.8s', duration: '9.5s', angle: '8deg', travel: '120vw', drop: '12vh', width: '22rem', tone: 'warm' as const },
-    { id: 4, top: '78%', left: '-8%', delay: '4s', duration: '13s', angle: '6deg', travel: '88vw', drop: '8vh', width: '18rem' },
-    { id: 5, top: '20%', left: '48%', delay: '12.5s', duration: '16s', angle: '36deg', travel: '40vw', drop: '26vh', width: '8rem', tone: 'arc' as const },
+    { id: 1, top: '4%', left: '-10%', delay: '2.2s', duration: '13s', angle: '7deg', travel: '78vw', drop: '5vh', width: '16rem', tone: 'arc' as const },
+    { id: 2, top: '1%', left: '28%', delay: '8.4s', duration: '16s', angle: '12deg', travel: '48vw', drop: '7vh', width: '11rem' },
+    { id: 3, top: '86%', left: '22%', delay: '5s', duration: '14s', angle: '2deg', travel: '58vw', drop: '2vh', width: '16rem', tone: 'warm' as const },
   ], []);
 
   return (
     <section className="hero-sky relative py-16 md:py-20 overflow-hidden">
-      <div className="hero-traveler" aria-hidden="true">
-        <span className="hero-traveler-glow" />
-        <span className="hero-traveler-shell" />
-      </div>
-      <div className="hero-limb" aria-hidden="true" />
+      <div className="hero-traveler" aria-hidden="true" />
+      <svg className="hero-earth" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
+        <path className="earth-haze earth-haze-wide" d="M-20 96 Q 720 34 1460 96" fill="none" stroke="hsl(198 100% 78%)" strokeOpacity="0.7" strokeWidth="22" />
+        <path className="earth-haze" d="M-20 96 Q 720 34 1460 96" fill="none" stroke="hsl(190 100% 86%)" strokeOpacity="0.9" strokeWidth="8" />
+        <path className="earth-fill" d="M-20 96 Q 720 34 1460 96 L 1460 160 L -20 160 Z" />
+        <path d="M-20 96 Q 720 34 1460 96" fill="none" stroke="hsl(186 100% 94%)" strokeOpacity="0.92" strokeWidth="1.5" />
+      </svg>
       <div className="stars-container">
         {stars.map((star) => (
           <div

@@ -39,7 +39,7 @@ export default function About() {
           About Code Vault
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-          Your automated guardian for tracking and discovering Destiny 2 emblem redemption codes across the web
+          A hand-checked catalogue of Destiny 2 emblem redemption codes.
         </p>
 
         <div className="mt-12 space-y-10">

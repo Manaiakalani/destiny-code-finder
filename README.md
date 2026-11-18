@@ -315,6 +315,15 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.5 Updates (November 2026)
+
+The bar uses the same names as the catalogue. Counts stay on a tablet. The clock under the title is when this browser loaded the list.
+
+- The nav count reads Destiny 2, beside Total.
+- A tablet-width screen keeps those counts in the bar.
+- The line under the title says Loaded at.
+- About opens on a hand-checked catalogue.
+
 ## 📋 v2.9.4 Updates (November 2026)
 
 The cards, glitch codes, and starfield stay. The tiles keep a steadier size, the sky is finer, and the title reads as one lockup.

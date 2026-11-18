@@ -110,7 +110,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
 
         {lastUpdate && (
           <p className="mt-6 text-xs text-muted-foreground/50" role="status" aria-live="polite">
-            Last updated: {lastUpdate.toLocaleTimeString()}
+            Loaded at {lastUpdate.toLocaleTimeString()}
           </p>
         )}
       </div>

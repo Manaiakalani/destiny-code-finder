@@ -46,18 +46,20 @@ function generateStars(count: number): SkyStar[] {
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
   const stars = useMemo(() => generateStars(72), []);
   const shootingStars = useMemo(() => [
-    { id: 1, top: '18%', left: '-12%', delay: '1s', duration: '13s', angle: '26deg', travel: '78vw', drop: '42vh', width: '8.5rem' },
-    { id: 2, top: '8%', left: '6%', delay: '6.5s', duration: '16s', angle: '34deg', travel: '62vw', drop: '36vh', width: '6.5rem' },
-    { id: 3, top: '28%', left: '-6%', delay: '11s', duration: '15s', angle: '18deg', travel: '84vw', drop: '28vh', width: '10rem', warm: true },
-    { id: 4, top: '4%', left: '38%', delay: '3.2s', duration: '18s', angle: '42deg', travel: '48vw', drop: '46vh', width: '5.5rem' },
+    { id: 1, top: '7%', left: '-14%', delay: '1.4s', duration: '11s', angle: '14deg', travel: '92vw', drop: '18vh', width: '16rem', tone: 'arc' as const },
+    { id: 2, top: '3%', left: '18%', delay: '6.2s', duration: '15s', angle: '28deg', travel: '52vw', drop: '24vh', width: '10rem' },
+    { id: 3, top: '14%', left: '-20%', delay: '9.8s', duration: '9.5s', angle: '8deg', travel: '120vw', drop: '12vh', width: '22rem', tone: 'warm' as const },
+    { id: 4, top: '78%', left: '-8%', delay: '4s', duration: '13s', angle: '6deg', travel: '88vw', drop: '8vh', width: '18rem' },
+    { id: 5, top: '20%', left: '48%', delay: '12.5s', duration: '16s', angle: '36deg', travel: '40vw', drop: '26vh', width: '8rem', tone: 'arc' as const },
   ], []);
 
   return (
     <section className="hero-sky relative py-16 md:py-20 overflow-hidden">
-      <div className="hero-limb" aria-hidden="true" />
       <div className="hero-traveler" aria-hidden="true">
-        <span className="hero-traveler-ring" />
+        <span className="hero-traveler-glow" />
+        <span className="hero-traveler-shell" />
       </div>
+      <div className="hero-limb" aria-hidden="true" />
       <div className="stars-container">
         {stars.map((star) => (
           <div
@@ -76,7 +78,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
         {shootingStars.map((star) => (
           <div
             key={`shooting-${star.id}`}
-            className={`shooting-star${star.warm ? ' shooting-star-warm' : ''}`}
+            className={`shooting-star${star.tone ? ` shooting-star-${star.tone}` : ''}`}
             style={{
               top: star.top,
               left: star.left,

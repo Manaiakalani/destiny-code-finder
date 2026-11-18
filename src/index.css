@@ -847,117 +847,7 @@
      AESTHETIC ENHANCEMENTS - All 6 Recommendations
      ============================================ */
 
-  /* 1. HERO SECTION - Animated Star Particles */
-  .stars-container {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-  }
-
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    background: #fff;
-    animation: twinkle var(--duration, 4s) ease-in-out infinite;
-    animation-delay: var(--delay, 0s);
-  }
-
-  .star-dim {
-    --tw-min: 0.18;
-    --tw-max: 0.5;
-    box-shadow: 0 0 3px rgba(255, 255, 255, 0.28);
-  }
-
-  .star-mid {
-    --tw-min: 0.35;
-    --tw-max: 0.9;
-    background: #eef3ff;
-    box-shadow: 0 0 5px rgba(200, 214, 255, 0.55);
-  }
-
-  .star-bright {
-    --tw-min: 0.7;
-    --tw-max: 1;
-    background: #f7f9ff;
-    box-shadow:
-      0 0 6px 1px rgba(255, 255, 255, 0.8),
-      8px 0 0 -2.5px rgba(255, 255, 255, 0.85),
-      -8px 0 0 -2.5px rgba(255, 255, 255, 0.85),
-      0 8px 0 -2.5px rgba(226, 232, 255, 0.7),
-      0 -8px 0 -2.5px rgba(226, 232, 255, 0.7);
-  }
-
-  @keyframes twinkle {
-    0%, 100% { opacity: var(--tw-min, 0.25); }
-    50% { opacity: var(--tw-max, 1); }
-  }
-
-  /* A wake with a bright head and a long tail. Mostly absent, so the sky stays quiet. */
-  .shooting-star {
-    --wake: 206 80% 82%;
-    position: absolute;
-    height: 2px;
-    width: 8rem;
-    border-radius: 999px;
-    opacity: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(var(--wake) / 0) 28%,
-      hsl(var(--wake) / 0.18) 58%,
-      hsl(var(--wake) / 0.72) 84%,
-      #fff 100%
-    );
-    filter: drop-shadow(0 0 6px hsl(var(--wake) / 0.85));
-    transform-origin: 100% 50%;
-    animation: meteor var(--duration, 14s) linear infinite;
-    animation-delay: var(--delay, 0s);
-  }
-
-  .shooting-star::before {
-    content: '';
-    position: absolute;
-    right: -1px;
-    top: 50%;
-    width: 4px;
-    height: 4px;
-    transform: translateY(-50%);
-    border-radius: 50%;
-    background: #fff;
-    box-shadow:
-      0 0 6px 1px #fff,
-      0 0 16px 5px hsl(var(--wake) / 0.9),
-      -22px 0 10px 1px hsl(var(--wake) / 0.28);
-  }
-
-  .shooting-star-warm {
-    --wake: var(--solar-accent);
-  }
-
-  .shooting-star-arc {
-    --wake: var(--arc);
-  }
-
-  @keyframes meteor {
-    0% {
-      transform: translate3d(0, 0, 0) rotate(var(--angle, 8deg));
-      opacity: 0;
-    }
-    4% { opacity: 1; }
-    8% { opacity: 1; }
-    16% {
-      transform: translate3d(var(--travel, 70vw), var(--drop, 6vh), 0) rotate(var(--angle, 8deg));
-      opacity: 0;
-    }
-    100% {
-      transform: translate3d(var(--travel, 70vw), var(--drop, 6vh), 0) rotate(var(--angle, 8deg));
-      opacity: 0;
-    }
-  }
-
-  /* Tower night. The wash above this stays a 5% Void tint, so the
-     top of the field stays dark and the sphere sits low, where the wash is gone. */
+  /* Tower night. The canvas paints the limb. The wash above this stays a 5% Void tint. */
   .hero-sky {
     --background: 220 30% 6%;
     --foreground: 220 10% 95%;
@@ -970,9 +860,7 @@
     --solar-accent: 25 100% 60%;
     --solar-foreground: 22 95% 8%;
     --arc: 202 100% 65%;
-    background:
-      radial-gradient(ellipse 100% 42% at 50% 120%, hsl(210 42% 16% / 0.55), transparent 62%),
-      hsl(220 32% 5%);
+    background: hsl(220 32% 5%);
     color: hsl(var(--foreground));
   }
 
@@ -981,73 +869,14 @@
     background: #000;
   }
 
-  /* One horizon. The bow is an SVG arc. The night side matches the sky,
-     so the planet reads as a limb, not a second hill. */
-  .hero-earth {
+  .hero-canvas {
     position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 112px;
+    inset: 0;
     pointer-events: none;
   }
 
-  .earth-fill {
-    fill: hsl(220 32% 5%);
-  }
-
-  .oled-mode .earth-fill {
-    fill: #000;
-  }
-
-  .earth-haze {
-    filter: blur(7px);
-  }
-
-  .earth-haze-wide {
-    filter: blur(16px);
-  }
-
-  /* A whole pearl, above the limb. The arc is too gentle at the sides
-     to cut the disc without looking like a straight slice. */
-  .hero-traveler {
-    position: absolute;
-    left: 80px;
-    bottom: 54px;
-    width: 168px;
-    height: 168px;
-    border-radius: 50%;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 32% 30%,
-        hsl(0 0% 100%) 0%,
-        hsl(214 18% 91%) 18%,
-        hsl(216 12% 76%) 42%,
-        hsl(218 10% 60%) 70%,
-        hsl(220 14% 48%) 100%);
-    box-shadow:
-      inset -22px -14px 28px hsl(222 22% 24% / 0.42),
-      inset 8px 6px 14px hsl(0 0% 100% / 0.5);
-  }
-
-  @media (max-width: 1024px) {
-    .hero-traveler {
-      left: 20px;
-      bottom: 40px;
-      width: 96px;
-      height: 96px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .hero-earth { height: 92px; }
-    .hero-traveler {
-      left: 14px;
-      bottom: 28px;
-      width: 72px;
-      height: 72px;
-    }
+  .hero-canvas canvas {
+    display: block;
   }
 
   .hero-loaded {

@@ -1,6 +1,20 @@
 import { ExternalLink, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useMemo } from 'react';
+import { Component, lazy, Suspense, type ReactNode } from 'react';
+
+const HeroCanvas = lazy(() => import('@/components/hero-sky/HeroCanvas'));
+
+class SkyBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 interface HeroSectionProps {
   lastUpdate: Date | null;
@@ -8,92 +22,14 @@ interface HeroSectionProps {
   isLoading: boolean;
 }
 
-interface SkyStar {
-  id: number;
-  left: string;
-  top: string;
-  size: number;
-  duration: number;
-  delay: number;
-  tier: 'bright' | 'mid' | 'dim';
-}
-
-function generateStars(count: number): SkyStar[] {
-  const stars: SkyStar[] = [];
-  let guard = 0;
-  while (stars.length < count && guard < 900) {
-    guard += 1;
-    const left = Math.random() * 100;
-    const top = Math.random() * 100;
-    // The lockup sits in the middle. The planet and the sphere own the lower left.
-    if (top > 78) continue;
-    if (left < 24 && top > 46) continue;
-    if (left > 16 && left < 84 && top > 16 && top < 74) continue;
-    const roll = Math.random();
-    const tier = roll > 0.94 ? 'bright' : roll > 0.72 ? 'mid' : 'dim';
-    const size = tier === 'bright' ? 2 : tier === 'mid' ? 1.5 : 1;
-    stars.push({
-      id: stars.length,
-      left: `${left}%`,
-      top: `${top}%`,
-      size,
-      duration: (tier === 'dim' ? 4.5 : 3) + Math.random() * 4,
-      delay: Math.random() * 8,
-      tier,
-    });
-  }
-  return stars;
-}
-
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
-  const stars = useMemo(() => generateStars(72), []);
-  const shootingStars = useMemo(() => [
-    { id: 1, top: '4%', left: '-10%', delay: '2.2s', duration: '13s', angle: '7deg', travel: '78vw', drop: '5vh', width: '16rem', tone: 'arc' as const },
-    { id: 2, top: '1%', left: '28%', delay: '8.4s', duration: '16s', angle: '12deg', travel: '48vw', drop: '7vh', width: '11rem' },
-    { id: 3, top: '86%', left: '22%', delay: '5s', duration: '14s', angle: '2deg', travel: '58vw', drop: '2vh', width: '16rem', tone: 'warm' as const },
-  ], []);
-
   return (
     <section className="hero-sky relative py-16 md:py-20 overflow-hidden">
-      <div className="hero-traveler" aria-hidden="true" />
-      <svg className="hero-earth" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true">
-        <path className="earth-haze earth-haze-wide" d="M-20 96 Q 720 34 1460 96" fill="none" stroke="hsl(198 100% 78%)" strokeOpacity="0.7" strokeWidth="22" />
-        <path className="earth-haze" d="M-20 96 Q 720 34 1460 96" fill="none" stroke="hsl(190 100% 86%)" strokeOpacity="0.9" strokeWidth="8" />
-        <path className="earth-fill" d="M-20 96 Q 720 34 1460 96 L 1460 160 L -20 160 Z" />
-        <path d="M-20 96 Q 720 34 1460 96" fill="none" stroke="hsl(186 100% 94%)" strokeOpacity="0.92" strokeWidth="1.5" />
-      </svg>
-      <div className="stars-container">
-        {stars.map((star) => (
-          <div
-            key={star.id}
-            className={`star star-${star.tier}`}
-            style={{
-              left: star.left,
-              top: star.top,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              '--duration': `${star.duration}s`,
-              '--delay': `${star.delay}s`,
-            } as React.CSSProperties}
-          />
-        ))}
-        {shootingStars.map((star) => (
-          <div
-            key={`shooting-${star.id}`}
-            className={`shooting-star${star.tone ? ` shooting-star-${star.tone}` : ''}`}
-            style={{
-              top: star.top,
-              left: star.left,
-              width: star.width,
-              '--delay': star.delay,
-              '--duration': star.duration,
-              '--angle': star.angle,
-              '--travel': star.travel,
-              '--drop': star.drop,
-            } as React.CSSProperties}
-          />
-        ))}
-      </div>
+      <SkyBoundary>
+        <Suspense fallback={null}>
+          <HeroCanvas />
+        </Suspense>
+      </SkyBoundary>
 
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
 

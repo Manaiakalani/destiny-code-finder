@@ -92,7 +92,10 @@ try {
   await waitForServer(BASE_URL);
   console.log("✅ Dev server is ready!\n");
 
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({
+    channel: "chrome",
+    args: ["--use-angle=metal"],
+  });
 
   // ── a) Desktop hero screenshot (1280×800) ──────────────────────────────────
   {

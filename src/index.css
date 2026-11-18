@@ -931,19 +931,6 @@
       -22px 0 10px 1px hsl(var(--wake) / 0.28);
   }
 
-  .shooting-star::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    width: 70%;
-    height: 8px;
-    transform: translateY(-50%);
-    border-radius: 999px;
-    background: linear-gradient(90deg, transparent 0%, hsl(var(--wake) / 0.45) 100%);
-    filter: blur(2px);
-  }
-
   .shooting-star-warm {
     --wake: var(--solar-accent);
   }
@@ -954,17 +941,17 @@
 
   @keyframes meteor {
     0% {
-      transform: translate3d(0, 0, 0) rotate(var(--angle, 18deg)) scaleX(0.25);
+      transform: translate3d(0, 0, 0) rotate(var(--angle, 8deg));
       opacity: 0;
     }
-    3% { opacity: 1; }
-    7% { opacity: 1; }
-    18% {
-      transform: translate3d(var(--travel, 80vw), var(--drop, 20vh), 0) rotate(var(--angle, 18deg)) scaleX(1);
+    4% { opacity: 1; }
+    8% { opacity: 1; }
+    16% {
+      transform: translate3d(var(--travel, 70vw), var(--drop, 6vh), 0) rotate(var(--angle, 8deg));
       opacity: 0;
     }
     100% {
-      transform: translate3d(var(--travel, 80vw), var(--drop, 20vh), 0) rotate(var(--angle, 18deg)) scaleX(1);
+      transform: translate3d(var(--travel, 70vw), var(--drop, 6vh), 0) rotate(var(--angle, 8deg));
       opacity: 0;
     }
   }
@@ -994,83 +981,73 @@
     background: #000;
   }
 
-  /* Earth. The bright air is a ring on the circle, so the horizon bows. */
-  .hero-limb {
+  /* One horizon. The bow is an SVG arc. The night side matches the sky,
+     so the planet reads as a limb, not a second hill. */
+  .hero-earth {
     position: absolute;
-    left: 50%;
-    bottom: -229vw;
-    width: 240vw;
-    height: 240vw;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    pointer-events: none;
-    background:
-      radial-gradient(ellipse 7% 2.2% at 46% 3.6%, hsl(0 0% 100% / 0.14), transparent 70%),
-      radial-gradient(ellipse 5% 1.6% at 58% 4.4%, hsl(198 50% 94% / 0.1), transparent 72%),
-      radial-gradient(circle at 50% 50%,
-        hsl(222 46% 5% / 0.96) 0,
-        hsl(220 44% 8% / 0.94) calc(50% - 42px),
-        hsl(212 58% 20% / 0.88) calc(50% - 18px),
-        hsl(198 86% 48% / 0.55) calc(50% - 7px),
-        hsl(188 100% 82% / 0.9) calc(50% - 2px),
-        transparent 50%);
-    box-shadow: 0 0 28px 1px hsl(192 95% 72% / 0.18);
-  }
-
-  /* The Traveler. Pearl shell rising behind the limb, lit from the upper left. */
-  .hero-traveler {
-    position: absolute;
-    left: 27%;
-    bottom: 8%;
-    width: clamp(16rem, 36vw, 28rem);
-    aspect-ratio: 1;
-    transform: translate(-50%, 58%);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 112px;
     pointer-events: none;
   }
 
-  .hero-traveler-glow {
-    position: absolute;
-    inset: -12%;
-    border-radius: 50%;
-    background: radial-gradient(circle at 38% 24%, hsl(210 40% 92% / 0.2), transparent 58%);
+  .earth-fill {
+    fill: hsl(220 32% 5%);
+  }
+
+  .oled-mode .earth-fill {
+    fill: #000;
+  }
+
+  .earth-haze {
+    filter: blur(7px);
+  }
+
+  .earth-haze-wide {
     filter: blur(16px);
   }
 
-  @media (max-width: 640px) {
+  /* A whole pearl, above the limb. The arc is too gentle at the sides
+     to cut the disc without looking like a straight slice. */
+  .hero-traveler {
+    position: absolute;
+    left: 80px;
+    bottom: 54px;
+    width: 168px;
+    height: 168px;
+    border-radius: 50%;
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 32% 30%,
+        hsl(0 0% 100%) 0%,
+        hsl(214 18% 91%) 18%,
+        hsl(216 12% 76%) 42%,
+        hsl(218 10% 60%) 70%,
+        hsl(220 14% 48%) 100%);
+    box-shadow:
+      inset -22px -14px 28px hsl(222 22% 24% / 0.42),
+      inset 8px 6px 14px hsl(0 0% 100% / 0.5);
+  }
+
+  @media (max-width: 1024px) {
     .hero-traveler {
-      left: 16%;
-      bottom: -6%;
-      width: 15rem;
-      transform: translate(-50%, 76%);
+      left: 20px;
+      bottom: 40px;
+      width: 96px;
+      height: 96px;
     }
   }
 
-  .hero-traveler-shell {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background:
-      radial-gradient(ellipse 78% 7% at 50% 30%, hsl(0 0% 100% / 0.2), transparent 72%),
-      radial-gradient(circle at 32% 24%,
-        hsl(0 0% 100% / 0.95) 0%,
-        hsl(210 35% 94% / 0.55) 7%,
-        hsl(216 18% 76% / 0.2) 20%,
-        transparent 42%),
-      radial-gradient(circle at 46% 42%,
-        hsl(220 16% 82% / 0.42) 0%,
-        hsl(220 18% 52% / 0.16) 38%,
-        hsl(222 28% 16% / 0.22) 64%,
-        transparent 78%),
-      radial-gradient(circle at 82% 46%,
-        hsl(222 42% 4% / 0.78) 0%,
-        hsl(222 36% 8% / 0.28) 26%,
-        transparent 50%);
-    box-shadow:
-      inset -22px 4px 36px hsl(222 42% 4% / 0.42),
-      inset 12px 8px 18px hsl(0 0% 100% / 0.22),
-      inset 0 0 0 1px hsl(210 40% 96% / 0.16);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 100%);
+  @media (max-width: 640px) {
+    .hero-earth { height: 92px; }
+    .hero-traveler {
+      left: 14px;
+      bottom: 28px;
+      width: 72px;
+      height: 72px;
+    }
   }
 
   .hero-loaded {

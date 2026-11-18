@@ -41,7 +41,7 @@ function VaultCount({
       <span className={cn('font-heading text-base tabular-nums', tone === 'strand' ? 'text-strand' : 'text-accent')}>
         {value}
       </span>
-      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
+      <span className="whitespace-nowrap text-[10px] uppercase tracking-wider text-muted-foreground">{label}</span>
     </p>
   );
 }
@@ -90,7 +90,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
             <NavLink
               to="/"
               end
-              className="flex min-w-0 items-center gap-3 rounded-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              className="flex shrink-0 items-center gap-3 rounded-md group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             >
               <span className="relative shrink-0">
                 <Hexagon className="h-10 w-10 text-accent transition-colors duration-300 group-hover:text-solar" strokeWidth={1.5} />
@@ -99,7 +99,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
                 </span>
               </span>
               <span className="min-w-0">
-                <span className="block font-heading text-base font-bold tracking-wider text-foreground sm:text-lg">
+                <span className="block whitespace-nowrap font-heading text-base font-bold tracking-wider text-foreground sm:text-lg">
                   CODE VAULT
                 </span>
                 <span className="block text-[10px] uppercase tracking-[0.18em] text-accent/80">
@@ -109,8 +109,8 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
             </NavLink>
 
             <div className="ml-auto hidden items-center gap-2 md:flex">
-              <div className="mr-3 hidden items-center gap-4 lg:flex" aria-label="Catalogue size">
-                <VaultCount value={activeCount} label="D2 Active" tone="strand" />
+              <div className="mr-1 flex shrink-0 items-center gap-3 lg:mr-3 lg:gap-4" aria-label="Catalogue size">
+                <VaultCount value={activeCount} label="Destiny 2" tone="strand" />
                 <span className="h-3 w-px bg-border" aria-hidden="true" />
                 <VaultCount value={totalCount} label="Total" tone="accent" />
               </div>
@@ -150,7 +150,7 @@ export function Header({ onAddCode, activeCount = 0, totalCount = 0 }: HeaderPro
           {isMobileMenuOpen && (
             <div id="mobile-menu" className="md:hidden pb-4">
               <div className="flex items-center justify-between gap-4 py-3">
-                <VaultCount value={activeCount} label="D2 Active" tone="strand" />
+                <VaultCount value={activeCount} label="Destiny 2" tone="strand" />
                 <VaultCount value={totalCount} label="Total" tone="accent" />
               </div>
               <nav className="flex flex-col" aria-label="Primary">

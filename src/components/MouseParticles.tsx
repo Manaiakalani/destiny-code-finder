@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Particle {
   x: number;
@@ -19,7 +19,19 @@ const COLORS = [
   'rgba(59, 130, 246, 0.6)',    // Stasis blue
 ];
 
+function particleAllowed() {
+  if (window.matchMedia('(pointer: coarse), (prefers-reduced-motion: reduce)').matches) return false;
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return connection?.saveData !== true;
+}
+
 export function MouseParticles() {
+  const [allowed] = useState(particleAllowed);
+  if (!allowed) return null;
+  return <ParticleCanvas />;
+}
+
+function ParticleCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: 0, y: 0, moving: false });
@@ -27,17 +39,12 @@ export function MouseParticles() {
   const animationFrameRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
-    // Respect reduced motion preference
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    if (motionQuery.matches) return;
-
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -45,12 +52,69 @@ export function MouseParticles() {
     resize();
     window.addEventListener('resize', resize);
 
-    // Mouse move handler
+    let running = false;
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (Date.now() - lastMoveTimeRef.current > 100) {
+        mouseRef.current.moving = false;
+      }
+
+      particlesRef.current = particlesRef.current.filter(particle => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vy += 0.05;
+        particle.life++;
+
+        const alpha = 1 - (particle.life / particle.maxLife);
+
+        if (alpha > 0) {
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = particle.color;
+          ctx.fillStyle = particle.color.replace('0.6', String(alpha * 0.6));
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.shadowBlur = 5;
+          ctx.fillStyle = particle.color.replace('0.6', String(alpha * 0.9));
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          return true;
+        }
+        return false;
+      });
+
+      if (mouseRef.current.moving && particlesRef.current.length < 200) {
+        const trailColor = COLORS[Math.floor(Date.now() / 200) % COLORS.length];
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = trailColor;
+        ctx.fillStyle = trailColor;
+        ctx.beginPath();
+        ctx.arc(mouseRef.current.x, mouseRef.current.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.shadowBlur = 0;
+      if (mouseRef.current.moving || particlesRef.current.length > 0) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+      } else {
+        running = false;
+      }
+    };
+
+    const kick = () => {
+      if (running) return;
+      running = true;
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY, moving: true };
       lastMoveTimeRef.current = Date.now();
 
-      // Create particles on move
       if (Math.random() > 0.7) {
         particlesRef.current.push({
           x: e.clientX,
@@ -63,68 +127,10 @@ export function MouseParticles() {
           color: COLORS[Math.floor(Math.random() * COLORS.length)]
         });
       }
-    };
-
-    // Check if mouse stopped moving
-    const checkMouseMovement = () => {
-      if (Date.now() - lastMoveTimeRef.current > 100) {
-        mouseRef.current.moving = false;
-      }
+      kick();
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-
-    // Animation loop
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      checkMouseMovement();
-
-      // Update and draw particles
-      particlesRef.current = particlesRef.current.filter(particle => {
-        particle.x += particle.vx;
-        particle.y += particle.vy;
-        particle.vy += 0.05; // Gravity
-        particle.life++;
-
-        const alpha = 1 - (particle.life / particle.maxLife);
-        
-        if (alpha > 0) {
-          // Draw particle with glow
-          ctx.shadowBlur = 10;
-          ctx.shadowColor = particle.color;
-          ctx.fillStyle = particle.color.replace('0.6', String(alpha * 0.6));
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-          ctx.fill();
-          
-          // Draw inner glow
-          ctx.shadowBlur = 5;
-          ctx.fillStyle = particle.color.replace('0.6', String(alpha * 0.9));
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size * 0.5, 0, Math.PI * 2);
-          ctx.fill();
-          
-          return true;
-        }
-        return false;
-      });
-
-      // Draw trail behind mouse
-      if (mouseRef.current.moving && particlesRef.current.length < 200) {
-        const trailColor = COLORS[Math.floor(Date.now() / 200) % COLORS.length];
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = trailColor;
-        ctx.fillStyle = trailColor;
-        ctx.beginPath();
-        ctx.arc(mouseRef.current.x, mouseRef.current.y, 3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      ctx.shadowBlur = 0;
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
 
     return () => {
       window.removeEventListener('resize', resize);

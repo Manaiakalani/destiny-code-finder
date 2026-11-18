@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.9.7 Updates (November 2026)
+
+The wakes have a bright head and a long tail. Earth is a bowed limb, and the Traveler rises behind it.
+
+- Shooting stars are cold, warm, or arc, and they stay mostly off.
+- The horizon follows the curve of the planet. The air is a thin bright ring.
+- The pearl sphere sits behind that limb. On a phone it stays in the corner.
+
 ## 📋 v2.9.6 Updates (November 2026)
 
 The hero is the Tower at night. A pearl sphere hangs low over a thin atmosphere, and the Void wash across the top stays.

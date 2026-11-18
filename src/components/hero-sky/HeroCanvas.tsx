@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const NIGHT_MAP = `${import.meta.env.BASE_URL}textures/earth-night.webp`;
+const MOON_COLOR = `${import.meta.env.BASE_URL}textures/moon-color.webp`;
+const MOON_HEIGHT = `${import.meta.env.BASE_URL}textures/moon-height.webp`;
+const moonTexel = new THREE.Vector2(1 / 1024, 1 / 512);
 
 const earthVertex = /* glsl */ `
   varying vec2 vUv;
@@ -130,31 +133,55 @@ const METEORS: MeteorSpec[] = [
   },
 ];
 
-const travelerVertex = /* glsl */ `
+const moonVertex = /* glsl */ `
+  varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vWorld;
+  varying vec3 vTangent;
+  varying vec3 vBitangent;
   void main() {
+    vUv = uv;
     vec4 world = modelMatrix * vec4(position, 1.0);
     vWorld = world.xyz;
-    vNormal = normalize(mat3(modelMatrix) * normal);
+    mat3 normalMat = mat3(modelMatrix);
+    vec3 n = normalize(normal);
+    vNormal = normalize(normalMat * n);
+    vec3 tangent = cross(vec3(0.0, 1.0, 0.0), n);
+    if (dot(tangent, tangent) < 1e-6) tangent = vec3(1.0, 0.0, 0.0);
+    tangent = normalize(tangent);
+    vTangent = normalize(normalMat * tangent);
+    vBitangent = normalize(cross(vNormal, vTangent));
     gl_Position = projectionMatrix * viewMatrix * world;
   }
 `;
 
-const travelerFragment = /* glsl */ `
+const moonFragment = /* glsl */ `
+  uniform sampler2D uColor;
+  uniform sampler2D uHeight;
+  uniform vec2 uTexel;
+  varying vec2 vUv;
   varying vec3 vNormal;
   varying vec3 vWorld;
+  varying vec3 vTangent;
+  varying vec3 vBitangent;
+  float heightAt(vec2 uv) {
+    return texture2D(uHeight, uv).r;
+  }
   void main() {
-    vec3 n = normalize(vNormal);
-    vec3 viewDir = normalize(cameraPosition - vWorld);
-    vec3 lightDir = normalize(vec3(-0.45, 0.82, 0.55));
-    float wrap = clamp(dot(n, lightDir) * 0.45 + 0.62, 0.0, 1.0);
-    vec3 color = mix(vec3(0.74, 0.77, 0.81), vec3(0.98, 0.97, 0.94), wrap);
-    vec3 halfDir = normalize(lightDir + viewDir);
-    float spec = pow(max(dot(n, halfDir), 0.0), 36.0);
-    color += spec * 0.5;
-    float fres = pow(1.0 - max(dot(n, viewDir), 0.0), 3.2);
-    color += fres * vec3(0.78, 0.86, 0.96) * 0.22;
+    vec3 albedo = texture2D(uColor, vUv).rgb;
+    albedo = clamp((albedo - 0.42) * 1.35 + 0.42, 0.0, 1.0);
+    float fine = 2.4;
+    float broad = 5.5;
+    float sx = (heightAt(vUv - vec2(uTexel.x, 0.0)) - heightAt(vUv + vec2(uTexel.x, 0.0))) * fine
+      + (heightAt(vUv - vec2(uTexel.x * 5.0, 0.0)) - heightAt(vUv + vec2(uTexel.x * 5.0, 0.0))) * broad;
+    float sy = (heightAt(vUv - vec2(0.0, uTexel.y)) - heightAt(vUv + vec2(0.0, uTexel.y))) * fine
+      + (heightAt(vUv - vec2(0.0, uTexel.y * 5.0)) - heightAt(vUv + vec2(0.0, uTexel.y * 5.0))) * broad;
+    vec3 n = normalize(vTangent * sx + vBitangent * sy + vNormal);
+    vec3 lightDir = normalize(vec3(0.72, 0.34, 0.60));
+    float phase = smoothstep(-0.02, 0.62, dot(normalize(vNormal), lightDir));
+    float micro = clamp(dot(n, lightDir) * 0.85 + 0.35, 0.15, 1.35);
+    vec3 sun = vec3(1.08, 1.01, 0.92);
+    vec3 color = albedo * sun * (0.05 + phase * micro);
     gl_FragColor = vec4(color, 1.0);
   }
 `;
@@ -269,6 +296,40 @@ function useNightTexture() {
     loaded.colorSpace = THREE.SRGBColorSpace;
     loaded.anisotropy = 8;
   });
+}
+
+function useMoonColor() {
+  return useTexture(MOON_COLOR, (loaded) => {
+    loaded.colorSpace = THREE.SRGBColorSpace;
+    loaded.anisotropy = 8;
+  });
+}
+
+function useMoonHeight() {
+  return useTexture(MOON_HEIGHT, (loaded) => {
+    loaded.colorSpace = THREE.NoColorSpace;
+    loaded.anisotropy = 4;
+    loaded.generateMipmaps = true;
+  });
+}
+
+function Moon() {
+  const color = useMoonColor();
+  const height = useMoonHeight();
+  return (
+    <mesh rotation={[0.1, -Math.PI / 2 + 0.22, 0.06]}>
+      <sphereGeometry args={[1, 80, 80]} />
+      <shaderMaterial
+        uniforms={{
+          uColor: { value: color },
+          uHeight: { value: height },
+          uTexel: { value: moonTexel },
+        }}
+        vertexShader={moonVertex}
+        fragmentShader={moonFragment}
+      />
+    </mesh>
+  );
 }
 
 function Earth({ still }: { still: boolean }) {
@@ -404,7 +465,7 @@ function pointOnCanvas(
 
 function Stage({ still }: { still: boolean }) {
   const earth = useRef<THREE.Group>(null);
-  const traveler = useRef<THREE.Group>(null);
+  const moon = useRef<THREE.Group>(null);
   const stars = useRef<THREE.Group>(null);
   const pointer = usePointer();
 
@@ -445,12 +506,12 @@ function Stage({ still }: { still: boolean }) {
       earth.current.position.x += (px * 0.05 - earth.current.position.x) * damp;
       earth.current.position.y += (earthY - py * 0.03 - earth.current.position.y) * damp;
     }
-    if (traveler.current) {
-      traveler.current.position.x += (anchor.x + px * 0.16 - traveler.current.position.x) * damp;
-      traveler.current.position.y += (anchor.y - py * 0.08 - traveler.current.position.y) * damp;
-      traveler.current.position.z += (anchor.z - traveler.current.position.z) * damp;
-      const next = traveler.current.scale.x + (scale - traveler.current.scale.x) * damp;
-      traveler.current.scale.setScalar(next);
+    if (moon.current) {
+      moon.current.position.x += (anchor.x + px * 0.16 - moon.current.position.x) * damp;
+      moon.current.position.y += (anchor.y - py * 0.08 - moon.current.position.y) * damp;
+      moon.current.position.z += (anchor.z - moon.current.position.z) * damp;
+      const next = moon.current.scale.x + (scale - moon.current.scale.x) * damp;
+      moon.current.scale.setScalar(next);
     }
   });
 
@@ -463,11 +524,8 @@ function Stage({ still }: { still: boolean }) {
       <group ref={earth} position={[0.3, -2.05, 0]} scale={2.15}>
         <Earth still={still} />
       </group>
-      <group ref={traveler} position={[-2.2, 0.7, 2.2]} scale={0.2}>
-        <mesh>
-          <sphereGeometry args={[1, 64, 64]} />
-          <shaderMaterial vertexShader={travelerVertex} fragmentShader={travelerFragment} />
-        </mesh>
+      <group ref={moon} position={[-2.2, 0.7, 2.2]} scale={0.2}>
+        <Moon />
       </group>
     </>
   );

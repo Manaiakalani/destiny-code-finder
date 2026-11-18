@@ -43,7 +43,7 @@ A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled agai
 - **⚡ Lightning Fast**: Built with Vite + React for instant page loads
 - **🎨 Beautiful UI**: NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
 - **📱 Fully Responsive**: Works flawlessly on desktop, tablet, and mobile
-- **🔒 Privacy-First**: No cookies, no user accounts, cookieless privacy-focused analytics
+- **🔒 Privacy-First**: No cookies, no user accounts, no third-party analytics
 - **🌙 Theme Support**: Dark, OLED, and Light modes
 - **✨ Visual Effects**: Shooting stars, particle effects, and emblem shine animations
 
@@ -226,7 +226,7 @@ Code Vault is built with privacy as a core principle:
 
 - ✅ No cookies
 - ✅ No cross-site tracking, advertising, or data selling
-- ✅ Cookieless, privacy-focused analytics (aggregate page counts only)
+- ✅ No third-party analytics
 - ✅ No user accounts required
 - ✅ All code data stored locally in your browser
 - ✅ Open source and auditable
@@ -314,6 +314,15 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 
 ### Version
 - Bumped `package.json` version to **2.4.0**
+
+## 📋 v2.10.2 Updates (November 2026)
+
+The small sphere beside the Earth limb is the Moon, and the site no longer loads a third-party tracker.
+
+- Lunar color and elevation come from NASA's Lunar Reconnaissance Orbiter. The familiar near side faces the page, with a terminator so the maria and crater rims read.
+- The privacy policy no longer names an analytics host. Its date is November 18, 2026.
+
+Lunar maps courtesy of NASA.
 
 ## 📋 v2.10.1 Updates (November 2026)
 

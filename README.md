@@ -315,6 +315,18 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.10.0 Updates (November 2026)
+
+The hero is a night limb of Earth, with the Traveler as a bone-white sphere.
+
+- Earth uses NASA's public-domain Earth-at-night city lights. A thin Arc rim follows the curve, and the sphere turns slowly.
+- The Traveler sits clear of the title, the buttons, and the clock. On a narrow screen it sits above the title.
+- Stars are a point field. The brightest carry a small cross. Three meteors cross the upper sky or the limb, then stay dark.
+- Moving the pointer shifts the far stars more than the Earth. Reduced motion holds one still frame. The canvas sits behind the title and does not take clicks.
+- The Void wash, the glitch codes, and the cards stay.
+
+Earth-at-night city lights courtesy of NASA.
+
 ## 📋 v2.9.8 Updates (November 2026)
 
 The Traveler is a whole pearl in the lower sky. Earth is one bowed limb.

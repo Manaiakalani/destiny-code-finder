@@ -952,30 +952,98 @@
     }
   }
 
-  /* Traveler silhouette */
-  .traveler-bg {
-    position: absolute;
-    bottom: -20%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(124, 58, 237, 0.03) 0%, transparent 70%);
-    border-radius: 50%;
-    pointer-events: none;
+  /* Tower night. The wash above this stays a 5% Void tint, so the
+     top of the field stays dark and the sphere sits low, where the wash is gone. */
+  .hero-sky {
+    --background: 220 30% 6%;
+    --foreground: 220 10% 95%;
+    --muted-foreground: 220 12% 60%;
+    --accent: 265 90% 71%;
+    --accent-foreground: 220 30% 6%;
+    --border: 220 25% 22%;
+    --solar: 34 100% 50%;
+    --solar-secondary: 14 85% 50%;
+    --solar-accent: 25 100% 60%;
+    --solar-foreground: 22 95% 8%;
+    --arc: 202 100% 65%;
+    background:
+      radial-gradient(ellipse 100% 42% at 50% 120%, hsl(210 42% 16% / 0.55), transparent 62%),
+      hsl(220 32% 5%);
+    color: hsl(var(--foreground));
   }
 
-  .traveler-bg::before {
+  .oled-mode .hero-sky {
+    --background: 0 0% 0%;
+    background: #000;
+  }
+
+  /* Earth's atmosphere, a thin arc along the bottom. No continents. */
+  .hero-limb {
+    position: absolute;
+    left: -35%;
+    right: -35%;
+    bottom: -42%;
+    height: 58%;
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow:
+      inset 0 1px 0 0 hsl(var(--arc) / 0.7),
+      inset 0 12px 28px hsl(var(--arc) / 0.18),
+      inset 0 36px 70px hsl(205 70% 40% / 0.06);
+  }
+
+  .hero-limb::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
+    left: 18%;
+    right: 18%;
+    top: 0;
+    height: 2.5rem;
+    background: radial-gradient(ellipse at 50% 0%, hsl(32 45% 58% / 0.1), transparent 72%);
+  }
+
+  /* The Traveler. Pearl, lit from the upper left, cropped so only the crown shows. */
+  .hero-traveler {
+    position: absolute;
+    left: 36%;
+    bottom: 0;
+    width: clamp(26rem, 62vw, 46rem);
+    aspect-ratio: 1;
+    transform: translate(-50%, 78%);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%);
-    box-shadow: 0 0 100px 50px rgba(124, 58, 237, 0.05);
+    pointer-events: none;
+    background:
+      radial-gradient(circle at 32% 16%,
+        hsl(0 0% 100% / 0.5) 0%,
+        hsl(214 28% 88% / 0.28) 12%,
+        hsl(216 16% 64% / 0.1) 30%,
+        hsl(220 22% 34% / 0.04) 48%,
+        transparent 64%),
+      radial-gradient(circle at 76% 34%,
+        hsl(222 45% 3% / 0.55) 0%,
+        transparent 42%);
+    box-shadow:
+      inset -36px 8px 70px hsl(222 45% 3% / 0.45),
+      inset 14px 6px 24px hsl(0 0% 100% / 0.14),
+      0 0 64px 6px hsl(210 40% 82% / 0.05);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 16%, #000 100%);
+  }
+
+  /* One shell latitude, parallel to the silhouette, not a chord across the disc. */
+  .hero-traveler-ring {
+    position: absolute;
+    inset: 5%;
+    border-radius: 50%;
+    border: 1px solid hsl(210 40% 100% / 0.2);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 8%, transparent 18%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 8%, transparent 18%);
+  }
+
+  .hero-loaded {
+    text-shadow:
+      0 1px 2px hsl(220 40% 4% / 0.9),
+      0 0 14px hsl(220 40% 4% / 0.75);
   }
 
   /* 2. CODE CARDS - Enhanced Shine & Rarity Borders */
@@ -1193,29 +1261,6 @@
     );
     pointer-events: none;
     opacity: 0.3;
-  }
-
-  /* Aurora background effect */
-  .aurora-bg {
-    background: 
-      linear-gradient(125deg, 
-        hsl(var(--accent) / 0.1) 0%,
-        transparent 40%
-      ),
-      linear-gradient(225deg, 
-        hsl(var(--strand) / 0.08) 0%,
-        transparent 40%
-      ),
-      linear-gradient(45deg, 
-        hsl(var(--solar) / 0.05) 0%,
-        transparent 40%
-      );
-    animation: aurora-shift 10s ease-in-out infinite alternate;
-  }
-
-  @keyframes aurora-shift {
-    0% { filter: hue-rotate(0deg); }
-    100% { filter: hue-rotate(30deg); }
   }
 
   /* Destiny-style orbit loader */

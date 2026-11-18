@@ -8,21 +8,39 @@ interface HeroSectionProps {
   isLoading: boolean;
 }
 
-function generateStars(count: number) {
-  return Array.from({ length: count }, (_, i) => {
+interface SkyStar {
+  id: number;
+  left: string;
+  top: string;
+  size: number;
+  duration: number;
+  delay: number;
+  tier: 'bright' | 'mid' | 'dim';
+}
+
+function generateStars(count: number): SkyStar[] {
+  const stars: SkyStar[] = [];
+  let guard = 0;
+  while (stars.length < count && guard < 900) {
+    guard += 1;
+    const left = Math.random() * 100;
+    const top = Math.random() * 100;
+    // The lockup sits in the middle. Keep that band clear.
+    if (left > 16 && left < 84 && top > 16 && top < 74) continue;
     const roll = Math.random();
     const tier = roll > 0.94 ? 'bright' : roll > 0.72 ? 'mid' : 'dim';
     const size = tier === 'bright' ? 2 : tier === 'mid' ? 1.5 : 1;
-    return {
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
+    stars.push({
+      id: stars.length,
+      left: `${left}%`,
+      top: `${top}%`,
       size,
       duration: (tier === 'dim' ? 4.5 : 3) + Math.random() * 4,
       delay: Math.random() * 8,
       tier,
-    };
-  });
+    });
+  }
+  return stars;
 }
 
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
@@ -35,7 +53,11 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
   ], []);
 
   return (
-    <section className="relative py-16 md:py-20 overflow-hidden">
+    <section className="hero-sky relative py-16 md:py-20 overflow-hidden">
+      <div className="hero-limb" aria-hidden="true" />
+      <div className="hero-traveler" aria-hidden="true">
+        <span className="hero-traveler-ring" />
+      </div>
       <div className="stars-container">
         {stars.map((star) => (
           <div
@@ -69,10 +91,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
         ))}
       </div>
 
-      <div className="traveler-bg" aria-hidden="true" />
-      <div className="absolute inset-0 aurora-bg" />
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-accent/5 rounded-full blur-3xl" />
 
       <div className="relative container mx-auto px-4 text-center">
         <div className="space-y-5 mb-10">
@@ -109,7 +128,7 @@ export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionPro
         </div>
 
         {lastUpdate && (
-          <p className="mt-6 text-xs text-muted-foreground/50" role="status" aria-live="polite">
+          <p className="hero-loaded mt-6 text-xs text-muted-foreground/80" role="status" aria-live="polite">
             Loaded at {lastUpdate.toLocaleTimeString()}
           </p>
         )}

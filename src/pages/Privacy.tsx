@@ -17,11 +17,6 @@ const PARTIES = [
     detail: "Destiny 1 emblem artwork, which Bungie's own CDN no longer serves.",
     aside: { label: 'destinyemblemcollector.b-cdn.net' },
   },
-  {
-    name: 'Google Fonts',
-    detail: 'The Orbitron and Rajdhani typefaces used across the site.',
-    aside: { label: 'fonts.googleapis.com' },
-  },
 ];
 
 export default function Privacy() {

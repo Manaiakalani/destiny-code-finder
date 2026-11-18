@@ -1,8 +1,30 @@
 import { ExternalLink, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Component, lazy, Suspense, type ReactNode } from 'react';
+import { Component, lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 
 const HeroCanvas = lazy(() => import('@/components/hero-sky/HeroCanvas'));
+
+function wantsLessData() {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (connection?.saveData === true) return true;
+  return window.matchMedia('(prefers-reduced-data: reduce)').matches;
+}
+
+function useShowSky() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    if (wantsLessData()) return;
+    const lite = window.matchMedia('(max-width: 719px), (pointer: coarse) and (max-width: 1180px)').matches;
+    const start = () => setShow(true);
+    if (!lite) {
+      start();
+      return;
+    }
+    const id = window.setTimeout(start, 600);
+    return () => window.clearTimeout(id);
+  }, []);
+  return show;
+}
 
 class SkyBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -23,18 +45,21 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ lastUpdate, onRefresh, isLoading }: HeroSectionProps) {
+  const showSky = useShowSky();
   return (
-    <section className="hero-sky relative py-16 md:py-20 overflow-hidden">
-      <SkyBoundary>
-        <Suspense fallback={null}>
-          <HeroCanvas />
-        </Suspense>
-      </SkyBoundary>
+    <section className="hero-sky relative overflow-hidden pt-8 pb-12 md:py-20">
+      {showSky ? (
+        <SkyBoundary>
+          <Suspense fallback={null}>
+            <HeroCanvas />
+          </Suspense>
+        </SkyBoundary>
+      ) : null}
 
       <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent" />
 
       <div className="relative container mx-auto px-4 text-center">
-        <div className="space-y-5 mb-10">
+        <div className="hero-copy mb-6 space-y-4 md:mb-10 md:space-y-5">
           <h1 className="hero-title font-heading text-5xl font-bold leading-[0.92] text-foreground md:text-6xl lg:text-7xl">
             <span className="hero-word block md:inline">Destiny 2</span>{' '}
             <span className="hero-word-solar mt-1 block md:mt-0 md:inline">Codes</span>

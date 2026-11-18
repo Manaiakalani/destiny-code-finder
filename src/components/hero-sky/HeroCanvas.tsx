@@ -219,8 +219,7 @@ function makeMeteorTexture() {
   return texture;
 }
 
-function makeStars() {
-  const count = 1200;
+function makeStars(count: number) {
   const positions = new Float32Array(count * 3);
   const colors = new Float32Array(count * 3);
   const sizes = new Float32Array(count);
@@ -228,7 +227,7 @@ function makeStars() {
   const crosses = new Float32Array(count);
   let i = 0;
   let guard = 0;
-  while (i < count && guard < 8000) {
+  while (i < count && guard < count * 8) {
     guard += 1;
     const radius = 9 + Math.random() * 7;
     const theta = Math.random() * Math.PI * 2;
@@ -313,7 +312,23 @@ function useMoonHeight() {
   });
 }
 
-function Moon() {
+const moonPlainFragment = /* glsl */ `
+  uniform sampler2D uColor;
+  varying vec2 vUv;
+  varying vec3 vNormal;
+  void main() {
+    vec3 albedo = texture2D(uColor, vUv).rgb;
+    albedo = clamp((albedo - 0.42) * 1.35 + 0.42, 0.0, 1.0);
+    vec3 n = normalize(vNormal);
+    vec3 lightDir = normalize(vec3(0.72, 0.34, 0.60));
+    float phase = smoothstep(-0.02, 0.62, dot(n, lightDir));
+    float micro = clamp(dot(n, lightDir) * 0.85 + 0.35, 0.15, 1.35);
+    vec3 color = albedo * vec3(1.08, 1.01, 0.92) * (0.05 + phase * micro);
+    gl_FragColor = vec4(color, 1.0);
+  }
+`;
+
+function DetailedMoon() {
   const color = useMoonColor();
   const height = useMoonHeight();
   return (
@@ -332,7 +347,25 @@ function Moon() {
   );
 }
 
-function Earth({ still }: { still: boolean }) {
+function PlainMoon() {
+  const color = useMoonColor();
+  return (
+    <mesh rotation={[0.1, -Math.PI / 2 + 0.22, 0.06]}>
+      <sphereGeometry args={[1, 40, 40]} />
+      <shaderMaterial
+        uniforms={{ uColor: { value: color } }}
+        vertexShader={moonVertex}
+        fragmentShader={moonPlainFragment}
+      />
+    </mesh>
+  );
+}
+
+function Moon({ detailed }: { detailed: boolean }) {
+  return detailed ? <DetailedMoon /> : <PlainMoon />;
+}
+
+function Earth({ still, segments }: { still: boolean; segments: number }) {
   const night = useNightTexture();
   const mesh = useRef<THREE.Mesh>(null);
   useFrame((_, delta) => {
@@ -342,7 +375,7 @@ function Earth({ still }: { still: boolean }) {
   return (
     <group rotation={[0.28, 0.55, 0.08]}>
       <mesh ref={mesh}>
-        <sphereGeometry args={[1, 80, 80]} />
+        <sphereGeometry args={[1, segments, segments]} />
         <shaderMaterial
           uniforms={{ uNight: { value: night } }}
           vertexShader={earthVertex}
@@ -350,7 +383,7 @@ function Earth({ still }: { still: boolean }) {
         />
       </mesh>
       <mesh scale={1.045}>
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[1, segments, segments]} />
         <shaderMaterial
           vertexShader={atmosphereVertex}
           fragmentShader={atmosphereFragment}
@@ -363,13 +396,13 @@ function Earth({ still }: { still: boolean }) {
   );
 }
 
-function Starfield({ still }: { still: boolean }) {
+function Starfield({ still, count }: { still: boolean; count: number }) {
   const stillRef = useRef(still);
   useEffect(() => {
     stillRef.current = still;
   }, [still]);
   const points = useMemo(() => {
-    const geometry = makeStars();
+    const geometry = makeStars(count);
     const material = new THREE.ShaderMaterial({
       uniforms: { uTime: { value: 0 } },
       vertexShader: starVertex,
@@ -384,7 +417,7 @@ function Starfield({ still }: { still: boolean }) {
       material.uniforms.uTime.value = performance.now() / 1000;
     };
     return cloud;
-  }, []);
+  }, [count]);
   useEffect(() => () => {
     points.geometry.dispose();
     const material = points.material;
@@ -463,7 +496,7 @@ function pointOnCanvas(
   target.copy(camera.position).addScaledVector(ray, travel);
 }
 
-function Stage({ still }: { still: boolean }) {
+function Stage({ still, lite }: { still: boolean; lite: boolean }) {
   const earth = useRef<THREE.Group>(null);
   const moon = useRef<THREE.Group>(null);
   const stars = useRef<THREE.Group>(null);
@@ -473,7 +506,7 @@ function Stage({ still }: { still: boolean }) {
     const width = state.size.width;
     const height = Math.max(state.size.height, 1);
     const aspect = width / height;
-    const wide = aspect >= 2.7;
+    const wide = aspect >= 2.7 && height >= 340;
     const earthY = width < 480 ? -3.46 : -3.25;
     let sx = width * 0.078;
     let sy = height * 0.2;
@@ -518,20 +551,40 @@ function Stage({ still }: { still: boolean }) {
   return (
     <>
       <group ref={stars}>
-        <Starfield still={still} />
+        <Starfield still={still} count={lite ? 480 : 1200} />
         <Meteors still={still} />
       </group>
       <group ref={earth} position={[0.3, -2.05, 0]} scale={2.15}>
-        <Earth still={still} />
+        <Earth still={still} segments={lite ? 48 : 80} />
       </group>
       <group ref={moon} position={[-2.2, 0.7, 2.2]} scale={0.2}>
-        <Moon />
+        <Moon detailed={!lite} />
       </group>
     </>
   );
 }
 
-function SkyScene({ still }: { still: boolean }) {
+function Pace({ run }: { run: boolean }) {
+  const { invalidate } = useThree();
+  useEffect(() => {
+    if (!run) return;
+    let frame = 0;
+    let last = 0;
+    const tick = (now: number) => {
+      if (now - last >= 34) {
+        last = now;
+        invalidate();
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    invalidate();
+    return () => cancelAnimationFrame(frame);
+  }, [run, invalidate]);
+  return null;
+}
+
+function SkyScene({ still, lite, running }: { still: boolean; lite: boolean; running: boolean }) {
   const { invalidate } = useThree();
   useEffect(() => {
     invalidate();
@@ -539,15 +592,21 @@ function SkyScene({ still }: { still: boolean }) {
   return (
     <>
       <ClearColor />
-      <Stage still={still} />
+      <Pace run={lite && running} />
+      <Stage still={still} lite={lite} />
     </>
   );
+}
+
+function readLite() {
+  return window.matchMedia('(max-width: 719px), (pointer: coarse) and (max-width: 1180px)').matches;
 }
 
 export default function HeroCanvas() {
   const host = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(true);
   const [still, setStill] = useState(false);
+  const [lite] = useState(readLite);
 
   useEffect(() => {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -566,15 +625,15 @@ export default function HeroCanvas() {
     <div ref={host} className="hero-canvas" aria-hidden="true">
       <Canvas
         camera={{ position: [0, 0.42, 5.6], fov: 28, near: 0.1, far: 50 }}
-        dpr={[1, 1.5]}
-        frameloop={still || !active ? 'demand' : 'always'}
-        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+        dpr={lite ? 1 : [1, 1.5]}
+        frameloop={still || !active || lite ? 'demand' : 'always'}
+        gl={{ antialias: true, alpha: false, powerPreference: lite ? 'low-power' : 'high-performance' }}
         onCreated={({ gl }) => {
           gl.toneMapping = THREE.NoToneMapping;
           gl.outputColorSpace = THREE.SRGBColorSpace;
         }}
       >
-        <SkyScene still={still} />
+        <SkyScene still={still} lite={lite} running={!still && active} />
       </Canvas>
     </div>
   );

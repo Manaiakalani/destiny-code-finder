@@ -315,6 +315,15 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.10.3 Updates (November 2026)
+
+The catalogue shows up on a phone before the sky finishes loading.
+
+- The WebGL sky starts after the catalogue paints. Phones wait a moment longer, and the sky stays off when the browser is saving data. Phones draw it at 30 frames a second, at a pixel ratio of 1, with fewer stars and without the lunar elevation map.
+- The pointer trail stays off on a touch screen, and it sleeps while the pointer is still.
+- The hero is shorter on a phone, including when it is turned sideways, so Archive Database starts higher.
+- Orbitron and Rajdhani are self-hosted. The privacy page no longer lists Google Fonts.
+
 ## 📋 v2.10.2 Updates (November 2026)
 
 The small sphere beside the Earth limb is the Moon, and the site no longer loads a third-party tracker.

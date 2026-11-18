@@ -61,7 +61,7 @@ const Index = () => {
 
       <div className="hex-divider mx-auto max-w-4xl" />
 
-      <main className="container mx-auto px-4 py-12">
+      <main className="catalogue-main container mx-auto px-4 py-8 md:py-12">
         <div className="space-y-6">
           <h2 className="font-heading text-2xl font-bold tracking-wider text-foreground md:text-3xl">
             Archive Database

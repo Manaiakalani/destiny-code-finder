@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.10.5 Updates (November 2026)
+
+The missing page uses the same footer as the rest of the vault, and the share image shows the night hero.
+
+- Checked Destiny Emblem Collector on 19 November 2026. All 49 universal codes are already in the catalogue. No code was added.
+- A missing page keeps About and Privacy in the footer.
+- The Open Graph image is the current night hero.
+
 ## 📋 v2.10.4 Updates (November 2026)
 
 Light mode is a dim dusk slate, and the pointer trail uses the same Void, Arc, and Solar colors as the rest of the vault.

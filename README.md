@@ -10,30 +10,8 @@
 
 A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled against [Destiny Emblem Collector](https://destinyemblemcollector.com/availability/universalcode): **49 universal Destiny 2 emblems** (including the July 2026 Bungie Day set), plus cosmetics, Destiny 1 codes labelled separately, and restricted/expired entries.
 
-## 📸 Screenshots
-
 <p align="center">
-  <img src="docs/screenshots/demo.gif" alt="Destiny Code Vault Demo" width="720" />
-</p>
-
-### Desktop: Deep Space Theme
-<p align="center">
-  <img src="docs/screenshots/desktop-hero.png" alt="Desktop Hero View" width="720" />
-</p>
-
-### Search & Filter
-<p align="center">
-  <img src="docs/screenshots/search-filter.png" alt="Search filtering for Runner emblem" width="720" />
-</p>
-
-### Shooting Stars & Particle Effects
-<p align="center">
-  <img src="docs/screenshots/dark-theme.png" alt="Dark theme with shooting star effects" width="720" />
-</p>
-
-### Mobile Responsive
-<p align="center">
-  <img src="docs/screenshots/mobile-view.png" alt="Mobile responsive view" width="320" />
+  <img src="docs/screenshots/hero.png" alt="Destiny 2 Code Vault at night: the Moon and a meteor over the Earth limb" width="960" />
 </p>
 
 ## ✨ Features
@@ -43,7 +21,7 @@ A privacy-focused Destiny 2 emblem code finder. The catalogue is reconciled agai
 - **⚡ Lightning Fast**: Built with Vite + React for instant page loads
 - **🎨 Beautiful UI**: NASA-inspired "Deep Space" theme with Destiny 2 subclass colors
 - **📱 Fully Responsive**: Works flawlessly on desktop, tablet, and mobile
-- **🔒 Privacy-First**: No cookies, no user accounts, no third-party analytics
+- **🔒 Privacy-First**: No cookies, no accounts, and cookieless visit counts we run ourselves
 - **🌙 Theme Support**: Dark, OLED, and Light modes
 - **✨ Visual Effects**: Shooting stars, particle effects, and emblem shine animations
 
@@ -225,10 +203,10 @@ The UI features a NASA-inspired "Deep Space" theme:
 Code Vault is built with privacy as a core principle:
 
 - ✅ No cookies
-- ✅ No cross-site tracking, advertising, or data selling
-- ✅ No third-party analytics
+- ✅ No advertising profiles, cross-site tracking, or data selling
+- ✅ Cookieless visit counts, on a counter we run
 - ✅ No user accounts required
-- ✅ All code data stored locally in your browser
+- ✅ Catalogue data stays in your browser
 - ✅ Open source and auditable
 
 See our [Privacy Policy](/privacy) for complete details.
@@ -264,205 +242,13 @@ Emblem codes are aggregated from publicly available community sources. Always ve
 - The Destiny 2 Reddit community for sharing codes
 - All Guardians who contribute to keeping the community informed
 
-## 📋 Community Feedback (v2.2.0)
+## Updates
 
-This release directly addresses community feedback from [r/DestinyTheGame](https://www.reddit.com/r/DestinyTheGame/comments/1rewz3y/):
+**November 2026.** The page is the Tower at night: the Moon over an Earth limb, stars, and the occasional meteor. The cards keep the glitch codes. Light mode is a dusk slate, and the hero stays night. A phone shows the catalogue before the sky. About opens on the night page, at the title. About, Privacy, and a missing page share the footer. Visit counts are on again. The list was last checked on 19 November 2026.
 
-### Issues Fixed
-- **Wrong code→emblem mappings**: All 38 original code entries had incorrect emblem name associations (e.g., `YRC-C3D-YNC` was labeled "The Visionary" but is actually "A Classy Order"). Every mapping has been corrected against [destinyemblemcollector.com](https://destinyemblemcollector.com/availability/universalcode), [rewards.mijago.net](https://rewards.mijago.net), and [blueberries.gg](https://www.blueberries.gg/items/destiny-2-free-emblems/).
-- **Fabricated codes removed**: 6 codes that never existed as universal codes were removed (`JNX-DMH-XLA`, `A7L-FYC-44X`, `N3L-XN6-PXF`, `X9F-GMA-H6D`, `3VF-LGC-RLX`, `X4C-FGX-MX3`).
-- **Non-universal codes marked expired**: 7 codes for emblems that require special access (Game2Give donations, Bungie API developer program, Steelseries promos, Creator Hub, Netcafe vendors) are now marked "Expired" with dependency notes explaining how to actually obtain them.
-- **D1 shader codes properly labeled**: `D6T-3JR-CKX`, `7MM-VPD-MHP`, `RXC-9XJ-4MH` are Destiny 1 shaders (Prismatic Expanse, Double Banshee, Oracle 99), not D2 emblems. They now display under a dedicated "D1" filter.
-- **Add Code crash fixed**: `Uncaught TypeError: x.toUpperCase is not a function` caused by passing a `RedemptionCode` object where a string was expected.
-- **Code validation updated**: Regex now uses Bungie's official character set (`ACDFGHJKLMNPRTVXY34679`) and supports extended 14-character codes for Destiny: Rising promotions.
-- **Missing rewards added**: `R9J-79M-J6C` (End of the Rainbow transmat) and `TK7-D3P-FDF` (Rainbow Connection emote) now included.
+**August 2026.** The catalogue matches Destiny Emblem Collector, including the Bungie Day emblems. Destiny 1 codes are labelled on their own. Redeem opens as a normal link.
 
-### New Features
-- **D1 Filter**: Combined filter row: All / D2 Active / D2 Expired / D1
-- **Dependency Notes**: Expired and D1 cards display explanatory notes about how to obtain the item
-
-## 📋 v2.3.0 Updates
-
-### New Codes
-- **`DXL-XHC-X37`**: **Runner** emblem (universal code, available Feb 5, 2026). Confirmed via [destinyemblemcollector.com](https://destinyemblemcollector.com/emblem?id=3079989879).
-
-### Image Fixes
-- **Runner emblem** now shows correct Bungie CDN icon
-- **End of the Rainbow** and **Rainbow Connection**: removed fabricated icon paths that were 404ing on Bungie CDN. These are a transmat effect and emote (not emblems), so they correctly show a placeholder icon.
-
-### Scraper Improvements
-- Reddit and Blueberries.gg scrapers now validate discovered codes against **Bungie's official character set** (`ACDFGHJKLMNPRTVXY34679`), filtering out false matches with characters outside the valid set.
-
-## 📋 v2.4.0 Updates
-
-### UX Improvements
-- **Middle-click support on Redeem buttons**: Redeem buttons are now native `<a>` elements instead of `<button>`, enabling middle-click / Ctrl+click to open codes in new browser tabs. Applies to both per-code Redeem buttons and the hero "Redeem on Bungie.net" button.
-
-### Code Quality & Refactoring
-- Removed unused imports (`CodeGridSkeleton`, `EmptyState` from Index page)
-- Removed dead types (`SortOrder`, unused `sourceUrl` field)
-- Removed redundant `description` fields from 48 code entries where they duplicated `emblemName`: `useCodeScanner` now falls back to `emblemName` automatically
-- Removed dead default export from `codeScraperService`
-
-### Docker Hardening
-- Container now runs as **non-root user** (`appuser`) instead of root
-- Nginx listens on **port 8080** (unprivileged) instead of port 80
-- Added `server_tokens off` to suppress Nginx version in responses
-- Added security headers: `Referrer-Policy`, `Permissions-Policy`
-- Improved gzip config with `gzip_vary` and `gzip_min_length`
-- Docker Compose example now includes `read_only` and `no-new-privileges`
-
-### Version
-- Bumped `package.json` version to **2.4.0**
-
-## 📋 v2.10.6 Updates (November 2026)
-
-About shows when the catalogue was last checked, light mode is one step lighter, and the night sky script is smaller.
-
-- About keeps the same opening line and adds the 19 November 2026 check date. Nothing new was found.
-- Light mode stays a dusk slate, one step lighter than before. The hero stays night.
-- The sky script is smaller. The Moon, Earth, stars, and meteors are unchanged.
-
-## 📋 v2.10.5 Updates (November 2026)
-
-The missing page uses the same footer as the rest of the vault, and the share image shows the night hero.
-
-- Checked Destiny Emblem Collector on 19 November 2026. All 49 universal codes are already in the catalogue. No code was added.
-- A missing page keeps About and Privacy in the footer.
-- The Open Graph image is the current night hero.
-
-## 📋 v2.10.4 Updates (November 2026)
-
-Light mode is a dim dusk slate, and the pointer trail uses the same Void, Arc, and Solar colors as the rest of the vault.
-
-- About and Privacy stay in the footer. They are no longer in the top bar.
-- Refresh keeps its Void label when you hover or tap it.
-- The Moon is graded to the night Earth: warm highlands, blue-black maria, and the same Arc rim.
-- The sky has more stars. Their size is unchanged.
-- The pointer trail sits on the cursor. It stays off on a touch screen and while the browser is saving data.
-
-## 📋 v2.10.3 Updates (November 2026)
-
-The catalogue shows up on a phone before the sky finishes loading.
-
-- The WebGL sky starts after the catalogue paints. Phones wait a moment longer, and the sky stays off when the browser is saving data. Phones draw it at 30 frames a second, at a pixel ratio of 1, with fewer stars and without the lunar elevation map.
-- The pointer trail stays off on a touch screen, and it sleeps while the pointer is still.
-- The hero is shorter on a phone, including when it is turned sideways, so Archive Database starts higher.
-- Orbitron and Rajdhani are self-hosted. The privacy page no longer lists Google Fonts.
-
-## 📋 v2.10.2 Updates (November 2026)
-
-The small sphere beside the Earth limb is the Moon, and the site no longer loads a third-party tracker.
-
-- Lunar color and elevation come from NASA's Lunar Reconnaissance Orbiter. The familiar near side faces the page, with a terminator so the maria and crater rims read.
-- The privacy policy no longer names an analytics host. Its date is November 18, 2026.
-
-Lunar maps courtesy of NASA.
-
-## 📋 v2.10.1 Updates (November 2026)
-
-About and Privacy share one reading layout, and both end on the same footer as the catalogue.
-
-- Section headings, lists, and source rows use the same size, icon, and gap.
-- Privacy keeps the November 17, 2026 date. About keeps the Zavala line and the title shadow.
-- The catalogue footer is the same component on the home page.
-
-## 📋 v2.10.0 Updates (November 2026)
-
-The hero is a night limb of Earth, with the Traveler as a bone-white sphere.
-
-- Earth uses NASA's public-domain Earth-at-night city lights. A thin Arc rim follows the curve, and the sphere turns slowly.
-- The Traveler sits clear of the title, the buttons, and the clock. On a narrow screen it sits above the title.
-- Stars are a point field. The brightest carry a small cross. Three meteors cross the upper sky or the limb, then stay dark.
-- Moving the pointer shifts the far stars more than the Earth. Reduced motion holds one still frame. The canvas sits behind the title and does not take clicks.
-- The Void wash, the glitch codes, and the cards stay.
-
-Earth-at-night city lights courtesy of NASA.
-
-## 📋 v2.9.8 Updates (November 2026)
-
-The Traveler is a whole pearl in the lower sky. Earth is one bowed limb.
-
-- The sphere stays clear of the title, the buttons, and the clock.
-- The horizon is a single arc with a soft atmosphere. The hero stays night in light mode and on OLED.
-- Shooting stars keep a bright head and a long tail, and they stay off the title.
-
-## 📋 v2.9.7 Updates (November 2026)
-
-The wakes have a bright head and a long tail. Earth is a bowed limb, and the Traveler rises behind it.
-
-- Shooting stars are cold, warm, or arc, and they stay mostly off.
-- The horizon follows the curve of the planet. The air is a thin bright ring.
-- The pearl sphere sits behind that limb. On a phone it stays in the corner.
-
-## 📋 v2.9.6 Updates (November 2026)
-
-The hero is the Tower at night. A pearl sphere hangs low over a thin atmosphere, and the Void wash across the top stays.
-
-- The Traveler is bone-white and cropped along the bottom of the title.
-- Earth's limb is a thin arc. The field stays dark in light mode so the sphere still reads.
-- Stars stay clear of the title. The cards, glitch codes, and solar word stay.
-
-## 📋 v2.9.5 Updates (November 2026)
-
-The bar uses the same names as the catalogue. Counts stay on a tablet. The clock under the title is when this browser loaded the list.
-
-- The nav count reads Destiny 2, beside Total.
-- A tablet-width screen keeps those counts in the bar.
-- The line under the title says Loaded at.
-- About opens on a hand-checked catalogue.
-
-## 📋 v2.9.4 Updates (November 2026)
-
-The cards, glitch codes, and starfield stay. The tiles keep a steadier size, the sky is finer, and the title reads as one lockup.
-
-- Catalogue cards share a tile width and a shorter height. The code stays on one line.
-- Stars vary in size and brightness. Shooting stars cross as short streaks.
-- Destiny 2 Codes sits tighter. Codes keeps the solar color, lit from the top.
-
-## 📋 v2.9.3 Updates (November 2026)
-
-The cards, glitch codes, and starfield stay. Status on a card is a word, and each catalogue filter is a name with its count set apart.
-
-- Card corners say Destiny 2, Destiny 1, Expired, or Unknown. The status dots are gone.
-- Archive Database is one heading. The filters read All, Destiny 2, Expired, Destiny 1, and Unknown.
-
-## 📋 v2.9.2 Updates (November 2026)
-
-The same cards, glitch codes, and starfield. The bar across the top is one surface now, and About, Privacy, and missing pages use it too.
-
-- Catalogue counts sit with the links instead of inside a second glass card.
-- The current page is marked in the bar. The phone menu keeps Add Code, appearance, and the counts together.
-- About and Privacy read as pages, not a stack of identical cards.
-
-## 📋 v2.9.1 Updates (November 2026)
-
-The card catalogue, glitch codes, and starfield stay. v2.9.0 had replaced them with a plain list, and this puts that design back.
-
-- Refresh keeps the cards on screen instead of swapping in the scanner.
-- A code you add can be copied and redeemed. The card says when you added it. Catalogue cards no longer show the cache clock as a found date.
-- If a refresh fails, the page says so and keeps the last set.
-- A phone-width screen keeps each card inside the viewport.
-
-## 📋 v2.8.0 Updates (August 2026)
-
-### Catalogue
-- Reconciled against Destiny Emblem Collector on 2026-08-18: **no new public codes** since Bungie Day (July 7, 2026).
-- Relabelled 11 Destiny 1-only codes that redeem to the Tower kiosk, not Destiny 2 Collections.
-- Bungie Day 2026 emblems stay listed as D2 active: Broken and Bruised, Gloriabundus, Last Blush, Little Light, Lofty Wail, Red Shift Returning, Tethered Storm.
-
-### Security
-- Landed Dependabot updates (sonner 2.0.8, typescript-eslint 8.67.0, globals 17.11.0, eslint-plugin-react-refresh 0.5.4).
-- Added a triaged production `npm audit` gate on CI and deploy. Zero production advisories.
-- Pinned GitHub Actions to commit SHAs.
-
-### SEO & UX
-- Real `/about` and `/privacy` URLs (BrowserRouter + GitHub Pages 404 restore). Old `#/…` links redirect.
-- Canonical, Open Graph, Twitter, JSON-LD FAQ, sitemap, and `og-image.png`.
-- Redeem is a native link again (middle-click / Ctrl-click works).
-
-### Version
-- Bumped `package.json` to **2.8.0**.
+**Earlier.** Emblem names were corrected against the public lists, codes that were never universal were dropped, and Add Code accepts only the Bungie character set.
 
 ---
 

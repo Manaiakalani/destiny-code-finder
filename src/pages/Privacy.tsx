@@ -1,4 +1,4 @@
-import { Shield, Database, Cookie, ExternalLink, Lock } from 'lucide-react';
+import { Shield, Database, Cookie, ExternalLink, Lock, Eye } from 'lucide-react';
 import { useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { SiteFooter } from '@/components/SiteFooter';
@@ -16,6 +16,11 @@ const PARTIES = [
     name: 'Destiny Emblem Collector CDN',
     detail: "Destiny 1 emblem artwork, which Bungie's own CDN no longer serves.",
     aside: { label: 'destinyemblemcollector.b-cdn.net' },
+  },
+  {
+    name: 'Visit counter',
+    detail: 'Cookieless page-view counts on a counter we run. No session replay and no advertising profile.',
+    aside: { label: 'analytics.manaiakalani.info' },
   },
 ];
 
@@ -35,7 +40,7 @@ export default function Privacy() {
         <DocTitle
           title="Privacy Policy"
           lede="Your privacy is protected. We don't collect, store, or share any personal information."
-          meta="Last updated: November 18, 2026"
+          meta="Last updated: November 20, 2026"
         />
 
         <DocSections>
@@ -90,7 +95,7 @@ export default function Privacy() {
             <DocHeading icon={Cookie} tone="text-solar">No Cookies</DocHeading>
             <p className="leading-relaxed text-muted-foreground">
               Code Vault does not use cookies of any kind. We don't create user profiles, follow you across other
-              sites, or sell data.
+              sites, or sell data. The visit counter below is the one aggregate measurement we keep.
             </p>
           </DocSection>
 
@@ -125,6 +130,29 @@ export default function Privacy() {
               </DocRows>
               <p className="leading-relaxed">
                 The code catalogue itself is bundled with the app — no code data is fetched from an external API.
+              </p>
+            </DocProse>
+          </DocSection>
+
+          <DocSection>
+            <DocHeading icon={Eye} tone="text-accent">Visit counts</DocHeading>
+            <DocProse>
+              <p className="leading-relaxed">
+                A counter we run records page views so we can see that the catalogue is being used. It does not
+                build an advertising profile.
+              </p>
+              <DocRows>
+                <li className="py-3">
+                  <span className="block font-medium text-foreground">What we collect</span>
+                  <span className="text-sm text-muted-foreground">Page views and approximate visitor counts</span>
+                </li>
+                <li className="py-3">
+                  <span className="block font-medium text-foreground">What we don&apos;t collect</span>
+                  <span className="text-sm text-muted-foreground">An account, a tracking cookie, session replay, or a device fingerprint</span>
+                </li>
+              </DocRows>
+              <p className="leading-relaxed">
+                We don&apos;t use Google Analytics, an advertising pixel, or any service that follows you across the web.
               </p>
             </DocProse>
           </DocSection>

@@ -17,6 +17,9 @@ import {
 
 test.describe('storage resilience', () => {
   test('renders normally when localStorage is denied outright', async ({ page }) => {
+    // The visit counter throws when storage is denied. Block it so this
+    // assertion is about the catalogue, not the counter.
+    await page.route('**/analytics.manaiakalani.info/**', route => route.abort());
     await page.addInitScript(blockAllStorage);
 
     const errors: string[] = [];

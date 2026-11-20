@@ -315,6 +315,14 @@ This release directly addresses community feedback from [r/DestinyTheGame](https
 ### Version
 - Bumped `package.json` version to **2.4.0**
 
+## 📋 v2.10.6 Updates (November 2026)
+
+About shows when the catalogue was last checked, light mode is one step lighter, and the night sky script is smaller.
+
+- About keeps the same opening line and adds the 19 November 2026 check date. Nothing new was found.
+- Light mode stays a dusk slate, one step lighter than before. The hero stays night.
+- The sky script is smaller. The Moon, Earth, stars, and meteors are unchanged.
+
 ## 📋 v2.10.5 Updates (November 2026)
 
 The missing page uses the same footer as the rest of the vault, and the share image shows the night hero.

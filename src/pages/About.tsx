@@ -40,6 +40,7 @@ export default function About() {
         <DocTitle
           title="About Code Vault"
           lede="A hand-checked catalogue of Destiny 2 emblem redemption codes."
+          meta="Last checked: 19 November 2026"
         />
 
         <DocSections>

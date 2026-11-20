@@ -1,7 +1,51 @@
 import { useTexture } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import * as THREE from 'three';
+import {
+  AdditiveBlending,
+  BackSide,
+  BufferAttribute,
+  BufferGeometry,
+  Camera,
+  CanvasTexture,
+  Group,
+  Material,
+  Mesh,
+  NoColorSpace,
+  NoToneMapping,
+  NormalBlending,
+  Points,
+  ShaderMaterial,
+  Sprite,
+  SpriteMaterial,
+  SRGBColorSpace,
+  Texture,
+  Vector2,
+  Vector3,
+} from 'three';
+
+const THREE = {
+  AdditiveBlending,
+  BackSide,
+  BufferAttribute,
+  BufferGeometry,
+  Camera,
+  CanvasTexture,
+  Group,
+  Material,
+  Mesh,
+  NoColorSpace,
+  NoToneMapping,
+  NormalBlending,
+  Points,
+  ShaderMaterial,
+  Sprite,
+  SpriteMaterial,
+  SRGBColorSpace,
+  Texture,
+  Vector2,
+  Vector3,
+};
 
 const NIGHT_MAP = `${import.meta.env.BASE_URL}textures/earth-night.webp`;
 const MOON_COLOR = `${import.meta.env.BASE_URL}textures/moon-color.webp`;
@@ -100,8 +144,8 @@ const starFragment = /* glsl */ `
 interface MeteorSpec {
   delay: number;
   duration: number;
-  from: THREE.Vector3;
-  to: THREE.Vector3;
+  from: Vector3;
+  to: Vector3;
   length: number;
   color: string;
 }
@@ -376,7 +420,7 @@ function Moon({ detailed }: { detailed: boolean }) {
 
 function Earth({ still, segments }: { still: boolean; segments: number }) {
   const night = useNightTexture();
-  const mesh = useRef<THREE.Mesh>(null);
+  const mesh = useRef<Mesh>(null);
   useFrame((_, delta) => {
     if (still || !mesh.current) return;
     mesh.current.rotation.y += delta * 0.0012;
@@ -437,14 +481,14 @@ function Starfield({ still, count }: { still: boolean; count: number }) {
 
 function Meteors({ still }: { still: boolean }) {
   const texture = useMemo(() => makeMeteorTexture(), []);
-  const refs = useRef<(THREE.Sprite | null)[]>([]);
+  const refs = useRef<(Sprite | null)[]>([]);
   useEffect(() => () => texture.dispose(), [texture]);
   useFrame(({ clock }) => {
     const elapsed = clock.elapsedTime;
     METEORS.forEach((meteor, index) => {
       const sprite = refs.current[index];
       if (!sprite) return;
-      const material = sprite.material as THREE.SpriteMaterial;
+      const material = sprite.material as SpriteMaterial;
       if (still) {
         material.opacity = 0;
         return;
@@ -490,13 +534,13 @@ const edge = new THREE.Vector3();
 const ray = new THREE.Vector3();
 
 function pointOnCanvas(
-  camera: THREE.Camera,
+  camera: Camera,
   width: number,
   height: number,
   sx: number,
   sy: number,
   z: number,
-  target: THREE.Vector3,
+  target: Vector3,
 ) {
   ndc.set((sx / width) * 2 - 1, -(sy / height) * 2 + 1, 0.5);
   ndc.unproject(camera);
@@ -506,9 +550,9 @@ function pointOnCanvas(
 }
 
 function Stage({ still, lite }: { still: boolean; lite: boolean }) {
-  const earth = useRef<THREE.Group>(null);
-  const moon = useRef<THREE.Group>(null);
-  const stars = useRef<THREE.Group>(null);
+  const earth = useRef<Group>(null);
+  const moon = useRef<Group>(null);
+  const stars = useRef<Group>(null);
   const pointer = usePointer();
 
   useFrame((state, delta) => {

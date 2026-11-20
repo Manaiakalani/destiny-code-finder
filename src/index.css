@@ -133,27 +133,27 @@
     --input: 0 0% 8%;
   }
 
-  /* Light mode is the Tower at dusk: a dim slate, still lighter than the night theme. */
+  /* One step above the night slate. Still dusk. The hero stays night. */
   .light-mode {
-    --background: 222 18% 18%;
+    --background: 222 16% 22%;
     --foreground: 220 16% 96%;
-    --card: 222 14% 24%;
+    --card: 222 12% 28%;
     --card-foreground: 220 16% 96%;
-    --popover: 222 16% 22%;
+    --popover: 222 14% 26%;
     --popover-foreground: 220 16% 96%;
     --primary: 214 80% 62%;
     --primary-foreground: 222 30% 10%;
-    --secondary: 222 12% 28%;
+    --secondary: 222 12% 32%;
     --secondary-foreground: 220 16% 96%;
-    --muted: 222 12% 26%;
+    --muted: 222 12% 30%;
     --muted-foreground: 220 12% 78%;
-    --accent: 265 90% 78%;
+    --accent: 265 90% 82%;
     --accent-foreground: 260 40% 10%;
-    --border: 222 12% 40%;
-    --input: 222 12% 28%;
-    --ring: 265 90% 78%;
+    --border: 222 12% 46%;
+    --input: 222 12% 32%;
+    --ring: 265 90% 82%;
 
-    /* Bright enough to clear 4.5:1 on the dusk card. Solar ink stays dark. */
+    /* Status colours clear 4.5:1 on the lighter card. Solar ink stays dark. */
     --arc: 202 100% 70%;
     --solar: 34 100% 52%;
     --solar-secondary: 14 85% 50%;
@@ -166,7 +166,7 @@
     --strand-secondary: 145 50% 70%;
     --strand-accent: 135 60% 68%;
 
-    --destructive: 9 90% 62%;
+    --destructive: 9 90% 76%;
     --destructive-foreground: 0 0% 100%;
     --success: 142 60% 58%;
     --success-foreground: 150 40% 8%;
@@ -176,9 +176,9 @@
 
   .light-mode body {
     background:
-      radial-gradient(ellipse at 20% 0%, hsl(222 24% 26%) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 100%, hsl(228 18% 14%) 0%, transparent 50%),
-      hsl(222 18% 18%);
+      radial-gradient(ellipse at 20% 0%, hsl(222 22% 30%) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 100%, hsl(228 16% 16%) 0%, transparent 50%),
+      hsl(222 16% 22%);
   }
 }
 
@@ -1207,7 +1207,7 @@
 .light-mode .status-stasis { color: hsl(187 100% 68%); }
 .light-mode [aria-pressed="true"].tone-solar,
 .light-mode .status-solar { color: hsl(34 100% 58%); }
-.light-mode [aria-pressed="true"].tone-accent { color: hsl(265 90% 78%); }
+.light-mode [aria-pressed="true"].tone-accent { color: hsl(265 90% 82%); }
 
 /* The outline variant's hover colour is the wrong ink on this night button. */
 .hero-sky .hero-refresh,
